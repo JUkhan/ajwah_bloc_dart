@@ -23,29 +23,26 @@ class CounterComponent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
-        ButtonBar(
-            mainAxisSize: MainAxisSize
-                .min, // this will take space as minimum as posible(to center)
-            children: <Widget>[
-              RaisedButton(
-                textColor: Colors.white,
-                color: Colors.blue,
-                child: Icon(Icons.add),
-                onPressed: increment,
-              ),
-              new RaisedButton(
-                textColor: Colors.white,
-                color: Colors.blue,
-                child: Text('Async(+)'),
-                onPressed: asyncIncrement,
-              ),
-              RaisedButton(
-                textColor: Colors.white,
-                color: Colors.blue,
-                child: Icon(Icons.remove),
-                onPressed: decrement,
-              )
-            ]),
+        ButtonBar(mainAxisSize: MainAxisSize.min, children: <Widget>[
+          RaisedButton(
+            textColor: Colors.white,
+            color: Colors.blue,
+            child: Icon(Icons.add),
+            onPressed: increment,
+          ),
+          new RaisedButton(
+            textColor: Colors.white,
+            color: Colors.blue,
+            child: Text('Async(+)'),
+            onPressed: asyncIncrement,
+          ),
+          RaisedButton(
+            textColor: Colors.white,
+            color: Colors.blue,
+            child: Icon(Icons.remove),
+            onPressed: decrement,
+          )
+        ]),
         SizedBox(
           width: 10.0,
         ),
