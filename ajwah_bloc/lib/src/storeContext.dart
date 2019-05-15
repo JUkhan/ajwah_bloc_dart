@@ -44,12 +44,12 @@ class StoreContext {
   }
 
   StoreContext addEffect(EffectCallback callback, {@required String key}) {
-    removeEffectByKey(key);
+    removeEffectsByKey(key);
     _subs[key] = callback(_actions, this).listen(_dispatcher.dispatch);
     return this;
   }
 
-  StoreContext removeEffectByKey(String key) {
+  StoreContext removeEffectsByKey(String key) {
     if (_subs.containsKey(key)) {
       _subs[key].cancel();
       _subs.remove(key);
@@ -73,7 +73,7 @@ class StoreContext {
     if (effectInstance.effectKey == null) {
       _effSub.addEffects(effect);
     } else {
-      removeEffectByKey(effectInstance.effectKey);
+      removeEffectsByKey(effectInstance.effectKey);
       _subs[effectInstance.effectKey] = effect.listen(_dispatcher.dispatch);
     }
     return this;

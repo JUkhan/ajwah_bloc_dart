@@ -1,4 +1,4 @@
-name: ajwah_bloc_dart
+name: ajwah_bloc
 version: 0.1.0
 author: "Jasim Khan <jasim.uddin.khan@gmail.com>"
 homepage: https://github.com/JUkhan/ajwah_bloc_dart
@@ -15,3 +15,5 @@ dependencies:
 
 dev_dependencies:
   test: ^1.6.3
+  build_runner: ^1.4.0
+  build_test: ^0.10.7+3
