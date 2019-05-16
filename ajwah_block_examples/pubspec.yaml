@@ -12,6 +12,7 @@ dependencies:
   flutter_web: any
   flutter_web_ui: any
   rxdart: ^0.22.0
+  http: ^0.12.0+2
   ajwah_bloc:
     path: ../ajwah_bloc
 

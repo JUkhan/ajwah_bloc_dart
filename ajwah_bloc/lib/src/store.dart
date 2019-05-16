@@ -46,7 +46,7 @@ class Store {
   ///
   ///**Example**
   ///```dart
-  ///store().addEffect((action$, store$)=>action$
+  ///store.addEffect((action$, store$)=>action$
   ///           .ofType(ActionTypes.AsyncInc)
   ///           .debounceTime(Duration(milliseconds: 1000))
   ///           .mapTo(Action(type: ActionTypes.Inc)), 'any-effectKey');
@@ -90,6 +90,30 @@ class Store {
       _subs[effectInstance.effectKey] = effect.listen(_dispatcher.dispatch);
     }
     return this;
+  }
+
+  ///return latest stream of [action, state] array.
+  ///
+  /// **Example**
+  /// ```dart
+  ///store.exportState().listen((arr) {
+  ///    print((arr[0] as Action).type);
+  ///    print(arr[1]);
+  ///  });
+  /// ```
+  Observable<List<dynamic>> exportState() {
+    return _storeHelper.exportState();
+  }
+
+  ///state object should be a **Map<String, dynamic> state**
+  ///
+  /// **Example**
+  /// ```dart
+  /// var state={'counter':CounterModel(count:5, isLoading:false)};
+  /// store.importState(state);
+  /// ```
+  void importState(Map<String, dynamic> state) {
+    _storeHelper.importState(state);
   }
 
   ///It's a clean up function.

@@ -11,12 +11,13 @@ Store _store;
 ///Also you can dynamically **add** or **remove** state and effect
 ///using **addState(BaseState stateInstance)** ,**removeStateByStateName(String stateName)**,
 ///**addEffects(BaseEffect effectInstance)**, **addEffect(EffectCallback callback, {@required String key})**, **removeEffectsByKey(String key)**
-void createStore(
+Store createStore(
     {@required List<BaseState> states, List<BaseEffect> effects = const []}) {
   _store = Store(states);
   effects.forEach((effect) {
     _store.addEffects(effect);
   });
+  return _store;
 }
 
 ///return **Store** instance.

@@ -11,20 +11,18 @@ import 'action.dart';
 ///   final int count;
 ///   final bool isLoading;
 ///   CounterModel({this.count, this.isLoading});
+///   CounterModel.init():this(count:0, isLoading:false);
+///   CounterModel.countData(int count) : this(count: count, isLoading: false);
 /// }
 ///
 ///class CounterState extends BaseState<CounterModel> {
 ///
-///   CounterState(): super(name: 'counter',
-///      initialState: CounterModel(count: 0, isLoading: false));
+///   CounterState(): super(name: 'counter', initialState: CounterModel.init());
 ///
-///   CounterModel increment(CounterModel state, Action action){
-///     return CounterModel(count: state.count + 1, isLoading: false);
-///   }
 ///
 ///   CounterModel reduce(CounterModel state, Action action) {
 ///     switch (action.type) {
-///       case ActionTypes.Inc: return increment(state, action);
+///       case ActionTypes.Inc: return CounterModel.countData(state.count+1);
 ///       default: return state;
 ///     }
 ///   }
