@@ -1,68 +1,100 @@
 import 'dart:async';
 
+import 'package:async/async.dart';
+import 'baseEffect.dart';
+
+import 'effectSubscription.dart';
+import 'package:meta/meta.dart';
+import 'package:rxdart/rxdart.dart';
+
+import 'storeHelper.dart';
 import 'action.dart';
 import 'baseState.dart';
 import 'dispatcher.dart';
-import 'package:rxdart/rxdart.dart';
+import 'actions.dart';
+
+typedef EffectCallback = Observable<Action> Function(
+    Actions action$, Store store$);
 
 class Store {
   Dispatcher _dispatcher;
-  BehaviorSubject<Map<String, dynamic>> _state;
-  StreamSubscription _subscriptiom;
-  List<BaseState> _states;
+  Actions _actions;
+  StoreHelper _storeHelper;
+  Map<String, StreamSubscription<Action>> _subs;
+  EffectSubscription _effSub;
 
-  Store(Dispatcher dispatcher, List<BaseState> states) {
-    _dispatcher = dispatcher;
-    _state = BehaviorSubject<Map<String, dynamic>>();
-    _states = states;
-    _subscriptiom = _dispatcher.streamController
-        .scan((state, action, index) => _combineStates(state, action),
-            Map<String, dynamic>())
-        .listen((nextState) {
-      print(nextState);
-      _state.add(nextState);
-    });
+  Store(List<BaseState> states) {
+    _dispatcher = Dispatcher();
+    _actions = Actions(_dispatcher);
+    _storeHelper = StoreHelper(_dispatcher, states);
+    _subs = Map<String, StreamSubscription<Action>>();
+    _effSub = EffectSubscription(_dispatcher);
   }
 
-  void dispatch(Action action) {
-    _dispatcher.streamController.add(action);
+  Store dispatch(Action action) {
+    _storeHelper.dispatch(action);
+    return this;
   }
 
-  Observable<T> select<T>(String stateName) {
-    return _state.map<T>((dic) => dic[stateName]).distinct();
+  ///This method takes a single param **String stateName** and return Observable/Stream
+  Observable<T> select<T>({@required String stateName}) {
+    return _storeHelper.select(stateName);
   }
 
-  Map<String, dynamic> _combineStates(
-      Map<String, dynamic> state, Action action) {
-    _states.forEach((stateObj) {
-      state[stateObj.name] = stateObj.reduce(
-          state[stateObj.name] == null
-              ? stateObj.initialState
-              : state[stateObj.name],
-          action);
-    });
-    return state;
+  ///This method is usefull to add a single effect passing a callback **(
+  ///Actions action$, Store store$)=>Observable** and **effectKey** on demand.
+  ///
+  ///**Example**
+  ///```dart
+  ///store().addEffect((action$, store$)=>action$
+  ///           .ofType(ActionTypes.AsyncInc)
+  ///           .debounceTime(Duration(milliseconds: 1000))
+  ///           .mapTo(Action(type: ActionTypes.Inc)), 'any-effectKey');
+  ///```
+  Store addEffect(EffectCallback callback, {@required String effectKey}) {
+    removeEffectsByKey(effectKey);
+    _subs[effectKey] = callback(_actions, this).listen(_dispatcher.dispatch);
+    return this;
   }
 
-  void addState(BaseState state) {
-    removeStateByStateName(state.name, false);
-    _states.add(state);
-    dispatch(Action(type: 'add_state(${state.name})'));
-  }
-
-  void removeStateByStateName(String stateName, [bool shouldDispatch = true]) {
-    int index = _states.indexWhere((bs) => bs.name == stateName);
-    if (index != -1) {
-      _states.removeAt(index);
-      if (shouldDispatch) {
-        dispatch(Action(type: 'remove_state(${stateName})'));
-      }
+  ///This method is usefull to remove effects passing **effectKey** on demand.
+  Store removeEffectsByKey(String effectKey) {
+    if (_subs.containsKey(effectKey)) {
+      _subs[effectKey].cancel();
+      _subs.remove(effectKey);
     }
+    return this;
   }
 
-  void dispose() {
-    _subscriptiom.cancel();
-    _state.close();
-    _dispatcher.dispose();
+  ///This method is usefull to add a state passing **stateInstance** on demand.
+  Store addState(BaseState stateInstance) {
+    _storeHelper.addState(stateInstance);
+    return this;
+  }
+
+  ///This method is usefull to remove a state passing **stateName** on demand.
+  Store removeStateByStateName(String stateName) {
+    _storeHelper.removeStateByStateName(stateName);
+    return this;
+  }
+
+  ///This method is usefull to add effects passing **effectInstance** on demand.
+  Store addEffects(BaseEffect effectInstance) {
+    var effect =
+        StreamGroup.merge(effectInstance.registerEffects(_actions, this))
+            .asBroadcastStream();
+    if (effectInstance.effectKey == null) {
+      _effSub.addEffects(effect);
+    } else {
+      removeEffectsByKey(effectInstance.effectKey);
+      _subs[effectInstance.effectKey] = effect.listen(_dispatcher.dispatch);
+    }
+    return this;
+  }
+
+  ///It's a clean up function.
+  dispose() {
+    _storeHelper.dispose();
+    _effSub.dispose();
   }
 }

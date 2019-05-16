@@ -38,5 +38,18 @@ abstract class BaseState<T> {
             ? true
             : throw 'state name should not be empty or null.'),
         assert(initialState != null);
+
+  ///This method should be invoked by sysytem passing current state and action.
+  ///You should mutate the state based on action
+  ///
+  ///**Example**
+  ///```dart
+  ///   CounterModel reduce(CounterModel state, Action action) {
+  ///     switch (action.type) {
+  ///       case ActionTypes.Inc: return increment(state, action);
+  ///       default: return state;
+  ///     }
+  ///   }
+  /// ```
   T reduce(T state, Action action);
 }
