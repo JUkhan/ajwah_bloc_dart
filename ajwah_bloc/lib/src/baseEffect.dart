@@ -31,7 +31,7 @@ abstract class BaseEffect {
   BaseEffect({this.effectKey});
 
   ///This function should be invoked by system passing reference of Actions and Store classes.
-  ///Your effects should not work until you register them.
+  ///Please keep in mind that effects should not work until you register them.
   ///Here is the example how to register **effectForAsyncInc** effect.
   ///
   ///**Example**

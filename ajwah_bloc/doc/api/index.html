@@ -53,8 +53,166 @@
 
   <div id="dartdoc-main-content" class="col-xs-12 col-sm-9 col-md-8 main-content">
       <section class="desc markdown">
-        <h1 id="ajwah_bloc_dart">ajwah_bloc_dart</h1>
-<p>Rx based store library. Manage your application's states, effects, and actions easy way.</p>
+        <h1 id="ajwah_bloc">ajwah_bloc</h1>
+<p>Rx based state management library for Dart. Manage your application's states, effects, and actions easy way.</p>
+<h2 id="states">States</h2>
+<p>Every state class must derived from <code>BaseState&lt;T&gt;</code> class. And it is mandatory to pass the
+state <code>name</code> and <code>initialState</code>. The <code>BaseState&lt;T&gt;</code> class has one abstract method <code>T reduce(T state, Action action);</code>. This method should be invoked by sysytem passing current state and action. You should mutate the state based on action.</p>
+<h4 id="example">Example</h4>
+<pre class="language-dart"><code class="language-dart">import 'package:ajwah_bloc/ajwah_bloc.dart';
+import 'package:ajwah_block_examples/actionTypes.dart';
+
+class CounterModel {
+  final int count;
+  final bool isLoading;
+  CounterModel({this.count, this.isLoading});
+  CounterModel.init() : this(count: 0, isLoading: false);
+  CounterModel.countData(int count) : this(count: count, isLoading: false);
+  CounterModel.loading(int count) : this(count: count, isLoading: true);
+}
+
+class CounterState extends BaseState&lt;CounterModel&gt; {
+  CounterState() : super(name: 'counter', initialState: CounterModel.init());
+
+  CounterModel reduce(CounterModel state, Action action) {
+    switch (action.type) {
+      case ActionTypes.Inc:
+        return CounterModel.countData(state.count + 1);
+      case ActionTypes.Dec:
+        return CounterModel.countData(state.count - 1);
+      case ActionTypes.AsyncInc:
+        return CounterModel.loading(state.count);
+
+      default:
+        return state;
+    }
+  }
+}
+
+</code></pre>
+<h2 id="effects">Effects</h2>
+<p>Every effect class must derived from <code>BaseEffect</code> class. And it is optional to pass the
+<code>effectKey</code>. But it's mandatory if you want conditionally remove the effects by using
+<code>store.removeEffectsByKey('effectKey')</code>. The <code>BaseEffect</code> class has one abstract method <code>List&lt;Observable&lt;Action&gt;&gt; registerEffects(Actions action$, Store store$);</code>. This function should be invoked by system passing reference of Actions and Store classes. Please keep in mind that effects should not work until you register them.</p>
+<h4 id="example-2">Example</h4>
+<pre class="language-dart"><code class="language-dart">import 'package:ajwah_bloc/ajwah_bloc.dart';
+import 'package:rxdart/rxdart.dart';
+
+import '../../actionTypes.dart';
+
+class CounterEffect extends BaseEffect {
+  Observable&lt;Action&gt; effectForAsyncInc(Actions action$, Store store$) {
+    return action$
+        .ofType(ActionTypes.AsyncInc)
+        .debounceTime(Duration(milliseconds: 500))
+        .mapTo(Action(type: ActionTypes.Inc));
+  }
+
+  List&lt;Observable&lt;Action&gt;&gt; registerEffects(Actions action$, Store store$) {
+    return [effectForAsyncInc(action$, store$)];
+  }
+}
+
+</code></pre>
+<h2 id="applied-in-components">Applied in components</h2>
+<p>Ajwah provides a comfortable way to use states in components and dispatching state actions.</p>
+<p>First of all we need to call <code>createStore(states:[], effects:[])</code> method. So that <code>store</code> object exposed throughout the application.</p>
+<p>We can use <code>select</code> method to get <code>state</code> data (passing state name): <code>store().select(stateName: 'counter')</code>.
+This method return a <code>Observable&lt;T&gt;</code> type data. Now we can use <code>StreamBuilder</code> class for a reactive widget.
+And also for dispatching state's action - we will use <code>dispatch(actionType:'Inc')</code> method.</p>
+<h3 id="example-3">Example</h3>
+<pre class="language-dart"><code class="language-dart">StreamBuilder&lt;CounterModel&gt;(
+    stream: store().select(stateName: 'counter'),
+    builder:(BuildContext context, AsyncSnapshot&lt;CounterModel&gt; snapshot) {
+        if (snapshot.hasData) {
+            if (snapshot.data.isLoading) {
+                return CircularProgressIndicator();
+            }
+            return Text(
+                snapshot.data.count.toString(),
+                style: Theme.of(context).textTheme.title,
+            );
+        } else if (snapshot.hasError) {
+            return Text(snapshot.error.toString());
+        }
+        return CircularProgressIndicator();
+    },
+)            
+</code></pre>
+<h2 id="countercomponent">CounterComponent</h2>
+<pre class="language-dart"><code class="language-dart">import 'package:ajwah_bloc/ajwah_bloc.dart';
+import 'package:ajwah_block_examples/actionTypes.dart';
+import 'package:ajwah_block_examples/counter/store/counterState.dart';
+import 'package:flutter_web/cupertino.dart';
+import 'package:flutter_web/material.dart';
+
+class CounterComponent extends StatelessWidget {
+  const CounterComponent({Key key}) : super(key: key);
+
+  void increment() {
+    dispatch(actionType: ActionTypes.Inc);
+  }
+
+  void decrement() {
+    dispatch(actionType: ActionTypes.Dec);
+  }
+
+  void asyncIncrement() {
+    dispatch(actionType: ActionTypes.AsyncInc);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: &lt;Widget&gt;[
+        ButtonBar(mainAxisSize: MainAxisSize.min, children: &lt;Widget&gt;[
+          RaisedButton(
+            textColor: Colors.white,
+            color: Colors.blue,
+            child: Icon(Icons.add),
+            onPressed: increment,
+          ),
+          new RaisedButton(
+            textColor: Colors.white,
+            color: Colors.blue,
+            child: Text('Async(+)'),
+            onPressed: asyncIncrement,
+          ),
+          RaisedButton(
+            textColor: Colors.white,
+            color: Colors.blue,
+            child: Icon(Icons.remove),
+            onPressed: decrement,
+          )
+        ]),
+        SizedBox(
+          width: 10.0,
+        ),
+        StreamBuilder&lt;CounterModel&gt;(
+          stream: store().select(stateName: 'counter'),
+          builder:
+              (BuildContext context, AsyncSnapshot&lt;CounterModel&gt; snapshot) {
+            if (snapshot.hasData) {
+              if (snapshot.data.isLoading) {
+                return CircularProgressIndicator();
+              }
+              return Text(
+                snapshot.data.count.toString(),
+                style: Theme.of(context).textTheme.title,
+              );
+            } else if (snapshot.hasError) {
+              return Text(snapshot.error.toString());
+            }
+            return CircularProgressIndicator();
+          },
+        )
+      ],
+    );
+  }
+}
+
+</code></pre>
+<p><a href="https://github.com/JUkhan/ajwah_bloc_dart/tree/master/ajwah_block_examples">Please look at here for progressive examples</a></p>
       </section>
       
         <section class="summary">
@@ -77,7 +235,7 @@
 
 <footer>
   <span class="no-break">
-    ajwah_bloc 0.1.0
+    ajwah_bloc 0.0.1
   </span>
 
   
