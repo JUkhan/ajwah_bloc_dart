@@ -172,4 +172,4 @@ class CounterComponent extends StatelessWidget {
 }
 
 ```
-[Please look at here for progressive examples](https://github.com/JUkhan/ajwah_bloc_dart/tree/master/ajwah_block_examples)
+[Please have a look at here for progressive examples](https://github.com/JUkhan/ajwah_bloc_dart/tree/master/ajwah_block_examples)

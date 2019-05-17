@@ -16,6 +16,7 @@ import 'actions.dart';
 typedef EffectCallback = Observable<Action> Function(
     Actions action$, Store store$);
 
+///A comfortable way to develop reactive widgets. You can dynamically add or remove effects and states and many more.
 class Store {
   Dispatcher _dispatcher;
   Actions _actions;
