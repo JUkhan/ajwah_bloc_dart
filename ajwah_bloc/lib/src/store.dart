@@ -39,7 +39,7 @@ class Store {
 
   ///This method takes a single param **String stateName** and return Observable/Stream
   Observable<T> select<T>({@required String stateName}) {
-    return _storeHelper.select(stateName);
+    return _storeHelper.select<T>(stateName);
   }
 
   ///This method is usefull to add a single effect passing a callback **(

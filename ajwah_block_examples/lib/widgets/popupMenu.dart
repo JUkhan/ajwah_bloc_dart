@@ -1,9 +1,14 @@
+import 'package:ajwah_bloc/ajwah_bloc.dart';
+import 'package:ajwah_block_examples/actionTypes.dart';
 import 'package:flutter_web/material.dart';
 
 class PopupMemu extends StatelessWidget {
   const PopupMemu({Key key}) : super(key: key);
 
   menuSelect(BuildContext context, String path) {
+    if (path == '/todo') {
+      dispatch(actionType: ActionTypes.LoadingTodos);
+    }
     Navigator.pushReplacementNamed(context, path);
   }
 
@@ -30,12 +35,6 @@ class PopupMemu extends StatelessWidget {
               value: '/todo',
               child: ListTile(
                 title: Text('Todo'),
-              ),
-            ),
-            PopupMenuItem(
-              value: '/ecommerce',
-              child: ListTile(
-                title: Text('E-Commerce'),
               ),
             )
           ],

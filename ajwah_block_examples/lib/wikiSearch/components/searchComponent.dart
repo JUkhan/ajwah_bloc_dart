@@ -25,6 +25,7 @@ class SearchComponent extends StatelessWidget {
             if (snapshot.hasData) {
               return Column(mainAxisSize: MainAxisSize.max, children: <Widget>[
                 TextField(
+                  autofocus: true,
                   decoration: InputDecoration(
                       prefix: snapshot.data.isLoading
                           ? CircularProgressIndicator()
