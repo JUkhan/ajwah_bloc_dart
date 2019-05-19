@@ -1,5 +1,5 @@
 # ajwah_bloc
-Rx based state management library for Dart. Manage your application's states, effects, and actions easy way.
+Rx based state management library. Manage your application's states, effects, and actions easy way.
 
 ## States
 Every state class must derived from `BaseState<T>` class. And it is mandatory to pass the

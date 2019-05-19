@@ -7,3 +7,6 @@ Fix lib/src/effectSubscription.dart. (-0.50 points)
 Analysis of lib/src/effectSubscription.dart reported 1 hint:
 
 line 10 col 19: The class 'Stream' was not exported from 'dart:core' until version 2.1, but this code is required to be able to run on earlier versions.
+
+## 1.0.0
+added testing and update doc
