@@ -5,7 +5,9 @@ import "package:ajwah_bloc/src/action.dart";
 import 'actionTypes.dart';
 import 'counterState.dart';
 import 'TodoState.dart';
+import 'util.dart';
 //pub run test test/ajwah_test.dart
+//dart --pause-isolates-on-exit --enable_asserts --enable-vm-service   test/.test_coverage.dart
 
 Store storeFactoty() {
   return createStore(states: [CounterState()]);
@@ -13,12 +15,8 @@ Store storeFactoty() {
 
 void main() {
   final store = storeFactoty();
-  var isFirst = true;
-  setUp(() {
-    isFirst = true;
-  });
 
-  test("initial store should be:{count:0, isLoading:false}", () {
+  test("initial store should be:{count:0, isLoading:false}", () async {
     store
         .select<CounterModel>(stateName: 'counter')
         .take(1)
@@ -30,7 +28,7 @@ void main() {
 
   test(
       "after store.addState(TodoState()) todo state should be:{message:'', todoList:[]}",
-      () {
+      () async {
     store.addState(TodoState());
     store.select<TodoModel>(stateName: 'todo').take(1).listen((todoModel) {
       expect(todoModel.message, equals(''));
@@ -39,8 +37,9 @@ void main() {
   });
   test(
       "after dispatch(actionType: ActionTypes.Dec) counter state should be:{count:-1, isLoading:false}",
-      () {
+      () async {
     dispatch(actionType: ActionTypes.Dec);
+    await delay(20);
     store
         .select<CounterModel>(stateName: 'counter')
         .take(1)
@@ -51,23 +50,18 @@ void main() {
   });
 
   test(
-      "after dispatch(actionType: ActionTypes.LoadingTodos) todo state should be mutated two times: first time:{message:'Loading todos.',todoList:[]} and second time:{message:'',todoList:[5 items...]}",
-      () {
+      "after dispatch(actionType: ActionTypes.LoadingTodos) todo state should be:{message:'Loading todos.',todoList:[]}",
+      () async {
     dispatch(actionType: ActionTypes.LoadingTodos);
-
-    store.select<TodoModel>(stateName: 'todo').take(2).listen((todoModel) {
-      if (isFirst) {
-        expect(todoModel.message, equals('Loading todos.'));
-      } else {
-        expect(todoModel.todoList.length, equals(5));
-      }
-      isFirst = false;
+    await delay(20);
+    store.select<TodoModel>(stateName: 'todo').take(1).listen((todoModel) {
+      expect(todoModel.message, equals('Loading todos.'));
     });
   });
 
   test(
       "after store.removeStateByStateName('counter') - actionType: 'remove_state(counter)' should be dispatched.",
-      () {
+      () async {
     store.exportState().take(1).listen((arr) {
       expect((arr[0] as Action).type, equals('remove_state(counter)'));
     });
