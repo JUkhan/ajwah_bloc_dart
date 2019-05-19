@@ -69,7 +69,6 @@ class CounterEffects extends BaseEffect {
 import 'package:ajwah_bloc/ajwah_bloc.dart';
 import 'actionTypes.dart';
 import 'counterState.dart';
-import 'counterState.dart';
 import 'package:flutter_web/material.dart';
 
 class CounterComponent extends StatelessWidget {
@@ -142,17 +141,15 @@ class CounterComponent extends StatelessWidget {
 ```dart
 import 'package:ajwah_bloc/ajwah_bloc.dart';
 import 'counterComponent.dart';
-import 'counterEffect.dart';
+import 'counterState.dart';
+import 'counterEffects.dart';
 import 'package:flutter_web/material.dart';
 
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   MyApp() {
-    createStore(
-        states: [CounterState(), SearchState(), TodoState()],
-        effects: [CounterEffect(), SearchEffect(), TodoEffects()]
-    );
+    createStore(states: [CounterState()], effects: [CounterEffects()]);
     /*store().exportState().listen((arr) {
       print((arr[0] as Action).type);
       print(arr[1]);
@@ -165,15 +162,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      debugShowCheckedModeBanner: false,
-      home:CounterComponent()
-    );
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        debugShowCheckedModeBanner: false,
+        home: CounterComponent());
   }
 }
-
 
 ```
