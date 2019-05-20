@@ -114,21 +114,18 @@ class CounterComponent extends StatelessWidget {
           width: 10.0,
         ),
         StreamBuilder<CounterModel>(
-          stream: store().select(stateName: 'counter'),
+          stream: store().select<CounterModel>(stateName: 'counter'),
+          initialData: CounterModel.init(),
           builder:
               (BuildContext context, AsyncSnapshot<CounterModel> snapshot) {
-            if (snapshot.hasData) {
-              if (snapshot.data.isLoading) {
-                return CircularProgressIndicator();
-              }
-              return Text(
-                snapshot.data.count.toString(),
-                style: Theme.of(context).textTheme.title,
-              );
-            } else if (snapshot.hasError) {
-              return Text(snapshot.error.toString());
+                
+            if (snapshot.data.isLoading) {
+              return CircularProgressIndicator();
             }
-            return CircularProgressIndicator();
+            return Text(
+              snapshot.data.count.toString(),
+              style: Theme.of(context).textTheme.title,
+            );
           },
         )
       ],
