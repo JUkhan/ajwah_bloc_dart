@@ -10,3 +10,10 @@ line 10 col 19: The class 'Stream' was not exported from 'dart:core' until versi
 
 ## 1.0.0
 added testing and update doc
+
+## 1.0.1
+Fix lib/src/storeHelper.dart. (-0.50 points)
+
+Analysis of lib/src/storeHelper.dart reported 1 hint:
+
+line 39 col 19: Avoid empty catch blocks.

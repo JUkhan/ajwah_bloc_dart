@@ -29,14 +29,12 @@ class StoreHelper {
   }
 
   void importState(Map<String, dynamic> state) {
-    try {
-      _states.forEach((s) {
-        if (!state.containsKey(s.name)) {
-          state[s.name] = s.initialState;
-        }
-      });
-      dispatch(Action(type: '@importState', payload: state));
-    } catch (err) {}
+    _states.forEach((s) {
+      if (!state.containsKey(s.name)) {
+        state[s.name] = s.initialState;
+      }
+    });
+    dispatch(Action(type: '@importState', payload: state));
   }
 
   void dispatch(Action action) {

@@ -122,22 +122,18 @@ This method return a <code>Observable&lt;T&gt;</code> type data. Now we can use 
 And also for dispatching state's action - we will use <code>dispatch(actionType:'Inc')</code> method.</p>
 <h3 id="example-3">Example</h3>
 <pre class="language-dart"><code class="language-dart">StreamBuilder&lt;CounterModel&gt;(
-    stream: store().select(stateName: 'counter'),
+    stream: store().select&lt;CounterModel&gt;(stateName: 'counter'),
+    initialData: CounterModel.init(),
     builder:(BuildContext context, AsyncSnapshot&lt;CounterModel&gt; snapshot) {
-        if (snapshot.hasData) {
-            if (snapshot.data.isLoading) {
-                return CircularProgressIndicator();
-            }
-            return Text(
-                snapshot.data.count.toString(),
-                style: Theme.of(context).textTheme.title,
-            );
-        } else if (snapshot.hasError) {
-            return Text(snapshot.error.toString());
+        if (snapshot.data.isLoading) {
+          return CircularProgressIndicator();
         }
-        return CircularProgressIndicator();
+        return Text(
+            snapshot.data.count.toString(),
+            style: Theme.of(context).textTheme.title,
+          );
     },
-)            
+)        
 </code></pre>
 <h2 id="countercomponent">CounterComponent</h2>
 <pre class="language-dart"><code class="language-dart">import 'package:ajwah_bloc/ajwah_bloc.dart';
@@ -189,21 +185,17 @@ class CounterComponent extends StatelessWidget {
           width: 10.0,
         ),
         StreamBuilder&lt;CounterModel&gt;(
-          stream: store().select(stateName: 'counter'),
+          stream: store().select&lt;CounterModel&gt;(stateName: 'counter'),
+          initialData: CounterModel.init(),
           builder:
               (BuildContext context, AsyncSnapshot&lt;CounterModel&gt; snapshot) {
-            if (snapshot.hasData) {
-              if (snapshot.data.isLoading) {
-                return CircularProgressIndicator();
-              }
-              return Text(
-                snapshot.data.count.toString(),
-                style: Theme.of(context).textTheme.title,
-              );
-            } else if (snapshot.hasError) {
-              return Text(snapshot.error.toString());
+            if (snapshot.data.isLoading) {
+              return CircularProgressIndicator();
             }
-            return CircularProgressIndicator();
+            return Text(
+              snapshot.data.count.toString(),
+              style: Theme.of(context).textTheme.title,
+            );
           },
         )
       ],
@@ -235,7 +227,7 @@ class CounterComponent extends StatelessWidget {
 
 <footer>
   <span class="no-break">
-    ajwah_bloc 1.0.0
+    ajwah_bloc 1.0.1
   </span>
 
   
