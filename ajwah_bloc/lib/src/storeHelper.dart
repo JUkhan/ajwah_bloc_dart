@@ -45,6 +45,10 @@ class StoreHelper {
     return _state$.map<T>((dic) => dic[stateName]).distinct();
   }
 
+  Observable<T> select2<T>(T callback(Map<String, dynamic> state)) {
+    return _state$.map<T>(callback).distinct();
+  }
+
   Map<String, dynamic> _combineStates(
       Map<String, dynamic> state, Action action) {
     _states.forEach((stateObj) {

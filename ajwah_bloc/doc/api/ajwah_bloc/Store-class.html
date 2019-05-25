@@ -211,6 +211,17 @@ Actions action$, Store store$)=&gt;Observable</strong> and <strong>effectKey</st
           This method takes a single param <strong>String stateName</strong> and return Observable/Stream
                   
 </dd>
+        <dt id="select2" class="callable">
+          <span class="name"><a href="ajwah_bloc/Store/select2.html">select2</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="select2-param-callback"><span class="type-annotation">T</span> <span class="parameter-name">callback</span>(<span class="parameter" id="callback-param-state"><span class="type-annotation">Map<span class="signature">&lt;<wbr><span class="type-parameter">String</span>, <span class="type-parameter">dynamic</span>&gt;</span></span> <span class="parameter-name">state</span></span>)</span>)
+            <span class="returntype parameter">&#8594; Observable<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          This method takes a callback which has a single <strong>Map&lt;String, dynamic&gt;</strong> type arg.
+If you pass Map key as a state name then you will get corresponding model instance
+as value. <a href="ajwah_bloc/Store/select2.html">[...]</a>
+                  
+</dd>
         <dt id="noSuchMethod" class="callable inherited">
           <span class="name"><a href="ajwah_bloc/Store/noSuchMethod.html">noSuchMethod</a></span><span class="signature">(<wbr><span class="parameter" id="noSuchMethod-param-invocation"><span class="type-annotation">Invocation</span> <span class="parameter-name">invocation</span></span>)
             <span class="returntype parameter">&#8594; dynamic</span>
@@ -274,6 +285,7 @@ Actions action$, Store store$)=&gt;Observable</strong> and <strong>effectKey</st
       <li><a href="ajwah_bloc/Store/removeEffectsByKey.html">removeEffectsByKey</a></li>
       <li><a href="ajwah_bloc/Store/removeStateByStateName.html">removeStateByStateName</a></li>
       <li><a href="ajwah_bloc/Store/select.html">select</a></li>
+      <li><a href="ajwah_bloc/Store/select2.html">select2</a></li>
       <li class="inherited"><a href="ajwah_bloc/Store/noSuchMethod.html">noSuchMethod</a></li>
       <li class="inherited"><a href="ajwah_bloc/Store/toString.html">toString</a></li>
     
@@ -289,7 +301,7 @@ Actions action$, Store store$)=&gt;Observable</strong> and <strong>effectKey</st
 
 <footer>
   <span class="no-break">
-    ajwah_bloc 1.0.1
+    ajwah_bloc 1.0.2
   </span>
 
   

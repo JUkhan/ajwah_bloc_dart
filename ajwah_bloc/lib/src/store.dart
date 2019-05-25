@@ -37,6 +37,22 @@ class Store {
     return this;
   }
 
+  ///This method takes a callback which has a single **Map<String, dynamic>** type arg.
+  ///If you pass Map key as a state name then you will get corresponding model instance
+  /// as value.
+  ///
+  /// **Example**
+  /// ```dart
+  /// final _message$ = store()
+  ///    .select2<TodoModel>((states) => states['todo'])
+  ///    .map((tm) => tm.message)
+  ///    .distinct();
+  /// ```
+  /// Note: You can take any combination from the overall application's state.
+  Observable<T> select2<T>(T callback(Map<String, dynamic> state)) {
+    return _storeHelper.select2(callback);
+  }
+
   ///This method takes a single param **String stateName** and return Observable/Stream
   Observable<T> select<T>({@required String stateName}) {
     return _storeHelper.select<T>(stateName);

@@ -4,16 +4,18 @@ import 'package:ajwah_block_examples/todo/store/TodoState.dart';
 import 'package:flutter_web/material.dart';
 
 class TodoListView extends StatelessWidget {
-  const TodoListView({Key key}) : super(key: key);
+  TodoListView({Key key}) : super(key: key);
+
+  final _todoList$ = store()
+      .select<TodoModel>(stateName: 'todo')
+      .map((todo) => todo.todoList)
+      .distinct();
 
   @override
   Widget build(BuildContext context) {
     return Container(
         child: StreamBuilder<List<Todo>>(
-            stream: store()
-                .select<TodoModel>(stateName: 'todo')
-                .map((todo) => todo.todoList)
-                .distinct(),
+            stream: _todoList$,
             builder:
                 (BuildContext context, AsyncSnapshot<List<Todo>> snapshot) {
               if (snapshot.hasData) {

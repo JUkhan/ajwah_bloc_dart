@@ -17,3 +17,16 @@ Fix lib/src/storeHelper.dart. (-0.50 points)
 Analysis of lib/src/storeHelper.dart reported 1 hint:
 
 line 39 col 19: Avoid empty catch blocks.
+
+## 1.0.2
+Added **select2(...)** method. This method takes a callback which has a single **Map<String, dynamic>** type arg.
+If you pass Map key as a state name then you will get corresponding model instance
+as value.
+  
+**Example**
+```dart
+final _message$ = store()
+    .select2<TodoModel>((states) => states['todo'])
+    .map((tm) => tm.message)
+    .distinct();
+ ```
