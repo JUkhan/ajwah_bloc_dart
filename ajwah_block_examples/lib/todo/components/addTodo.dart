@@ -28,6 +28,6 @@ class AddTodo extends StatelessWidget {
         actionType: ActionTypes.AddTodo,
         payload: Todo(completed: false, title: value));
     _textController.clear();
-    _textController.text = '';
+    //_textController.text = '';
   }
 }

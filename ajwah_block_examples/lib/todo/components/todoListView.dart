@@ -9,11 +9,15 @@ class TodoListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        child: StreamBuilder<TodoModel>(
-            stream: store().select(stateName: 'todo'),
-            builder: (BuildContext context, AsyncSnapshot<TodoModel> snapshot) {
+        child: StreamBuilder<List<Todo>>(
+            stream: store()
+                .select<TodoModel>(stateName: 'todo')
+                .map((todo) => todo.todoList)
+                .distinct(),
+            builder:
+                (BuildContext context, AsyncSnapshot<List<Todo>> snapshot) {
               if (snapshot.hasData) {
-                final list = snapshot.data.todoList;
+                final list = snapshot.data;
                 return Expanded(
                     child: ListView.builder(
                         itemCount: list.length,

@@ -6,8 +6,10 @@ class TodoError extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<String>(
-      stream:
-          store().select<TodoModel>(stateName: 'todo').map((tm) => tm.message),
+      stream: store()
+          .select<TodoModel>(stateName: 'todo')
+          .map((tm) => tm.message)
+          .distinct(),
       builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
         if (snapshot.hasData) {
           return AnimatedOpacity(
