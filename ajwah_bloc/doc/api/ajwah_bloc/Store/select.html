@@ -91,16 +91,19 @@
     <section class="multi-line-signature">
       <span class="returntype">Observable<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
             <span class="name ">select</span>
-&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr>{<span class="parameter" id="select-param-stateName"><span>@required</span> <span class="type-annotation">String</span> <span class="parameter-name">stateName</span></span> })
+&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><span class="parameter" id="select-param-stateName"><span class="type-annotation">String</span> <span class="parameter-name">stateName</span></span>)
       
     </section>
     <section class="desc markdown">
       <p>This method takes a single param <strong>String stateName</strong> and return Observable/Stream</p>
+<p><strong>Example</strong></p>
+<pre class="language-daty"><code class="language-daty">store.select('counter')
+</code></pre>
     </section>
     
     <section class="summary source-code" id="source">
       <h2><span>Implementation</span></h2>
-      <pre class="language-dart"><code class="language-dart">Observable&lt;T&gt; select&lt;T&gt;({@required String stateName}) {
+      <pre class="language-dart"><code class="language-dart">Observable&lt;T&gt; select&lt;T&gt;(String stateName) {
   return _storeHelper.select&lt;T&gt;(stateName);
 }</code></pre>
     </section>
@@ -114,7 +117,7 @@
 
 <footer>
   <span class="no-break">
-    ajwah_bloc 1.0.2
+    ajwah_bloc 1.0.3
   </span>
 
   

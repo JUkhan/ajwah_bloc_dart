@@ -14,10 +14,7 @@ void main() {
   final store = storeFactoty();
 
   test("initial store should be:{count:0, isLoading:false}", () {
-    store
-        .select<CounterModel>(stateName: 'counter')
-        .take(1)
-        .listen((counterModel) {
+    store.select<CounterModel>('counter').take(1).listen((counterModel) {
       expect(counterModel.count, equals(0));
       expect(counterModel.isLoading, equals(false));
     });
@@ -27,10 +24,7 @@ void main() {
       "after dispatch(actionType: ActionTypes.Inc) state should be:{count:1, isLoading:false}",
       () {
     dispatch(actionType: ActionTypes.Inc);
-    store
-        .select<CounterModel>(stateName: 'counter')
-        .take(1)
-        .listen((counterModel) {
+    store.select<CounterModel>('counter').take(1).listen((counterModel) {
       expect(counterModel.count, equals(1));
       expect(counterModel.isLoading, equals(false));
     });
@@ -39,10 +33,7 @@ void main() {
       "after dispatch(actionType: ActionTypes.Dec) state should be:{count:0, isLoading:false}",
       () {
     dispatch(actionType: ActionTypes.Dec);
-    store
-        .select<CounterModel>(stateName: 'counter')
-        .take(1)
-        .listen((counterModel) {
+    store.select<CounterModel>('counter').take(1).listen((counterModel) {
       expect(counterModel.count, equals(0));
       expect(counterModel.isLoading, equals(false));
     });

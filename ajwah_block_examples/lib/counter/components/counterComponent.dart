@@ -1,5 +1,6 @@
 import 'package:ajwah_bloc/ajwah_bloc.dart';
 import 'package:ajwah_block_examples/actionTypes.dart';
+import 'package:ajwah_block_examples/appStateProvider.dart';
 import 'package:ajwah_block_examples/counter/store/counterState.dart';
 import 'package:ajwah_block_examples/widgets/popupMenu.dart';
 import 'package:flutter_web/material.dart';
@@ -21,6 +22,7 @@ class CounterComponent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //var store=AppStateProvider.of(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('Counter'),
@@ -53,7 +55,7 @@ class CounterComponent extends StatelessWidget {
             width: 10.0,
           ),
           StreamBuilder<CounterModel>(
-            stream: store().select(stateName: 'counter'),
+            stream: store().select('counter'),
             builder:
                 (BuildContext context, AsyncSnapshot<CounterModel> snapshot) {
               if (snapshot.hasData) {

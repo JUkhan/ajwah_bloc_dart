@@ -114,16 +114,15 @@ class CounterEffect extends BaseEffect {
 }
 
 </code></pre>
-<h2 id="applied-in-components">Applied in components</h2>
-<p>Ajwah provides a comfortable way to use states in components and dispatching state actions.</p>
-<p>First of all we need to call <code>createStore(states:[], effects:[])</code> method. So that <code>store</code> object exposed throughout the application.</p>
-<p>We can use <code>select</code> method to get <code>state</code> data (passing state name): <code>store().select(stateName: 'counter')</code>.
-This method return a <code>Observable&lt;T&gt;</code> type data. Now we can use <code>StreamBuilder</code> class for a reactive widget.
-And also for dispatching state's action - we will use <code>dispatch(actionType:'Inc')</code> method.</p>
+<h2 id="using-state-in-components">Using state in components</h2>
+<p>Ajwah provides a comfortable way to use states in components and dispatching actions.</p>
+<p>Just call the <code>createStore(states:[], effects:[])</code> method from <code>main()</code> function. Now <code>store</code> instance should be available by the helper function <code>store()</code> throughout the application.</p>
+<p>Note:  <code>createStore(...)</code> method return store instance so that you can make a sate provider class(InheritedWidget) as your convenient.</p>
+<p>We can use <code>select</code> method to get <code>state</code> data (passing state name): <code>store().select('counter')</code>. or <code>store().select2(...)</code>
+This method return a <code>Observable&lt;T&gt;</code> type object. Now we can use <code>StreamBuilder</code> object to make reactive widgets.</p>
 <h3 id="example-3">Example</h3>
 <pre class="language-dart"><code class="language-dart">StreamBuilder&lt;CounterModel&gt;(
-    stream: store().select&lt;CounterModel&gt;(stateName: 'counter'),
-    initialData: CounterModel.init(),
+    stream: store().select&lt;CounterModel&gt;('counter'),
     builder:(BuildContext context, AsyncSnapshot&lt;CounterModel&gt; snapshot) {
         if (snapshot.data.isLoading) {
           return CircularProgressIndicator();
@@ -135,6 +134,7 @@ And also for dispatching state's action - we will use <code>dispatch(actionType:
     },
 )        
 </code></pre>
+<p>And also for dispatching state's action - we can use <code>dispatch(actionType:'any')</code> or <code>store().dispatch(Action(type:'any', payload:any))</code> method.</p>
 <h2 id="countercomponent">CounterComponent</h2>
 <pre class="language-dart"><code class="language-dart">import 'package:ajwah_bloc/ajwah_bloc.dart';
 import 'package:ajwah_block_examples/actionTypes.dart';
@@ -185,8 +185,7 @@ class CounterComponent extends StatelessWidget {
           width: 10.0,
         ),
         StreamBuilder&lt;CounterModel&gt;(
-          stream: store().select&lt;CounterModel&gt;(stateName: 'counter'),
-          initialData: CounterModel.init(),
+          stream: store().select&lt;CounterModel&gt;('counter')
           builder:
               (BuildContext context, AsyncSnapshot&lt;CounterModel&gt; snapshot) {
             if (snapshot.data.isLoading) {
@@ -227,7 +226,7 @@ class CounterComponent extends StatelessWidget {
 
 <footer>
   <span class="no-break">
-    ajwah_bloc 1.0.2
+    ajwah_bloc 1.0.3
   </span>
 
   

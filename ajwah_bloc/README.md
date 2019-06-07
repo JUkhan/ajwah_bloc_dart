@@ -68,21 +68,22 @@ class CounterEffect extends BaseEffect {
 ```
 
 
-## Applied in components
-Ajwah provides a comfortable way to use states in components and dispatching state actions.
+## Using state in components
+Ajwah provides a comfortable way to use states in components and dispatching actions.
 
-First of all we need to call `createStore(states:[], effects:[])` method. So that `store` object exposed throughout the application.
+Just call the `createStore(states:[], effects:[])` method from `main()` function. Now `store` instance should be available by the helper function `store()` throughout the application.
 
-We can use `select` method to get `state` data (passing state name): `store().select(stateName: 'counter')`.
-This method return a `Observable<T>` type data. Now we can use `StreamBuilder` class for a reactive widget.
-And also for dispatching state's action - we will use `dispatch(actionType:'Inc')` method.
+Note:  `createStore(...)` method return store instance so that you can make a sate provider class(InheritedWidget) as your convenient.
+
+We can use `select` method to get `state` data (passing state name): `store().select('counter')`. or `store().select2(...)`
+This method return a `Observable<T>` type object. Now we can use `StreamBuilder` object to make reactive widgets.
+
 
 ### Example
 
 ```dart
 StreamBuilder<CounterModel>(
-    stream: store().select<CounterModel>(stateName: 'counter'),
-    initialData: CounterModel.init(),
+    stream: store().select<CounterModel>('counter'),
     builder:(BuildContext context, AsyncSnapshot<CounterModel> snapshot) {
         if (snapshot.data.isLoading) {
           return CircularProgressIndicator();
@@ -94,6 +95,9 @@ StreamBuilder<CounterModel>(
     },
 )        
 ```
+
+And also for dispatching state's action - we can use `dispatch(actionType:'any')` or `store().dispatch(Action(type:'any', payload:any))` method.
+
 ## CounterComponent
 ```dart
 import 'package:ajwah_bloc/ajwah_bloc.dart';
@@ -145,8 +149,7 @@ class CounterComponent extends StatelessWidget {
           width: 10.0,
         ),
         StreamBuilder<CounterModel>(
-          stream: store().select<CounterModel>(stateName: 'counter'),
-          initialData: CounterModel.init(),
+          stream: store().select<CounterModel>('counter')
           builder:
               (BuildContext context, AsyncSnapshot<CounterModel> snapshot) {
             if (snapshot.data.isLoading) {

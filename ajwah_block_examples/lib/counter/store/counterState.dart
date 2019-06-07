@@ -5,7 +5,7 @@ class CounterModel {
   final int count;
   final bool isLoading;
   CounterModel({this.count, this.isLoading});
-  CounterModel.init() : this(count: 0, isLoading: false);
+  CounterModel.init() : this(count: 10, isLoading: false);
   CounterModel.countData(int count) : this(count: count, isLoading: false);
   CounterModel.loading(int count) : this(count: count, isLoading: true);
 }

@@ -17,10 +17,7 @@ void main() {
   final store = storeFactoty();
 
   test("initial store should be:{count:0, isLoading:false}", () async {
-    store
-        .select<CounterModel>(stateName: 'counter')
-        .take(1)
-        .listen((counterModel) {
+    store.select<CounterModel>('counter').take(1).listen((counterModel) {
       expect(counterModel.count, equals(0));
       expect(counterModel.isLoading, equals(false));
     });
@@ -30,7 +27,7 @@ void main() {
       "after store.addState(TodoState()) todo state should be:{message:'', todoList:[]}",
       () async {
     store.addState(TodoState());
-    store.select<TodoModel>(stateName: 'todo').take(1).listen((todoModel) {
+    store.select<TodoModel>('todo').take(1).listen((todoModel) {
       expect(todoModel.message, equals(''));
       expect(todoModel.todoList, equals([]));
     });
@@ -40,10 +37,7 @@ void main() {
       () async {
     dispatch(actionType: ActionTypes.Dec);
     await delay(20);
-    store
-        .select<CounterModel>(stateName: 'counter')
-        .take(1)
-        .listen((counterModel) {
+    store.select<CounterModel>('counter').take(1).listen((counterModel) {
       expect(counterModel.count, equals(-1));
       expect(counterModel.isLoading, equals(false));
     });
@@ -54,7 +48,7 @@ void main() {
       () async {
     dispatch(actionType: ActionTypes.LoadingTodos);
     await delay(20);
-    store.select<TodoModel>(stateName: 'todo').take(1).listen((todoModel) {
+    store.select<TodoModel>('todo').take(1).listen((todoModel) {
       expect(todoModel.message, equals('Loading todos.'));
     });
   });

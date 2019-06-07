@@ -19,10 +19,7 @@ void main() {
   });
 
   test("initial store should be:{count:0, isLoading:false}", () {
-    store
-        .select<CounterModel>(stateName: 'counter')
-        .take(1)
-        .listen((counterModel) {
+    store.select<CounterModel>('counter').take(1).listen((counterModel) {
       expect(counterModel.count, equals(0));
       expect(counterModel.isLoading, equals(false));
     });
@@ -33,10 +30,7 @@ void main() {
       () {
     dispatch(actionType: ActionTypes.AsyncInc);
 
-    store
-        .select<CounterModel>(stateName: 'counter')
-        .take(2)
-        .listen((counterModel) {
+    store.select<CounterModel>('counter').take(2).listen((counterModel) {
       if (isFirst) {
         expect(counterModel.isLoading, equals(true));
       } else {

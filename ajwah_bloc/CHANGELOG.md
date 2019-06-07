@@ -30,3 +30,6 @@ final _message$ = store()
     .map((tm) => tm.message)
     .distinct();
  ```
+
+ ## 1.0.3
+ updating doc and param type changed in `select()` method

@@ -20,7 +20,7 @@ class TodoEffects extends BaseEffect {
         .ofType(ActionTypes.AddTodo)
         .flatMap(
             (action) => Observable.fromFuture(TodoApi.addTodo(action.payload)))
-        .withLatestFrom<TodoModel, List<Todo>>(store$.select(stateName: 'todo'),
+        .withLatestFrom<TodoModel, List<Todo>>(store$.select('todo'),
             (a, b) => List.from(b.todoList)..insert(0, a))
         .map((data) => Action(type: ActionTypes.TodosData, payload: data))
         .doOnError((error, stacktrace) => store$.dispatch(
@@ -33,7 +33,7 @@ class TodoEffects extends BaseEffect {
         .flatMap((action) =>
             Observable.fromFuture(TodoApi.updateTodo(action.payload)))
         .withLatestFrom<TodoModel, List<Todo>>(
-            store$.select(stateName: 'todo'), (a, b) => b.todoList)
+            store$.select('todo'), (a, b) => b.todoList)
         .map((data) =>
             Action(type: ActionTypes.TodosData, payload: List<Todo>.from(data)))
         .doOnError((error, stacktrace) => store$.dispatch(
@@ -45,7 +45,7 @@ class TodoEffects extends BaseEffect {
         .ofType(ActionTypes.RemoveTodo)
         .flatMap((action) =>
             Observable.fromFuture(TodoApi.removeTodo(action.payload)))
-        .withLatestFrom<TodoModel, List<Todo>>(store$.select(stateName: 'todo'),
+        .withLatestFrom<TodoModel, List<Todo>>(store$.select('todo'),
             (todo, b) => List.from(b.todoList..remove(todo)))
         .map((data) => Action(type: ActionTypes.TodosData, payload: data))
         .doOnError((error, stacktrace) => store$.dispatch(

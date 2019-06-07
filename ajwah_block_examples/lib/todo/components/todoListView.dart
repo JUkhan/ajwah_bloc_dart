@@ -6,10 +6,8 @@ import 'package:flutter_web/material.dart';
 class TodoListView extends StatelessWidget {
   TodoListView({Key key}) : super(key: key);
 
-  final _todoList$ = store()
-      .select<TodoModel>(stateName: 'todo')
-      .map((todo) => todo.todoList)
-      .distinct();
+  final _todoList$ =
+      store().select<TodoModel>('todo').map((todo) => todo.todoList).distinct();
 
   @override
   Widget build(BuildContext context) {

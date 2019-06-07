@@ -20,7 +20,7 @@ class SearchComponent extends StatelessWidget {
       ),
       body: Container(
         child: StreamBuilder<SearchModel>(
-          stream: store().select(stateName: 'search'),
+          stream: store().select('search'),
           builder: (BuildContext context, AsyncSnapshot<SearchModel> snapshot) {
             if (snapshot.hasData) {
               return Column(mainAxisSize: MainAxisSize.max, children: <Widget>[

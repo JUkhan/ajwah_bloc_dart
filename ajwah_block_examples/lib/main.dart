@@ -1,4 +1,5 @@
 import 'package:ajwah_bloc/ajwah_bloc.dart';
+import 'package:ajwah_block_examples/appStateProvider.dart';
 import 'package:ajwah_block_examples/counter/components/counterComponent.dart';
 import 'package:ajwah_block_examples/counter/store/counterEffect.dart';
 import 'package:ajwah_block_examples/counter/store/counterState.dart';
@@ -10,36 +11,41 @@ import 'package:ajwah_block_examples/wikiSearch/store/SearchState.dart';
 import 'package:ajwah_block_examples/wikiSearch/store/searchEffect.dart';
 import 'package:flutter_web/material.dart';
 
-void main() => runApp(MyApp());
-
-class MyApp extends StatelessWidget {
-  MyApp() {
-    createStore(
+void main() => runApp(App(
+    store: createStore(
         states: [CounterState(), SearchState(), TodoState()],
-        effects: [CounterEffect(), SearchEffect(), TodoEffects()]);
-    /*store().exportState().listen((arr) {
-      print((arr[0] as Action).type);
-      print(arr[1]);
-    });
-    store()
-        .addState(SearchState())
-        .removeStateByStateName('counter')
-        .addState(CounterState());*/
-  }
+        effects: [CounterEffect(), SearchEffect(), TodoEffects()])));
+
+class App extends StatefulWidget {
+  App({Key key, this.store}) : super(key: key);
+  final Store store;
+  _AppState createState() => _AppState();
+}
+
+class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return AppStateProvider(
+      store: widget.store,
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        debugShowCheckedModeBanner: false,
+        initialRoute: "/",
+        routes: {
+          '/': (_) => CounterComponent(),
+          '/search': (_) => SearchComponent(),
+          '/todo': (_) => TodoContainer()
+        },
       ),
-      debugShowCheckedModeBanner: false,
-      initialRoute: "/",
-      routes: {
-        '/': (_) => CounterComponent(),
-        '/search': (_) => SearchComponent(),
-        '/todo': (_) => TodoContainer()
-      },
     );
+  }
+
+  @override
+  void dispose() {
+    widget.store.dispose();
+    super.dispose();
   }
 }

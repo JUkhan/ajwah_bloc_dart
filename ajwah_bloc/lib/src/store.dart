@@ -43,7 +43,7 @@ class Store {
   ///
   /// **Example**
   /// ```dart
-  /// final _message$ = store()
+  /// final _message$ = store
   ///    .select2<TodoModel>((states) => states['todo'])
   ///    .map((tm) => tm.message)
   ///    .distinct();
@@ -54,7 +54,12 @@ class Store {
   }
 
   ///This method takes a single param **String stateName** and return Observable/Stream
-  Observable<T> select<T>({@required String stateName}) {
+  ///
+  ///**Example**
+  ///```daty
+  ///store.select('counter')
+  ///```
+  Observable<T> select<T>(String stateName) {
     return _storeHelper.select<T>(stateName);
   }
 

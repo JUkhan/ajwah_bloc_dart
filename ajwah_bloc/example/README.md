@@ -114,7 +114,7 @@ class CounterComponent extends StatelessWidget {
           width: 10.0,
         ),
         StreamBuilder<CounterModel>(
-          stream: store().select<CounterModel>(stateName: 'counter'),
+          stream: store().select<CounterModel>('counter'),
           initialData: CounterModel.init(),
           builder:
               (BuildContext context, AsyncSnapshot<CounterModel> snapshot) {
@@ -142,20 +142,12 @@ import 'counterState.dart';
 import 'counterEffects.dart';
 import 'package:flutter_web/material.dart';
 
-void main() => runApp(MyApp());
+void main(){
+  createStore(states: [CounterState()], effects: [CounterEffects()]);
+  return runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
-  MyApp() {
-    createStore(states: [CounterState()], effects: [CounterEffects()]);
-    /*store().exportState().listen((arr) {
-      print((arr[0] as Action).type);
-      print(arr[1]);
-    });
-    store()
-        .addState(SearchState())
-        .removeStateByStateName('counter')
-        .addState(CounterState());*/
-  }
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
