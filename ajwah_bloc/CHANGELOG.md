@@ -33,3 +33,6 @@ final _message$ = store()
 
  ## 1.0.3
  updating doc and param type changed in `select()` method
+
+ ## 1.5.0
+ param type changed in dispatch() method and exposed select() and select2() methods into the global scope

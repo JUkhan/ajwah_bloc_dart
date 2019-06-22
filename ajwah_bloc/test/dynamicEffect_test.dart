@@ -37,7 +37,7 @@ void main() {
             .mapTo(Action(type: ActionTypes.Inc)),
         effectKey: 'myEffect');
     await delay(100);
-    dispatch(actionType: ActionTypes.AsyncInc);
+    dispatch(ActionTypes.AsyncInc);
     store.select<CounterModel>('counter').take(2).listen((counterModel) {
       if (isFirst) {
         expect(counterModel.isLoading, equals(true));
@@ -50,7 +50,7 @@ void main() {
     await delay(5);
 
     isFirst = true;
-    dispatch(actionType: ActionTypes.Dec);
+    dispatch(ActionTypes.Dec);
     store.select<CounterModel>('counter').take(2).listen((counterModel) {
       if (isFirst) {
         expect(counterModel.count, equals(0));
@@ -61,7 +61,7 @@ void main() {
     });
     await delay(5);
     store.removeEffectsByKey('myEffect');
-    dispatch(actionType: ActionTypes.AsyncInc);
+    dispatch(ActionTypes.AsyncInc);
     await delay(5);
     store.select<CounterModel>('counter').take(1).listen((counterModel) {
       expect(counterModel.count, equals(1));
@@ -73,7 +73,7 @@ void main() {
     store.addEffects(CounterEffect());
 
     await delay(5);
-    dispatch(actionType: ActionTypes.AsyncInc);
+    dispatch(ActionTypes.AsyncInc);
     store.select<CounterModel>('counter').take(2).listen((counterModel) {
       if (isFirst) {
         expect(counterModel.isLoading, equals(true));
@@ -85,7 +85,7 @@ void main() {
 
     await delay(5);
     store.removeEffectsByKey('counterEffect');
-    dispatch(actionType: ActionTypes.AsyncInc);
+    dispatch(ActionTypes.AsyncInc);
     await delay(5);
     store.select<CounterModel>('counter').take(1).listen((counterModel) {
       expect(counterModel.count, equals(1));

@@ -35,7 +35,7 @@ void main() {
   test(
       "after dispatch(actionType: ActionTypes.Dec) counter state should be:{count:-1, isLoading:false}",
       () async {
-    dispatch(actionType: ActionTypes.Dec);
+    dispatch(ActionTypes.Dec);
     await delay(20);
     store.select<CounterModel>('counter').take(1).listen((counterModel) {
       expect(counterModel.count, equals(-1));
@@ -46,7 +46,7 @@ void main() {
   test(
       "after dispatch(actionType: ActionTypes.LoadingTodos) todo state should be:{message:'Loading todos.',todoList:[]}",
       () async {
-    dispatch(actionType: ActionTypes.LoadingTodos);
+    dispatch(ActionTypes.LoadingTodos);
     await delay(20);
     store.select<TodoModel>('todo').take(1).listen((todoModel) {
       expect(todoModel.message, equals('Loading todos.'));

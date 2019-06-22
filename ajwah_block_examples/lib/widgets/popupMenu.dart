@@ -7,7 +7,7 @@ class PopupMemu extends StatelessWidget {
 
   menuSelect(BuildContext context, String path) {
     if (path == '/todo') {
-      dispatch(actionType: ActionTypes.LoadingTodos);
+      dispatch(ActionTypes.LoadingTodos);
     }
     Navigator.pushReplacementNamed(context, path);
   }

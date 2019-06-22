@@ -7,7 +7,7 @@ class TodoListView extends StatelessWidget {
   TodoListView({Key key}) : super(key: key);
 
   final _todoList$ =
-      store().select<TodoModel>('todo').map((todo) => todo.todoList).distinct();
+      select<TodoModel>('todo').map((todo) => todo.todoList).distinct();
 
   @override
   Widget build(BuildContext context) {
@@ -28,9 +28,7 @@ class TodoListView extends StatelessWidget {
                             value: todo.completed,
                             onChanged: (value) {
                               todo.completed = value;
-                              dispatch(
-                                  actionType: ActionTypes.UpdateTodo,
-                                  payload: todo);
+                              dispatch(ActionTypes.UpdateTodo, todo);
                             },
                             title: Row(
                               children: <Widget>[
@@ -41,9 +39,8 @@ class TodoListView extends StatelessWidget {
                                 )),
                                 IconButton(
                                   icon: const Icon(Icons.delete),
-                                  onPressed: () => dispatch(
-                                      actionType: ActionTypes.RemoveTodo,
-                                      payload: todo),
+                                  onPressed: () =>
+                                      dispatch(ActionTypes.RemoveTodo, todo),
                                 )
                               ],
                             ),

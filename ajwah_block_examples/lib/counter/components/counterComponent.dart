@@ -1,6 +1,5 @@
 import 'package:ajwah_bloc/ajwah_bloc.dart';
 import 'package:ajwah_block_examples/actionTypes.dart';
-import 'package:ajwah_block_examples/appStateProvider.dart';
 import 'package:ajwah_block_examples/counter/store/counterState.dart';
 import 'package:ajwah_block_examples/widgets/popupMenu.dart';
 import 'package:flutter_web/material.dart';
@@ -9,15 +8,15 @@ class CounterComponent extends StatelessWidget {
   const CounterComponent({Key key}) : super(key: key);
 
   void increment() {
-    dispatch(actionType: ActionTypes.Inc);
+    dispatch(ActionTypes.Inc);
   }
 
   void decrement() {
-    dispatch(actionType: ActionTypes.Dec);
+    dispatch(ActionTypes.Dec);
   }
 
   void asyncIncrement() {
-    dispatch(actionType: ActionTypes.AsyncInc);
+    dispatch(ActionTypes.AsyncInc);
   }
 
   @override
@@ -55,7 +54,7 @@ class CounterComponent extends StatelessWidget {
             width: 10.0,
           ),
           StreamBuilder<CounterModel>(
-            stream: store().select('counter'),
+            stream: select('counter'),
             builder:
                 (BuildContext context, AsyncSnapshot<CounterModel> snapshot) {
               if (snapshot.hasData) {

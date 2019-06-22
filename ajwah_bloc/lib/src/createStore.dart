@@ -1,4 +1,5 @@
 import 'package:meta/meta.dart';
+import 'package:rxdart/rxdart.dart';
 import 'store.dart';
 import 'baseEffect.dart';
 import 'baseState.dart';
@@ -26,6 +27,31 @@ Store store() {
 }
 
 ///This is a helper function of **store().dispatch(Action action).**
-Store dispatch({@required String actionType, dynamic payload}) {
+Store dispatch(String actionType, [dynamic payload]) {
   return _store.dispatch(Action(type: actionType, payload: payload));
+}
+
+///This is a helper function of **store().select(String stateName).**
+///
+///**Example**
+///```daty
+///final _counter$ =select('counter')
+///```
+Observable<T> select<T>(String stateName) {
+  return _store.select<T>(stateName);
+}
+
+///This method takes a callback which has a single **Map<String, dynamic>** type arg.
+///If you pass Map key as a state name then you will get corresponding model instance
+/// as value.
+///
+/// **Example**
+/// ```dart
+/// final _message$ = select2<TodoModel>((states) => states['todo'])
+///    .map((tm) => tm.message)
+///    .distinct();
+/// ```
+/// Note: You can take any combination from the overall application's state.
+Observable<T> select2<T>(T callback(Map<String, dynamic> state)) {
+  return _store.select2(callback);
 }

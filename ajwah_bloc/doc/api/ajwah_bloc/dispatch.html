@@ -64,6 +64,8 @@
       <li class="section-title"><a href="ajwah_bloc/ajwah_bloc-library.html#functions">Functions</a></li>
       <li><a href="ajwah_bloc/createStore.html">createStore</a></li>
       <li><a href="ajwah_bloc/dispatch.html">dispatch</a></li>
+      <li><a href="ajwah_bloc/select.html">select</a></li>
+      <li><a href="ajwah_bloc/select2.html">select2</a></li>
       <li><a href="ajwah_bloc/store.html">store</a></li>
     
     
@@ -79,7 +81,7 @@
     <section class="multi-line-signature">
         <span class="returntype"><a href="ajwah_bloc/Store-class.html">Store</a></span>
                 <span class="name ">dispatch</span>
-(<wbr>{<span class="parameter" id="dispatch-param-actionType"><span>@required</span> <span class="type-annotation">String</span> <span class="parameter-name">actionType</span>, </span> <span class="parameter" id="dispatch-param-payload"><span class="type-annotation">dynamic</span> <span class="parameter-name">payload</span></span> })
+(<wbr><span class="parameter" id="dispatch-param-actionType"><span class="type-annotation">String</span> <span class="parameter-name">actionType</span>, [</span> <span class="parameter" id="dispatch-param-payload"><span class="type-annotation">dynamic</span> <span class="parameter-name">payload</span></span> ])
     </section>
     <section class="desc markdown">
       <p>This is a helper function of <strong>store().dispatch(Action action).</strong></p>
@@ -87,7 +89,7 @@
     
     <section class="summary source-code" id="source">
       <h2><span>Implementation</span></h2>
-      <pre class="language-dart"><code class="language-dart">Store dispatch({@required String actionType, dynamic payload}) {
+      <pre class="language-dart"><code class="language-dart">Store dispatch(String actionType, [dynamic payload]) {
   return _store.dispatch(Action(type: actionType, payload: payload));
 }</code></pre>
     </section>
@@ -101,7 +103,7 @@
 
 <footer>
   <span class="no-break">
-    ajwah_bloc 1.0.3
+    ajwah_bloc 1.5.0
   </span>
 
   

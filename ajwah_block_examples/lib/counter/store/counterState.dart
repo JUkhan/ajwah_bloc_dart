@@ -2,12 +2,16 @@ import 'package:ajwah_bloc/ajwah_bloc.dart';
 import 'package:ajwah_block_examples/actionTypes.dart';
 
 class CounterModel {
-  final int count;
-  final bool isLoading;
+  int count;
+  bool isLoading;
+
   CounterModel({this.count, this.isLoading});
+
+  static clone(CounterModel obj) {
+    return CounterModel(count: obj.count, isLoading: obj.isLoading);
+  }
+
   CounterModel.init() : this(count: 10, isLoading: false);
-  CounterModel.countData(int count) : this(count: count, isLoading: false);
-  CounterModel.loading(int count) : this(count: count, isLoading: true);
 }
 
 class CounterState extends BaseState<CounterModel> {
@@ -16,11 +20,16 @@ class CounterState extends BaseState<CounterModel> {
   CounterModel reduce(CounterModel state, Action action) {
     switch (action.type) {
       case ActionTypes.Inc:
-        return CounterModel.countData(state.count + 1);
+        state.count++;
+        state.isLoading = false;
+        return CounterModel.clone(state);
       case ActionTypes.Dec:
-        return CounterModel.countData(state.count - 1);
+        state.count--;
+        state.isLoading = false;
+        return CounterModel.clone(state);
       case ActionTypes.AsyncInc:
-        return CounterModel.loading(state.count);
+        state.isLoading = true;
+        return CounterModel.clone(state);
 
       default:
         return state;

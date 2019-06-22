@@ -11,12 +11,16 @@ import 'package:ajwah_bloc/ajwah_bloc.dart';
 import 'package:ajwah_block_examples/actionTypes.dart';
 
 class CounterModel {
-  final int count;
-  final bool isLoading;
+  int count;
+  bool isLoading;
+
   CounterModel({this.count, this.isLoading});
-  CounterModel.init() : this(count: 0, isLoading: false);
-  CounterModel.countData(int count) : this(count: count, isLoading: false);
-  CounterModel.loading(int count) : this(count: count, isLoading: true);
+
+  static clone(CounterModel obj) {
+    return CounterModel(count: obj.count, isLoading: obj.isLoading);
+  }
+
+  CounterModel.init() : this(count: 10, isLoading: false);
 }
 
 class CounterState extends BaseState<CounterModel> {
@@ -25,17 +29,23 @@ class CounterState extends BaseState<CounterModel> {
   CounterModel reduce(CounterModel state, Action action) {
     switch (action.type) {
       case ActionTypes.Inc:
-        return CounterModel.countData(state.count + 1);
+        state.count++;
+        state.isLoading = false;
+        return CounterModel.clone(state);
       case ActionTypes.Dec:
-        return CounterModel.countData(state.count - 1);
+        state.count--;
+        state.isLoading = false;
+        return CounterModel.clone(state);
       case ActionTypes.AsyncInc:
-        return CounterModel.loading(state.count);
+        state.isLoading = true;
+        return CounterModel.clone(state);
 
       default:
         return state;
     }
   }
 }
+
 
 ```
 
@@ -75,15 +85,14 @@ Just call the `createStore(states:[], effects:[])` method from `main()` function
 
 Note:  `createStore(...)` method return store instance so that you can make a sate provider class(InheritedWidget) as your convenient.
 
-We can use `select` method to get `state` data (passing state name): `store().select('counter')`. or `store().select2(...)`
-This method return a `Observable<T>` type object. Now we can use `StreamBuilder` object to make reactive widgets.
-
+We can use `select` method to get `state` data (passing state name): `select('counter')`. or `select2(...)`.
+These methods return `Observable<T>`. Now pass this Observable inside a StreamBuilder to make a reactive widget.
 
 ### Example
 
 ```dart
 StreamBuilder<CounterModel>(
-    stream: store().select<CounterModel>('counter'),
+    stream: select<CounterModel>('counter'),
     builder:(BuildContext context, AsyncSnapshot<CounterModel> snapshot) {
         if (snapshot.data.isLoading) {
           return CircularProgressIndicator();
@@ -96,77 +105,8 @@ StreamBuilder<CounterModel>(
 )        
 ```
 
-And also for dispatching state's action - we can use `dispatch(actionType:'any')` or `store().dispatch(Action(type:'any', payload:any))` method.
+And also for dispatching state's action - we can use `dispatch(...)` or `store().dispatch(Action(type:'any', payload:any))` method.
 
-## CounterComponent
-```dart
-import 'package:ajwah_bloc/ajwah_bloc.dart';
-import 'package:ajwah_block_examples/actionTypes.dart';
-import 'package:ajwah_block_examples/counter/store/counterState.dart';
-import 'package:flutter_web/cupertino.dart';
-import 'package:flutter_web/material.dart';
-
-class CounterComponent extends StatelessWidget {
-  const CounterComponent({Key key}) : super(key: key);
-
-  void increment() {
-    dispatch(actionType: ActionTypes.Inc);
-  }
-
-  void decrement() {
-    dispatch(actionType: ActionTypes.Dec);
-  }
-
-  void asyncIncrement() {
-    dispatch(actionType: ActionTypes.AsyncInc);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: <Widget>[
-        ButtonBar(mainAxisSize: MainAxisSize.min, children: <Widget>[
-          RaisedButton(
-            textColor: Colors.white,
-            color: Colors.blue,
-            child: Icon(Icons.add),
-            onPressed: increment,
-          ),
-          new RaisedButton(
-            textColor: Colors.white,
-            color: Colors.blue,
-            child: Text('Async(+)'),
-            onPressed: asyncIncrement,
-          ),
-          RaisedButton(
-            textColor: Colors.white,
-            color: Colors.blue,
-            child: Icon(Icons.remove),
-            onPressed: decrement,
-          )
-        ]),
-        SizedBox(
-          width: 10.0,
-        ),
-        StreamBuilder<CounterModel>(
-          stream: store().select<CounterModel>('counter')
-          builder:
-              (BuildContext context, AsyncSnapshot<CounterModel> snapshot) {
-            if (snapshot.data.isLoading) {
-              return CircularProgressIndicator();
-            }
-            return Text(
-              snapshot.data.count.toString(),
-              style: Theme.of(context).textTheme.title,
-            );
-          },
-        )
-      ],
-    );
-  }
-}
-
-```
 
 
 [Please have a look at here for progressive examples](https://github.com/JUkhan/ajwah_bloc_dart/tree/master/ajwah_block_examples)

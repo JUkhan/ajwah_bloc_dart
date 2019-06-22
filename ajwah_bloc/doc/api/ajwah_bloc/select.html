@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
-  <meta name="description" content="API docs for the toString method from the BaseEffect class, for the Dart programming language.">
-  <title>toString method - BaseEffect class - ajwah_bloc library - Dart API</title>
+  <meta name="description" content="API docs for the select function from the ajwah_bloc library, for the Dart programming language.">
+  <title>select function - ajwah_bloc library - Dart API</title>
   <!-- required because all the links are pseudo-absolute -->
-  <base href="../..">
+  <base href="..">
 
   <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500,400i,400,300|Source+Sans+Pro:400,300,700" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -26,10 +26,9 @@
   <ol class="breadcrumbs gt-separated dark hidden-xs">
     <li><a href="index.html">ajwah_bloc</a></li>
     <li><a href="ajwah_bloc/ajwah_bloc-library.html">ajwah_bloc</a></li>
-    <li><a href="ajwah_bloc/BaseEffect-class.html">BaseEffect</a></li>
-    <li class="self-crumb">toString method</li>
+    <li class="self-crumb">select&lt;<wbr><span class="type-parameter">T</span>&gt; function</li>
   </ol>
-  <div class="self-name">toString</div>
+  <div class="self-name">select</div>
   <form class="search navbar-right" role="search">
     <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
   </form>
@@ -47,52 +46,55 @@
     <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
       <li><a href="index.html">ajwah_bloc</a></li>
       <li><a href="ajwah_bloc/ajwah_bloc-library.html">ajwah_bloc</a></li>
-      <li><a href="ajwah_bloc/BaseEffect-class.html">BaseEffect</a></li>
-      <li class="self-crumb">toString method</li>
+      <li class="self-crumb">select&lt;<wbr><span class="type-parameter">T</span>&gt; function</li>
     </ol>
     
-    <h5>BaseEffect class</h5>
+    <h5>ajwah_bloc library</h5>
     <ol>
-      <li class="section-title"><a href="ajwah_bloc/BaseEffect-class.html#constructors">Constructors</a></li>
-      <li><a href="ajwah_bloc/BaseEffect/BaseEffect.html">BaseEffect</a></li>
-    
-      <li class="section-title">
-        <a href="ajwah_bloc/BaseEffect-class.html#instance-properties">Properties</a>
-      </li>
-      <li><a href="ajwah_bloc/BaseEffect/effectKey.html">effectKey</a></li>
-      <li class="inherited"><a href="ajwah_bloc/BaseEffect/hashCode.html">hashCode</a></li>
-      <li class="inherited"><a href="ajwah_bloc/BaseEffect/runtimeType.html">runtimeType</a></li>
-    
-      <li class="section-title"><a href="ajwah_bloc/BaseEffect-class.html#instance-methods">Methods</a></li>
-      <li><a href="ajwah_bloc/BaseEffect/registerEffects.html">registerEffects</a></li>
-      <li class="inherited"><a href="ajwah_bloc/BaseEffect/noSuchMethod.html">noSuchMethod</a></li>
-      <li class="inherited"><a href="ajwah_bloc/BaseEffect/toString.html">toString</a></li>
-    
-      <li class="section-title inherited"><a href="ajwah_bloc/BaseEffect-class.html#operators">Operators</a></li>
-      <li class="inherited"><a href="ajwah_bloc/BaseEffect/operator_equals.html">operator ==</a></li>
+      <li class="section-title"><a href="ajwah_bloc/ajwah_bloc-library.html#classes">Classes</a></li>
+      <li><a href="ajwah_bloc/Action-class.html">Action</a></li>
+      <li><a href="ajwah_bloc/Actions-class.html">Actions</a></li>
+      <li><a href="ajwah_bloc/BaseEffect-class.html">BaseEffect</a></li>
+      <li><a href="ajwah_bloc/BaseState-class.html">BaseState</a></li>
+      <li><a href="ajwah_bloc/Store-class.html">Store</a></li>
     
     
+    
+    
+      <li class="section-title"><a href="ajwah_bloc/ajwah_bloc-library.html#functions">Functions</a></li>
+      <li><a href="ajwah_bloc/createStore.html">createStore</a></li>
+      <li><a href="ajwah_bloc/dispatch.html">dispatch</a></li>
+      <li><a href="ajwah_bloc/select.html">select</a></li>
+      <li><a href="ajwah_bloc/select2.html">select2</a></li>
+      <li><a href="ajwah_bloc/store.html">store</a></li>
+    
+    
+      <li class="section-title"><a href="ajwah_bloc/ajwah_bloc-library.html#typedefs">Typedefs</a></li>
+      <li><a href="ajwah_bloc/EffectCallback.html">EffectCallback</a></li>
     
     </ol>
-  </div><!--/.sidebar-offcanvas-->
+  </div><!--/.sidebar-offcanvas-left-->
 
   <div id="dartdoc-main-content" class="col-xs-12 col-sm-9 col-md-8 main-content">
-      <div>  <div id="external-links" class="btn-group"><a title="View source code" class="source-link" href="https://github.com/dart-lang/sdk/blob/29c7116a233c524290575154c73a114dce872666/sdk/lib/core/object.dart#L97"><i class="material-icons">description</i></a></div>
-<h1><span class="kind-method">toString</span> method</h1></div>
+      <div><h1><span class="kind-function">select&lt;<wbr><span class="type-parameter">T</span>&gt;</span> function </h1></div>
 
     <section class="multi-line-signature">
-      <span class="returntype">String</span>
-            <span class="name ">toString</span>
-(<wbr>)
-      <div class="features">inherited</div>
+        <span class="returntype">Observable<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+                <span class="name ">select</span>
+&lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><span class="parameter" id="select-param-stateName"><span class="type-annotation">String</span> <span class="parameter-name">stateName</span></span>)
     </section>
     <section class="desc markdown">
-      <p>Returns a string representation of this object.</p>
+      <p>This is a helper function of <strong>store().select(String stateName).</strong></p>
+<p><strong>Example</strong></p>
+<pre class="language-daty"><code class="language-daty">final _counter$ =select('counter')
+</code></pre>
     </section>
     
     <section class="summary source-code" id="source">
       <h2><span>Implementation</span></h2>
-      <pre class="language-dart"><code class="language-dart">external String toString();</code></pre>
+      <pre class="language-dart"><code class="language-dart">Observable&lt;T&gt; select&lt;T&gt;(String stateName) {
+  return _store.select&lt;T&gt;(stateName);
+}</code></pre>
     </section>
 
   </div> <!-- /.main-content -->

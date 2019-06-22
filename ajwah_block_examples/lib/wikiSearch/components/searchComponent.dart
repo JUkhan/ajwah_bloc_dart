@@ -8,7 +8,7 @@ class SearchComponent extends StatelessWidget {
   const SearchComponent({Key key}) : super(key: key);
 
   searchInput(String text) {
-    dispatch(actionType: ActionTypes.SearchInput, payload: text);
+    dispatch(ActionTypes.SearchInput, text);
   }
 
   @override
@@ -20,7 +20,7 @@ class SearchComponent extends StatelessWidget {
       ),
       body: Container(
         child: StreamBuilder<SearchModel>(
-          stream: store().select('search'),
+          stream: select('search'),
           builder: (BuildContext context, AsyncSnapshot<SearchModel> snapshot) {
             if (snapshot.hasData) {
               return Column(mainAxisSize: MainAxisSize.max, children: <Widget>[

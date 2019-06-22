@@ -3,8 +3,7 @@ import 'package:ajwah_block_examples/todo/store/TodoState.dart';
 import 'package:flutter_web/material.dart';
 
 class TodoError extends StatelessWidget {
-  final _message$ = store()
-      .select2<TodoModel>((states) => states['todo'])
+  final _message$ = select2<TodoModel>((states) => states['todo'])
       .map((tm) => tm.message)
       .distinct();
 

@@ -28,7 +28,7 @@ void main() {
   test(
       "after dispatch(actionType: ActionTypes.AsyncInc) state should be mutated two times: first time:{count:0, isLoading:true} isLoading:true and second time:{count:1, isLoading:false}",
       () {
-    dispatch(actionType: ActionTypes.AsyncInc);
+    dispatch(ActionTypes.AsyncInc);
 
     store.select<CounterModel>('counter').take(2).listen((counterModel) {
       if (isFirst) {

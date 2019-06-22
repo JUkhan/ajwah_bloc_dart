@@ -24,9 +24,7 @@ class AddTodo extends StatelessWidget {
       ]);
 
   void _onTextSubmitted(String value) {
-    dispatch(
-        actionType: ActionTypes.AddTodo,
-        payload: Todo(completed: false, title: value));
+    dispatch(ActionTypes.AddTodo, Todo(completed: false, title: value));
     _textController.clear();
     //_textController.text = '';
   }
