@@ -42,12 +42,17 @@ abstract class BaseState<T> {
   ///
   ///**Example**
   ///```dart
-  ///   CounterModel reduce(CounterModel state, Action action) {
+  ///   Stream<CounterModel> mapActionToState(
+  ///     CounterModel state, Action action ) async* {
   ///     switch (action.type) {
-  ///       case ActionTypes.Inc: return increment(state, action);
-  ///       default: return state;
+  ///       case ActionTypes.Inc:
+  ///         yield increment(state, action);
+  ///         break;
+  ///       default: yield state;
   ///     }
   ///   }
   /// ```
-  T reduce(T state, Action action);
+
+  Stream<T> mapActionToState(T state, Action action);
+  //T reduce(T state, Action action);
 }

@@ -26,4 +26,18 @@ class SearchState extends BaseState<SearchModel> {
         return state;
     }
   }
+
+  Stream<SearchModel> mapActionToState(
+      SearchModel state, Action action) async* {
+    switch (action.type) {
+      case ActionTypes.SearchInput:
+        yield SearchModel.loading();
+        break;
+      case ActionTypes.SearchData:
+        yield SearchModel.searchData(action.payload);
+        break;
+      default:
+        yield state;
+    }
+  }
 }

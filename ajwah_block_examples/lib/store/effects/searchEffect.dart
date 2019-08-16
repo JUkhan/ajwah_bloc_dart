@@ -1,9 +1,8 @@
 import 'package:ajwah_bloc/ajwah_bloc.dart';
+import 'package:ajwah_block_examples/actionTypes.dart';
 import 'package:rxdart/rxdart.dart';
 import 'dart:convert' as convert;
 import 'package:http/http.dart' as http;
-
-import '../../actionTypes.dart';
 
 class SearchEffect extends BaseEffect {
   Future<List<String>> search(String input) async {

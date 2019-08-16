@@ -15,54 +15,51 @@ import 'package:ajwah_bloc/ajwah_bloc.dart';
 import 'actionTypes.dart';
 
 class CounterModel {
-  final int count;
-  final bool isLoading;
+  int count;
+  bool isLoading;
+
   CounterModel({this.count, this.isLoading});
-  CounterModel.init() : this(count: 0, isLoading: false);
-  CounterModel.countData(int count) : this(count: count, isLoading: false);
-  CounterModel.loading(int count) : this(count: count, isLoading: true);
+
+  copyWith({int count, bool isLoading}) {
+    return CounterModel(
+        count: count ?? this.count, isLoading: isLoading ?? this.isLoading);
+  }
+
+  CounterModel.init() : this(count: 10, isLoading: false);
 }
 
 class CounterState extends BaseState<CounterModel> {
   CounterState() : super(name: 'counter', initialState: CounterModel.init());
 
-  CounterModel reduce(CounterModel state, Action action) {
+  Stream<CounterModel> mapActionToState(
+      CounterModel state, Action action) async* {
     switch (action.type) {
       case ActionTypes.Inc:
-        return CounterModel.countData(state.count + 1);
+        state.count++;
+        yield state.copyWith(isLoading: false);
+        break;
       case ActionTypes.Dec:
-        return CounterModel.countData(state.count - 1);
+        state.count--;
+        yield state.copyWith(isLoading: false);
+        break;
       case ActionTypes.AsyncInc:
-        return CounterModel.loading(state.count);
-
+        yield state.copyWith(isLoading: true);
+        yield await getCount(state.count);
+        break;
       default:
-        return state;
+        yield state;
     }
   }
-}
 
-```
-## counterEffects.dart
-```dart
-import 'package:ajwah_bloc/ajwah_bloc.dart';
-import 'package:rxdart/rxdart.dart';
-
-import 'actionTypes.dart';
-
-class CounterEffects extends BaseEffect {
-  Observable<Action> effectForAsyncInc(Actions action$, Store store$) {
-    return action$
-        .ofType(ActionTypes.AsyncInc)
-        .debounceTime(Duration(milliseconds: 550))
-        .mapTo(Action(type: ActionTypes.Inc));
-  }
-
-  List<Observable<Action>> registerEffects(Actions action$, Store store$) {
-    return [effectForAsyncInc(action$, store$)];
+  Future<CounterModel> getCount(int count) {
+    return Future.delayed(Duration(milliseconds: 500),
+        () => CounterModel(count: count + 1, isLoading: false));
   }
 }
 
+
 ```
+
 ## CounterComponent.dart
 ```dart
 
@@ -139,11 +136,10 @@ class CounterComponent extends StatelessWidget {
 import 'package:ajwah_bloc/ajwah_bloc.dart';
 import 'counterComponent.dart';
 import 'counterState.dart';
-import 'counterEffects.dart';
 import 'package:flutter_web/material.dart';
 
 void main(){
-  createStore(states: [CounterState()], effects: [CounterEffects()]);
+  createStore(states: [CounterState()]]);
   return runApp(MyApp());
 }
 
@@ -151,7 +147,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'Flutter Demo',
+        title: 'Ajwah_bloc Demo',
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),

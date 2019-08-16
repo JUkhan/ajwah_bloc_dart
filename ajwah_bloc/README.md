@@ -3,9 +3,9 @@ Rx based state management library. Manage your application's states, effects, an
 
 ## States
 Every state class must derived from `BaseState<T>` class. And it is mandatory to pass the
-state `name` and `initialState`. The `BaseState<T>` class has one abstract method `T reduce(T state, Action action);`. This method should be invoked by sysytem passing current state and action. You should mutate the state based on action.
+state `name` and `initialState`. The `BaseState<T>` class has an abstract method `Stream<T> mapActionToState(T state, Action action);`. This method should be invoked by sysytem passing current state and action. You should mutate the state based on action.
 
-#### Example
+#### Example CounterState
 ```dart
 import 'package:ajwah_bloc/ajwah_bloc.dart';
 import 'package:ajwah_block_examples/actionTypes.dart';
@@ -16,8 +16,9 @@ class CounterModel {
 
   CounterModel({this.count, this.isLoading});
 
-  static clone(CounterModel obj) {
-    return CounterModel(count: obj.count, isLoading: obj.isLoading);
+  copyWith({int count, bool isLoading}) {
+    return CounterModel(
+        count: count ?? this.count, isLoading: isLoading ?? this.isLoading);
   }
 
   CounterModel.init() : this(count: 10, isLoading: false);
@@ -26,29 +27,106 @@ class CounterModel {
 class CounterState extends BaseState<CounterModel> {
   CounterState() : super(name: 'counter', initialState: CounterModel.init());
 
-  CounterModel reduce(CounterModel state, Action action) {
+  Stream<CounterModel> mapActionToState(
+      CounterModel state, Action action) async* {
     switch (action.type) {
       case ActionTypes.Inc:
         state.count++;
-        state.isLoading = false;
-        return CounterModel.clone(state);
+        yield state.copyWith(isLoading: false);
+        break;
       case ActionTypes.Dec:
         state.count--;
-        state.isLoading = false;
-        return CounterModel.clone(state);
+        yield state.copyWith(isLoading: false);
+        break;
       case ActionTypes.AsyncInc:
-        state.isLoading = true;
-        return CounterModel.clone(state);
-
+        yield state.copyWith(isLoading: true);
+        yield await getCount(state.count);
+        break;
       default:
-        return state;
+        yield state;
+    }
+  }
+
+  Future<CounterModel> getCount(int count) {
+    return Future.delayed(Duration(milliseconds: 500),
+        () => CounterModel(count: count + 1, isLoading: false));
+  }
+}
+
+```
+#### Example TodoState
+```dart
+import 'package:ajwah_bloc/ajwah_bloc.dart';
+import 'package:ajwah_block_examples/actionTypes.dart';
+import 'package:ajwah_block_examples/todoApi.dart';
+
+class Todo {
+  final int id;
+  final String title;
+  bool completed;
+  Todo({this.id, this.title, this.completed});
+  factory Todo.fromJson(dynamic json) {
+    return Todo(
+        id: json['id'] as int,
+        title: json['title'] as String,
+        completed: json['completed'] as bool);
+  }
+  dynamic toJson() {
+    return {'id': id, 'title': title, 'completed': completed};
+  }
+}
+
+class TodoModel {
+  String message;
+  List<Todo> todoList = [];
+  TodoModel({this.message, this.todoList});
+  TodoModel copyWith({String message, List<Todo> todoList}) {
+    return TodoModel(
+        message: message ?? this.message, todoList: todoList ?? this.todoList);
+  }
+}
+
+class TodoState extends BaseState<TodoModel> {
+  TodoState()
+      : super(name: 'todo', initialState: TodoModel(message: '', todoList: []));
+
+  Stream<TodoModel> mapActionToState(TodoModel state, Action action) async* {
+    try {
+      switch (action.type) {
+        case ActionTypes.LoadingTodos:
+          yield state.copyWith(message: 'Loading todos.');
+          state.todoList = await TodoApi.getTodos();
+          yield state.copyWith(message: '');
+          break;
+        case ActionTypes.AddTodo:
+          yield state.copyWith(message: 'Adding todo.');
+          var todo = await TodoApi.addTodo(action.payload);
+          state.todoList = List.from(state.todoList)..insert(0, todo);
+          yield state.copyWith(message: '');
+          break;
+        case ActionTypes.UpdateTodo:
+          yield state.copyWith(message: 'Updating todo.');
+          await TodoApi.updateTodo(action.payload);
+          state.todoList = List<Todo>.from(state.todoList);
+          yield state.copyWith(message: '');
+          break;
+        case ActionTypes.RemoveTodo:
+          yield state.copyWith(message: 'Removing todo.');
+          var todo = await TodoApi.removeTodo(action.payload);
+          state.todoList =
+              state.todoList.where((it) => it.id != todo.id).toList();
+          yield state.copyWith(message: '');
+          break;
+        default:
+          yield state;
+      }
+    } catch (err) {
+      yield state.copyWith(message: err.toString());
     }
   }
 }
 
-
 ```
-
 
 ## Effects
 Every effect class must derived from `BaseEffect` class. And it is optional to pass the

@@ -1,5 +1,5 @@
 import 'package:ajwah_bloc/ajwah_bloc.dart';
-import 'package:ajwah_block_examples/todo/store/TodoState.dart';
+import 'package:ajwah_block_examples/store/states/TodoState.dart';
 import 'package:flutter_web/material.dart';
 
 class TodoError extends StatelessWidget {

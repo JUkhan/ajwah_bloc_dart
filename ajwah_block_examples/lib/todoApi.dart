@@ -1,4 +1,4 @@
-import 'package:ajwah_block_examples/todo/store/TodoState.dart';
+import 'package:ajwah_block_examples/store/states/TodoState.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert' as convert;
 import 'dart:async';

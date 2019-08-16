@@ -28,6 +28,7 @@ void main() {
       () async {
     store.addState(TodoState());
     store.select<TodoModel>('todo').take(1).listen((todoModel) {
+      print(todoModel);
       expect(todoModel.message, equals(''));
       expect(todoModel.todoList, equals([]));
     });

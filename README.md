@@ -3,42 +3,130 @@ Rx based state management library. Manage your application's states, effects, an
 
 ## States
 Every state class must derived from `BaseState<T>` class. And it is mandatory to pass the
-state `name` and `initialState`. The `BaseState<T>` class has one abstract method `T reduce(T state, Action action);`. This method should be invoked by sysytem passing current state and action. You should mutate the state based on action.
+state `name` and `initialState`. The `BaseState<T>` class has an abstract method `Stream<T> mapActionToState(T state, Action action);`. This method should be invoked by sysytem passing current state and action. You should mutate the state based on action.
 
-#### Example
+#### Example CounterState
 ```dart
 import 'package:ajwah_bloc/ajwah_bloc.dart';
 import 'package:ajwah_block_examples/actionTypes.dart';
 
 class CounterModel {
-  final int count;
-  final bool isLoading;
+  int count;
+  bool isLoading;
+
   CounterModel({this.count, this.isLoading});
-  CounterModel.init() : this(count: 0, isLoading: false);
-  CounterModel.countData(int count) : this(count: count, isLoading: false);
-  CounterModel.loading(int count) : this(count: count, isLoading: true);
+
+  copyWith({int count, bool isLoading}) {
+    return CounterModel(
+        count: count ?? this.count, isLoading: isLoading ?? this.isLoading);
+  }
+
+  CounterModel.init() : this(count: 10, isLoading: false);
 }
 
 class CounterState extends BaseState<CounterModel> {
   CounterState() : super(name: 'counter', initialState: CounterModel.init());
 
-  CounterModel reduce(CounterModel state, Action action) {
+  Stream<CounterModel> mapActionToState(
+      CounterModel state, Action action) async* {
     switch (action.type) {
       case ActionTypes.Inc:
-        return CounterModel.countData(state.count + 1);
+        state.count++;
+        yield state.copyWith(isLoading: false);
+        break;
       case ActionTypes.Dec:
-        return CounterModel.countData(state.count - 1);
+        state.count--;
+        yield state.copyWith(isLoading: false);
+        break;
       case ActionTypes.AsyncInc:
-        return CounterModel.loading(state.count);
-
+        yield state.copyWith(isLoading: true);
+        yield await getCount(state.count);
+        break;
       default:
-        return state;
+        yield state;
+    }
+  }
+
+  Future<CounterModel> getCount(int count) {
+    return Future.delayed(Duration(milliseconds: 500),
+        () => CounterModel(count: count + 1, isLoading: false));
+  }
+}
+
+```
+#### Example TodoState
+```dart
+import 'package:ajwah_bloc/ajwah_bloc.dart';
+import 'package:ajwah_block_examples/actionTypes.dart';
+import 'package:ajwah_block_examples/todoApi.dart';
+
+class Todo {
+  final int id;
+  final String title;
+  bool completed;
+  Todo({this.id, this.title, this.completed});
+  factory Todo.fromJson(dynamic json) {
+    return Todo(
+        id: json['id'] as int,
+        title: json['title'] as String,
+        completed: json['completed'] as bool);
+  }
+  dynamic toJson() {
+    return {'id': id, 'title': title, 'completed': completed};
+  }
+}
+
+class TodoModel {
+  String message;
+  List<Todo> todoList = [];
+  TodoModel({this.message, this.todoList});
+  TodoModel copyWith({String message, List<Todo> todoList}) {
+    return TodoModel(
+        message: message ?? this.message, todoList: todoList ?? this.todoList);
+  }
+}
+
+class TodoState extends BaseState<TodoModel> {
+  TodoState()
+      : super(name: 'todo', initialState: TodoModel(message: '', todoList: []));
+
+  Stream<TodoModel> mapActionToState(TodoModel state, Action action) async* {
+    try {
+      switch (action.type) {
+        case ActionTypes.LoadingTodos:
+          yield state.copyWith(message: 'Loading todos.');
+          state.todoList = await TodoApi.getTodos();
+          yield state.copyWith(message: '');
+          break;
+        case ActionTypes.AddTodo:
+          yield state.copyWith(message: 'Adding todo.');
+          var todo = await TodoApi.addTodo(action.payload);
+          state.todoList = List.from(state.todoList)..insert(0, todo);
+          yield state.copyWith(message: '');
+          break;
+        case ActionTypes.UpdateTodo:
+          yield state.copyWith(message: 'Updating todo.');
+          await TodoApi.updateTodo(action.payload);
+          state.todoList = List<Todo>.from(state.todoList);
+          yield state.copyWith(message: '');
+          break;
+        case ActionTypes.RemoveTodo:
+          yield state.copyWith(message: 'Removing todo.');
+          var todo = await TodoApi.removeTodo(action.payload);
+          state.todoList =
+              state.todoList.where((it) => it.id != todo.id).toList();
+          yield state.copyWith(message: '');
+          break;
+        default:
+          yield state;
+      }
+    } catch (err) {
+      yield state.copyWith(message: err.toString());
     }
   }
 }
 
 ```
-
 
 ## Effects
 Every effect class must derived from `BaseEffect` class. And it is optional to pass the
@@ -68,21 +156,21 @@ class CounterEffect extends BaseEffect {
 ```
 
 
-## Applied in components
-Ajwah provides a comfortable way to use states in components and dispatching state actions.
+## Using state in components
+Ajwah provides a comfortable way to use states in components and dispatching actions.
 
-First of all we need to call `createStore(states:[], effects:[])` method. So that `store` object exposed throughout the application.
+Just call the `createStore(states:[], effects:[])` method from `main()` function. Now `store` instance should be available by the helper function `store()` throughout the application.
 
-We can use `select` method to get `state` data (passing state name): `store().select(stateName: 'counter')`.
-This method return a `Observable<T>` type data. Now we can use `StreamBuilder` class for a reactive widget.
-And also for dispatching state's action - we will use `dispatch(actionType:'Inc')` method.
+Note:  `createStore(...)` method return store instance so that you can make a sate provider class(InheritedWidget) as your convenient.
+
+We can use `select` method to get `state` data (passing state name): `select('counter')`. or `select2(...)`.
+These methods return `Observable<T>`. Now pass this Observable inside a StreamBuilder to make a reactive widget.
 
 ### Example
 
 ```dart
 StreamBuilder<CounterModel>(
-    stream: store().select<CounterModel>(stateName: 'counter'),
-    initialData: CounterModel.init(),
+    stream: select<CounterModel>('counter'),
     builder:(BuildContext context, AsyncSnapshot<CounterModel> snapshot) {
         if (snapshot.data.isLoading) {
           return CircularProgressIndicator();
@@ -94,76 +182,9 @@ StreamBuilder<CounterModel>(
     },
 )        
 ```
-## CounterComponent
-```dart
-import 'package:ajwah_bloc/ajwah_bloc.dart';
-import 'package:ajwah_block_examples/actionTypes.dart';
-import 'package:ajwah_block_examples/counter/store/counterState.dart';
-import 'package:flutter_web/cupertino.dart';
-import 'package:flutter_web/material.dart';
 
-class CounterComponent extends StatelessWidget {
-  const CounterComponent({Key key}) : super(key: key);
+And also for dispatching state's action - we can use `dispatch(...)` or `store().dispatch(Action(type:'any', payload:any))` method.
 
-  void increment() {
-    dispatch(actionType: ActionTypes.Inc);
-  }
-
-  void decrement() {
-    dispatch(actionType: ActionTypes.Dec);
-  }
-
-  void asyncIncrement() {
-    dispatch(actionType: ActionTypes.AsyncInc);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: <Widget>[
-        ButtonBar(mainAxisSize: MainAxisSize.min, children: <Widget>[
-          RaisedButton(
-            textColor: Colors.white,
-            color: Colors.blue,
-            child: Icon(Icons.add),
-            onPressed: increment,
-          ),
-          new RaisedButton(
-            textColor: Colors.white,
-            color: Colors.blue,
-            child: Text('Async(+)'),
-            onPressed: asyncIncrement,
-          ),
-          RaisedButton(
-            textColor: Colors.white,
-            color: Colors.blue,
-            child: Icon(Icons.remove),
-            onPressed: decrement,
-          )
-        ]),
-        SizedBox(
-          width: 10.0,
-        ),
-        StreamBuilder<CounterModel>(
-          stream: store().select<CounterModel>(stateName: 'counter'),
-          initialData: CounterModel.init(),
-          builder:
-              (BuildContext context, AsyncSnapshot<CounterModel> snapshot) {
-            if (snapshot.data.isLoading) {
-              return CircularProgressIndicator();
-            }
-            return Text(
-              snapshot.data.count.toString(),
-              style: Theme.of(context).textTheme.title,
-            );
-          },
-        )
-      ],
-    );
-  }
-}
-
-```
 
 
 [Please have a look at here for progressive examples](https://github.com/JUkhan/ajwah_bloc_dart/tree/master/ajwah_block_examples)

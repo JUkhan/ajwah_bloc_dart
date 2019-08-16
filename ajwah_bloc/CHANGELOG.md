@@ -32,7 +32,10 @@ final _message$ = store()
  ```
 
  ## 1.0.3
- updating doc and param type changed in `select()` method
+ updating doc and param type changed in `select()` function
 
  ## 1.5.0
- param type changed in dispatch() method and exposed select() and select2() methods into the global scope
+ param type changed in dispatch() function and exposed select() and select2() functions into the global scope
+
+ ## 1.6.0
+ `T reduce(T state, Action action)` function has been replaced with `Stream<T> mapActionToState(T state, Action action)` into the `BaseState<T>` class.

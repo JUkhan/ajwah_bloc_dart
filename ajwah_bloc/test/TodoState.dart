@@ -27,22 +27,28 @@ class TodoState extends BaseState<TodoModel> {
   TodoState()
       : super(name: 'todo', initialState: TodoModel(message: '', todoList: []));
 
-  TodoModel reduce(TodoModel state, Action action) {
+  Stream<TodoModel> mapActionToState(TodoModel state, Action action) async* {
     switch (action.type) {
       case ActionTypes.LoadingTodos:
-        return TodoModel(message: 'Loading todos.', todoList: []);
+        yield TodoModel(message: 'Loading todos.', todoList: []);
+        break;
       case ActionTypes.TodosData:
-        return TodoModel(message: '', todoList: action.payload);
+        yield TodoModel(message: '', todoList: action.payload);
+        break;
       case ActionTypes.AddTodo:
-        return TodoModel(message: 'Adding todo.', todoList: state.todoList);
+        yield TodoModel(message: 'Adding todo.', todoList: state.todoList);
+        break;
       case ActionTypes.UpdateTodo:
-        return TodoModel(message: 'Updating todo.', todoList: state.todoList);
+        yield TodoModel(message: 'Updating todo.', todoList: state.todoList);
+        break;
       case ActionTypes.RemoveTodo:
-        return TodoModel(message: 'Removing todo.', todoList: state.todoList);
+        yield TodoModel(message: 'Removing todo.', todoList: state.todoList);
+        break;
       case ActionTypes.TodoError:
-        return TodoModel(message: action.payload, todoList: state.todoList);
+        yield TodoModel(message: action.payload, todoList: state.todoList);
+        break;
       default:
-        return state;
+        yield state;
     }
   }
 }

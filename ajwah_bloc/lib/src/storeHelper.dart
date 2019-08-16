@@ -49,7 +49,7 @@ class StoreHelper {
     return _state$.map<T>(callback).distinct();
   }
 
-  Map<String, dynamic> _combineStates(
+  /*Map<String, dynamic> _OldcombineStates(
       Map<String, dynamic> state, Action action) {
     _states.forEach((stateObj) {
       state[stateObj.name] = stateObj.reduce(
@@ -57,6 +57,25 @@ class StoreHelper {
               ? stateObj.initialState
               : state[stateObj.name],
           action);
+    });
+    return state;
+  }*/
+
+  Map<String, dynamic> _combineStates(
+      Map<String, dynamic> state, Action action) {
+    _states.forEach((stateObj) {
+      stateObj
+          .mapActionToState(
+              state[stateObj.name] == null
+                  ? stateObj.initialState
+                  : state[stateObj.name],
+              action)
+          .listen((newSubState) {
+        if (newSubState != state[stateObj.name]) {
+          state[stateObj.name] = newSubState;
+          _state$.add(state);
+        }
+      });
     });
     return state;
   }

@@ -1,6 +1,6 @@
 import 'package:ajwah_bloc/ajwah_bloc.dart';
 import 'package:ajwah_block_examples/actionTypes.dart';
-import 'package:ajwah_block_examples/todo/store/TodoState.dart';
+import 'package:ajwah_block_examples/store/states/TodoState.dart';
 import 'package:flutter_web/material.dart';
 
 class AddTodo extends StatelessWidget {
@@ -24,8 +24,9 @@ class AddTodo extends StatelessWidget {
       ]);
 
   void _onTextSubmitted(String value) {
-    dispatch(ActionTypes.AddTodo, Todo(completed: false, title: value));
-    _textController.clear();
-    //_textController.text = '';
+    if (value.isNotEmpty) {
+      dispatch(ActionTypes.AddTodo, Todo(completed: false, title: value));
+      _textController.clear();
+    }
   }
 }

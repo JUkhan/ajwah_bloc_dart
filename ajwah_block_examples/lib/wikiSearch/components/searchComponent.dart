@@ -1,7 +1,7 @@
 import 'package:ajwah_bloc/ajwah_bloc.dart';
 import 'package:ajwah_block_examples/actionTypes.dart';
+import 'package:ajwah_block_examples/store/states/SearchState.dart';
 import 'package:ajwah_block_examples/widgets/popupMenu.dart';
-import 'package:ajwah_block_examples/wikiSearch/store/SearchState.dart';
 import 'package:flutter_web/material.dart';
 
 class SearchComponent extends StatelessWidget {

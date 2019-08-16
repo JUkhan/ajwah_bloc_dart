@@ -1,6 +1,6 @@
 import 'package:ajwah_bloc/ajwah_bloc.dart';
 import 'package:ajwah_block_examples/actionTypes.dart';
-import 'package:ajwah_block_examples/counter/store/counterState.dart';
+import 'package:ajwah_block_examples/store/states/counterState.dart';
 import 'package:ajwah_block_examples/widgets/popupMenu.dart';
 import 'package:flutter_web/material.dart';
 

@@ -13,17 +13,21 @@ class CounterModel {
 class CounterState extends BaseState<CounterModel> {
   CounterState() : super(name: 'counter', initialState: CounterModel.init());
 
-  CounterModel reduce(CounterModel state, Action action) {
+  Stream<CounterModel> mapActionToState(
+      CounterModel state, Action action) async* {
     switch (action.type) {
       case ActionTypes.Inc:
-        return CounterModel.countData(state.count + 1);
+        yield CounterModel.countData(state.count + 1);
+        break;
       case ActionTypes.Dec:
-        return CounterModel.countData(state.count - 1);
+        yield CounterModel.countData(state.count - 1);
+        break;
       case ActionTypes.AsyncInc:
-        return CounterModel.loading(state.count);
+        yield CounterModel.loading(state.count);
+        break;
 
       default:
-        return state;
+        yield state;
     }
   }
 }

@@ -57,8 +57,8 @@
 <p>Rx based state management library. Manage your application's states, effects, and actions easy way.</p>
 <h2 id="states">States</h2>
 <p>Every state class must derived from <code>BaseState&lt;T&gt;</code> class. And it is mandatory to pass the
-state <code>name</code> and <code>initialState</code>. The <code>BaseState&lt;T&gt;</code> class has one abstract method <code>T reduce(T state, Action action);</code>. This method should be invoked by sysytem passing current state and action. You should mutate the state based on action.</p>
-<h4 id="example">Example</h4>
+state <code>name</code> and <code>initialState</code>. The <code>BaseState&lt;T&gt;</code> class has an abstract method <code>Stream&lt;T&gt; mapActionToState(T state, Action action);</code>. This method should be invoked by sysytem passing current state and action. You should mutate the state based on action.</p>
+<h4 id="example-counterstate">Example CounterState</h4>
 <pre class="language-dart"><code class="language-dart">import 'package:ajwah_bloc/ajwah_bloc.dart';
 import 'package:ajwah_block_examples/actionTypes.dart';
 
@@ -68,8 +68,9 @@ class CounterModel {
 
   CounterModel({this.count, this.isLoading});
 
-  static clone(CounterModel obj) {
-    return CounterModel(count: obj.count, isLoading: obj.isLoading);
+  copyWith({int count, bool isLoading}) {
+    return CounterModel(
+        count: count ?? this.count, isLoading: isLoading ?? this.isLoading);
   }
 
   CounterModel.init() : this(count: 10, isLoading: false);
@@ -78,33 +79,110 @@ class CounterModel {
 class CounterState extends BaseState&lt;CounterModel&gt; {
   CounterState() : super(name: 'counter', initialState: CounterModel.init());
 
-  CounterModel reduce(CounterModel state, Action action) {
+  Stream&lt;CounterModel&gt; mapActionToState(
+      CounterModel state, Action action) async* {
     switch (action.type) {
       case ActionTypes.Inc:
         state.count++;
-        state.isLoading = false;
-        return CounterModel.clone(state);
+        yield state.copyWith(isLoading: false);
+        break;
       case ActionTypes.Dec:
         state.count--;
-        state.isLoading = false;
-        return CounterModel.clone(state);
+        yield state.copyWith(isLoading: false);
+        break;
       case ActionTypes.AsyncInc:
-        state.isLoading = true;
-        return CounterModel.clone(state);
-
+        yield state.copyWith(isLoading: true);
+        yield await getCount(state.count);
+        break;
       default:
-        return state;
+        yield state;
     }
+  }
+
+  Future&lt;CounterModel&gt; getCount(int count) {
+    return Future.delayed(Duration(milliseconds: 500),
+        () =&gt; CounterModel(count: count + 1, isLoading: false));
   }
 }
 
+</code></pre>
+<h4 id="example-todostate">Example TodoState</h4>
+<pre class="language-dart"><code class="language-dart">import 'package:ajwah_bloc/ajwah_bloc.dart';
+import 'package:ajwah_block_examples/actionTypes.dart';
+import 'package:ajwah_block_examples/todoApi.dart';
+
+class Todo {
+  final int id;
+  final String title;
+  bool completed;
+  Todo({this.id, this.title, this.completed});
+  factory Todo.fromJson(dynamic json) {
+    return Todo(
+        id: json['id'] as int,
+        title: json['title'] as String,
+        completed: json['completed'] as bool);
+  }
+  dynamic toJson() {
+    return {'id': id, 'title': title, 'completed': completed};
+  }
+}
+
+class TodoModel {
+  String message;
+  List&lt;Todo&gt; todoList = [];
+  TodoModel({this.message, this.todoList});
+  TodoModel copyWith({String message, List&lt;Todo&gt; todoList}) {
+    return TodoModel(
+        message: message ?? this.message, todoList: todoList ?? this.todoList);
+  }
+}
+
+class TodoState extends BaseState&lt;TodoModel&gt; {
+  TodoState()
+      : super(name: 'todo', initialState: TodoModel(message: '', todoList: []));
+
+  Stream&lt;TodoModel&gt; mapActionToState(TodoModel state, Action action) async* {
+    try {
+      switch (action.type) {
+        case ActionTypes.LoadingTodos:
+          yield state.copyWith(message: 'Loading todos.');
+          state.todoList = await TodoApi.getTodos();
+          yield state.copyWith(message: '');
+          break;
+        case ActionTypes.AddTodo:
+          yield state.copyWith(message: 'Adding todo.');
+          var todo = await TodoApi.addTodo(action.payload);
+          state.todoList = List.from(state.todoList)..insert(0, todo);
+          yield state.copyWith(message: '');
+          break;
+        case ActionTypes.UpdateTodo:
+          yield state.copyWith(message: 'Updating todo.');
+          await TodoApi.updateTodo(action.payload);
+          state.todoList = List&lt;Todo&gt;.from(state.todoList);
+          yield state.copyWith(message: '');
+          break;
+        case ActionTypes.RemoveTodo:
+          yield state.copyWith(message: 'Removing todo.');
+          var todo = await TodoApi.removeTodo(action.payload);
+          state.todoList =
+              state.todoList.where((it) =&gt; it.id != todo.id).toList();
+          yield state.copyWith(message: '');
+          break;
+        default:
+          yield state;
+      }
+    } catch (err) {
+      yield state.copyWith(message: err.toString());
+    }
+  }
+}
 
 </code></pre>
 <h2 id="effects">Effects</h2>
 <p>Every effect class must derived from <code>BaseEffect</code> class. And it is optional to pass the
 <code>effectKey</code>. But it's mandatory if you want conditionally remove the effects by using
 <code>store.removeEffectsByKey('effectKey')</code>. The <code>BaseEffect</code> class has one abstract method <code>List&lt;Observable&lt;Action&gt;&gt; registerEffects(Actions action$, Store store$);</code>. This function should be invoked by system passing reference of Actions and Store classes. Please keep in mind that effects should not work until you register them.</p>
-<h4 id="example-2">Example</h4>
+<h4 id="example">Example</h4>
 <pre class="language-dart"><code class="language-dart">import 'package:ajwah_bloc/ajwah_bloc.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -130,7 +208,7 @@ class CounterEffect extends BaseEffect {
 <p>Note:  <code>createStore(...)</code> method return store instance so that you can make a sate provider class(InheritedWidget) as your convenient.</p>
 <p>We can use <code>select</code> method to get <code>state</code> data (passing state name): <code>select('counter')</code>. or <code>select2(...)</code>.
 These methods return <code>Observable&lt;T&gt;</code>. Now pass this Observable inside a StreamBuilder to make a reactive widget.</p>
-<h3 id="example-3">Example</h3>
+<h3 id="example-2">Example</h3>
 <pre class="language-dart"><code class="language-dart">StreamBuilder&lt;CounterModel&gt;(
     stream: select&lt;CounterModel&gt;('counter'),
     builder:(BuildContext context, AsyncSnapshot&lt;CounterModel&gt; snapshot) {
@@ -168,7 +246,7 @@ These methods return <code>Observable&lt;T&gt;</code>. Now pass this Observable 
 
 <footer>
   <span class="no-break">
-    ajwah_bloc 1.5.0
+    ajwah_bloc 1.6.0
   </span>
 
   

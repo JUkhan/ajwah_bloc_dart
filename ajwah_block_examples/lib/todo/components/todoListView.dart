@@ -1,6 +1,6 @@
 import 'package:ajwah_bloc/ajwah_bloc.dart';
 import 'package:ajwah_block_examples/actionTypes.dart';
-import 'package:ajwah_block_examples/todo/store/TodoState.dart';
+import 'package:ajwah_block_examples/store/states/TodoState.dart';
 import 'package:flutter_web/material.dart';
 
 class TodoListView extends StatelessWidget {
@@ -18,6 +18,9 @@ class TodoListView extends StatelessWidget {
                 (BuildContext context, AsyncSnapshot<List<Todo>> snapshot) {
               if (snapshot.hasData) {
                 final list = snapshot.data;
+                if (list.isEmpty) {
+                  dispatch(ActionTypes.LoadingTodos);
+                }
                 return Expanded(
                     child: ListView.builder(
                         itemCount: list.length,
