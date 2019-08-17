@@ -1,5 +1,5 @@
 name: ajwah_bloc
-version: 1.6.0
+version: 1.7.0
 author: "Jasim Khan <jasim.uddin.khan@gmail.com>"
 homepage: https://github.com/JUkhan/ajwah_bloc_dart
 description: Rx based state management library. Manage your application's states, effects, and actions easy way.
@@ -11,11 +11,10 @@ environment:
 dependencies:
   rxdart: ">=0.19.0 <2.0.0"
   meta: ">=1.0.0 <3.0.0"
-  async: ">=2.0.0 <4.0.0"
 
 dev_dependencies:
   test: ^1.6.3
-  build_runner: ^1.5.0
+  build_runner: ^1.6.6
   build_test: ^0.10.7+3
   dartdoc: ^0.28.3+2
   test_coverage: ^0.2.3

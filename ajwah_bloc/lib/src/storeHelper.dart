@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'action.dart';
 import 'baseState.dart';
 import 'dispatcher.dart';

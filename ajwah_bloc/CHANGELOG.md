@@ -39,3 +39,6 @@ final _message$ = store()
 
  ## 1.6.0
  `T reduce(T state, Action action)` function has been replaced with `Stream<T> mapActionToState(T state, Action action)` into the `BaseState<T>` class.
+
+ ## 1.7.0
+ Remove dependency `async`

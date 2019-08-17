@@ -1,12 +1,8 @@
 import 'dart:async';
-
-import 'package:async/async.dart';
 import 'baseEffect.dart';
-
 import 'effectSubscription.dart';
 import 'package:meta/meta.dart';
 import 'package:rxdart/rxdart.dart';
-
 import 'storeHelper.dart';
 import 'action.dart';
 import 'baseState.dart';
@@ -102,9 +98,11 @@ class Store {
 
   ///This method is usefull to add effects passing **effectInstance** on demand.
   Store addEffects(BaseEffect effectInstance) {
-    var effect =
+    /*var effect =
         StreamGroup.merge(effectInstance.registerEffects(_actions, this))
-            .asBroadcastStream();
+            .asBroadcastStream();*/
+    var effect = MergeStream(effectInstance.registerEffects(_actions, this))
+        .asBroadcastStream();
     if (effectInstance.effectKey == null) {
       _effSub.addEffects(effect);
     } else {

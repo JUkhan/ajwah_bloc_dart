@@ -101,9 +101,11 @@
     <section class="summary source-code" id="source">
       <h2><span>Implementation</span></h2>
       <pre class="language-dart"><code class="language-dart">Store addEffects(BaseEffect effectInstance) {
-  var effect =
+  &#47;*var effect =
       StreamGroup.merge(effectInstance.registerEffects(_actions, this))
-          .asBroadcastStream();
+          .asBroadcastStream();*&#47;
+  var effect = MergeStream(effectInstance.registerEffects(_actions, this))
+      .asBroadcastStream();
   if (effectInstance.effectKey == null) {
     _effSub.addEffects(effect);
   } else {
@@ -123,7 +125,7 @@
 
 <footer>
   <span class="no-break">
-    ajwah_bloc 1.6.0
+    ajwah_bloc 1.7.0
   </span>
 
   
