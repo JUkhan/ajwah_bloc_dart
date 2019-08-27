@@ -36,6 +36,12 @@ class PopupMemu extends StatelessWidget {
           child: ListTile(
             title: Text('Todo'),
           ),
+        ),
+        PopupMenuItem(
+          value: '/dynamicse',
+          child: ListTile(
+            title: Text('Dynamic State and Effects'),
+          ),
         )
       ],
     );

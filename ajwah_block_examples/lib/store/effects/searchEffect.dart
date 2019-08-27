@@ -5,6 +5,8 @@ import 'dart:convert' as convert;
 import 'package:http/http.dart' as http;
 
 class SearchEffect extends BaseEffect {
+  SearchEffect() : super(effectKey: 'search_effects');
+
   Future<List<String>> search(String input) async {
     var url =
         'https://en.wikipedia.org/w/api.php?&origin=*&action=opensearch&search=${input}&limit=5';

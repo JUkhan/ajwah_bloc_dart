@@ -16,17 +16,6 @@ class SearchModel {
 class SearchState extends BaseState<SearchModel> {
   SearchState() : super(name: 'search', initialState: SearchModel.init());
 
-  SearchModel reduce(SearchModel state, Action action) {
-    switch (action.type) {
-      case ActionTypes.SearchInput:
-        return SearchModel.loading();
-      case ActionTypes.SearchData:
-        return SearchModel.searchData(action.payload);
-      default:
-        return state;
-    }
-  }
-
   Stream<SearchModel> mapActionToState(
       SearchModel state, Action action) async* {
     switch (action.type) {

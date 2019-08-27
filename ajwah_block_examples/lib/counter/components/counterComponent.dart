@@ -37,7 +37,7 @@ class CounterComponent extends StatelessWidget {
               child: Icon(Icons.add),
               onPressed: increment,
             ),
-            new RaisedButton(
+            RaisedButton(
               textColor: Colors.white,
               color: Colors.blue,
               child: Text('Async(+)'),

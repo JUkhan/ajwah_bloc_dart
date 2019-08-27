@@ -6,6 +6,7 @@ import 'package:ajwah_block_examples/store/states/SearchState.dart';
 import 'package:ajwah_block_examples/store/states/TodoState.dart';
 import 'package:ajwah_block_examples/store/states/counterState.dart';
 import 'package:ajwah_block_examples/todo/components/todoContainer.dart';
+import 'package:ajwah_block_examples/widgets/dynamicStateAndEffect.dart';
 import 'package:ajwah_block_examples/wikiSearch/components/searchComponent.dart';
 import 'package:flutter_web/material.dart';
 
@@ -35,7 +36,8 @@ class _AppState extends State<App> {
         routes: {
           '/': (_) => CounterComponent(),
           '/search': (_) => SearchComponent(),
-          '/todo': (_) => TodoContainer()
+          '/todo': (_) => TodoContainer(),
+          '/dynamicse': (_) => DynamicStateAndEffectWidget()
         },
       ),
     );
