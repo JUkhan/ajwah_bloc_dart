@@ -42,3 +42,6 @@ final _message$ = store()
 
  ## 1.7.0
  Remove dependency `async`
+
+  ## 1.8.0
+ improve performance

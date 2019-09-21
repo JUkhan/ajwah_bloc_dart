@@ -12,7 +12,7 @@ class CounterModel {
         count: count ?? this.count, isLoading: isLoading ?? this.isLoading);
   }
 
-  CounterModel.init() : this(count: 10, isLoading: false);
+  CounterModel.init() : this(count: 5, isLoading: false);
 }
 
 class CounterState extends BaseState<CounterModel> {
@@ -39,7 +39,7 @@ class CounterState extends BaseState<CounterModel> {
   }
 
   Future<CounterModel> getCount(int count) {
-    return Future.delayed(Duration(milliseconds: 500),
+    return Future.delayed(Duration(milliseconds: 1000),
         () => CounterModel(count: count + 1, isLoading: false));
   }
 }

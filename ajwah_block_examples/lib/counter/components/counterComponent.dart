@@ -48,7 +48,7 @@ class CounterComponent extends StatelessWidget {
               color: Colors.blue,
               child: Icon(Icons.remove),
               onPressed: decrement,
-            )
+            ),
           ]),
           SizedBox(
             width: 10.0,

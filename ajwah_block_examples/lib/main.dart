@@ -23,6 +23,14 @@ class App extends StatefulWidget {
 
 class _AppState extends State<App> {
   @override
+  void initState() {
+    store().exportState().listen((arr) {
+      print(arr[0].type);
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return AppStateProvider(
       store: widget.store,

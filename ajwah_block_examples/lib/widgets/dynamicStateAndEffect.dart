@@ -2,6 +2,7 @@ import 'package:ajwah_bloc/ajwah_bloc.dart';
 import 'package:ajwah_block_examples/actionTypes.dart';
 import 'package:ajwah_block_examples/store/effects/searchEffect.dart';
 import 'package:ajwah_block_examples/store/states/SearchState.dart';
+import 'package:ajwah_block_examples/store/states/counterState.dart';
 import 'package:ajwah_block_examples/widgets/popupMenu.dart';
 
 import 'package:flutter_web/material.dart';
@@ -61,6 +62,14 @@ class DynamicStateAndEffectWidget extends StatelessWidget {
                         child: Text('Remove Search Effect'),
                         onPressed: () {
                           store().removeEffectsByKey('search_effects');
+                        },
+                      ),
+                      RaisedButton(
+                        textColor: Colors.white,
+                        color: Colors.black45,
+                        child: Text('Import State'),
+                        onPressed: () {
+                          store().importState({"counter": CounterModel.init()});
                         },
                       ),
                     ],

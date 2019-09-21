@@ -7,24 +7,20 @@ import 'package:rxdart/rxdart.dart';
 class StoreHelper {
   Dispatcher _dispatcher$;
   BehaviorSubject<Map<String, dynamic>> _state$;
-  StreamSubscription _subscriptiom;
+  StreamSubscription _subscription;
   List<BaseState> _states;
 
   StoreHelper(Dispatcher dispatcher, List<BaseState> states) {
     _dispatcher$ = dispatcher;
-    _state$ = BehaviorSubject<Map<String, dynamic>>();
+    _state$ =
+        BehaviorSubject<Map<String, dynamic>>.seeded(Map<String, dynamic>());
     _states = states;
-    _subscriptiom = _dispatcher$.streamController
-        .scan(
-            (state, action, index) => action.type == '@importState'
-                ? action.payload
-                : _combineStates(state, action),
-            Map<String, dynamic>())
-        .listen(_state$.add);
+    _subscription = _dispatcher$.streamController.listen((action) {
+      _combineStates(_state$.value, action);
+    });
   }
   Observable<List<dynamic>> exportState() {
-    return _dispatcher$.streamController
-        .withLatestFrom(_state$, (a, b) => [a, b]);
+    return _state$.map((state) => [_action, state]);
   }
 
   void importState(Map<String, dynamic> state) {
@@ -33,7 +29,8 @@ class StoreHelper {
         state[s.name] = s.initialState;
       }
     });
-    dispatch(Action(type: '@importState', payload: state));
+    _action = Action(type: '@importState');
+    _state$.add(state);
   }
 
   void dispatch(Action action) {
@@ -48,20 +45,8 @@ class StoreHelper {
     return _state$.map<T>(callback).distinct();
   }
 
-  /*Map<String, dynamic> _OldcombineStates(
-      Map<String, dynamic> state, Action action) {
-    _states.forEach((stateObj) {
-      state[stateObj.name] = stateObj.reduce(
-          state[stateObj.name] == null
-              ? stateObj.initialState
-              : state[stateObj.name],
-          action);
-    });
-    return state;
-  }*/
-
-  Map<String, dynamic> _combineStates(
-      Map<String, dynamic> state, Action action) {
+  Action _action = Action(type: '@@INIT');
+  void _combineStates(Map<String, dynamic> state, Action action) {
     _states.forEach((stateObj) {
       stateObj
           .mapActionToState(
@@ -70,13 +55,14 @@ class StoreHelper {
                   : state[stateObj.name],
               action)
           .listen((newSubState) {
+        state = _state$.value;
         if (newSubState != state[stateObj.name]) {
           state[stateObj.name] = newSubState;
+          _action = action;
           _state$.add(state);
         }
       });
     });
-    return state;
   }
 
   void addState(BaseState state) {
@@ -96,8 +82,6 @@ class StoreHelper {
   }
 
   void dispose() {
-    _subscriptiom.cancel();
-    _state$.close();
-    _dispatcher$.dispose();
+    _subscription.cancel();
   }
 }
