@@ -54,3 +54,8 @@ update sdk version
 
 ## 1.8.3
 update sdk version
+
+## 1.8.4
+fixed: Prefer using if null operators.
+fixed: Omit type annotations for local variables.
+fixed: The method dispose should have a return type but doesn't.

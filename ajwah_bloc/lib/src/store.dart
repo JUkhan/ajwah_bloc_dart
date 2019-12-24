@@ -133,7 +133,7 @@ class Store {
   }
 
   ///It's a clean up function.
-  dispose() {
+  void dispose() {
     _storeHelper.dispose();
     _effSub.dispose();
   }

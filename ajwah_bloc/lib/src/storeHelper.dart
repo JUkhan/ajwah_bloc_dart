@@ -50,10 +50,7 @@ class StoreHelper {
     _states.forEach((stateObj) {
       stateObj
           .mapActionToState(
-              state[stateObj.name] == null
-                  ? stateObj.initialState
-                  : state[stateObj.name],
-              action)
+              state[stateObj.name] ?? stateObj.initialState, action)
           .listen((newSubState) {
         state = _state$.value;
         if (newSubState != state[stateObj.name]) {
@@ -72,7 +69,7 @@ class StoreHelper {
   }
 
   void removeStateByStateName(String stateName, [bool shouldDispatch = true]) {
-    int index = _states.indexWhere((bs) => bs.name == stateName);
+    var index = _states.indexWhere((bs) => bs.name == stateName);
     if (index != -1) {
       _states.removeAt(index);
       if (shouldDispatch) {
