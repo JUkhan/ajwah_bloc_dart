@@ -48,3 +48,9 @@ final _message$ = store()
 
  ## 1.8.1
  sync with rxDart version: >=0.23.0
+
+## 1.8.2
+update sdk version
+
+## 1.8.3
+update sdk version

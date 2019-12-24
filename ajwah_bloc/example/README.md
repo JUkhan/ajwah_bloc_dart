@@ -66,7 +66,7 @@ class CounterState extends BaseState<CounterModel> {
 import 'package:ajwah_bloc/ajwah_bloc.dart';
 import 'actionTypes.dart';
 import 'counterState.dart';
-import 'package:flutter_web/material.dart';
+import 'package:flutter/material.dart';
 
 class CounterComponent extends StatelessWidget {
   const CounterComponent({Key key}) : super(key: key);
@@ -136,7 +136,7 @@ class CounterComponent extends StatelessWidget {
 import 'package:ajwah_bloc/ajwah_bloc.dart';
 import 'counterComponent.dart';
 import 'counterState.dart';
-import 'package:flutter_web/material.dart';
+import 'package:flutter/material.dart';
 
 void main(){
   createStore(states: [CounterState()]]);
