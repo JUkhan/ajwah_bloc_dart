@@ -45,3 +45,6 @@ final _message$ = store()
 
   ## 1.8.0
  improve performance
+
+ ## 1.8.1
+ sync with rxDart version: >=0.23.0

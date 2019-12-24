@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="static-assets/github.css">
   <link rel="stylesheet" href="static-assets/styles.css">
   <link rel="icon" href="static-assets/favicon.png">
-  
+  <!-- header placeholder -->
 </head>
 
 <body>
@@ -53,23 +53,26 @@
     
     <h5>BaseEffect class</h5>
     <ol>
-      <li class="section-title"><a href="ajwah_bloc/BaseEffect-class.html#constructors">Constructors</a></li>
-      <li><a href="ajwah_bloc/BaseEffect/BaseEffect.html">BaseEffect</a></li>
     
-      <li class="section-title">
-        <a href="ajwah_bloc/BaseEffect-class.html#instance-properties">Properties</a>
-      </li>
-      <li><a href="ajwah_bloc/BaseEffect/effectKey.html">effectKey</a></li>
-      <li class="inherited"><a href="ajwah_bloc/BaseEffect/hashCode.html">hashCode</a></li>
-      <li class="inherited"><a href="ajwah_bloc/BaseEffect/runtimeType.html">runtimeType</a></li>
+        <li class="section-title"><a href="ajwah_bloc/BaseEffect-class.html#constructors">Constructors</a></li>
+        <li><a href="ajwah_bloc/BaseEffect/BaseEffect.html">BaseEffect</a></li>
     
-      <li class="section-title"><a href="ajwah_bloc/BaseEffect-class.html#instance-methods">Methods</a></li>
-      <li><a href="ajwah_bloc/BaseEffect/registerEffects.html">registerEffects</a></li>
-      <li class="inherited"><a href="ajwah_bloc/BaseEffect/noSuchMethod.html">noSuchMethod</a></li>
-      <li class="inherited"><a href="ajwah_bloc/BaseEffect/toString.html">toString</a></li>
+        <li class="section-title">
+            <a href="ajwah_bloc/BaseEffect-class.html#instance-properties">Properties</a>
+        </li>
+        <li><a href="ajwah_bloc/BaseEffect/effectKey.html">effectKey</a></li>
+        <li class="inherited"><a href="ajwah_bloc/BaseEffect/hashCode.html">hashCode</a></li>
+        <li class="inherited"><a href="ajwah_bloc/BaseEffect/runtimeType.html">runtimeType</a></li>
     
-      <li class="section-title inherited"><a href="ajwah_bloc/BaseEffect-class.html#operators">Operators</a></li>
-      <li class="inherited"><a href="ajwah_bloc/BaseEffect/operator_equals.html">operator ==</a></li>
+        <li class="section-title"><a href="ajwah_bloc/BaseEffect-class.html#instance-methods">Methods</a></li>
+        <li><a href="ajwah_bloc/BaseEffect/registerEffects.html">registerEffects</a></li>
+        <li class="inherited"><a href="ajwah_bloc/BaseEffect/noSuchMethod.html">noSuchMethod</a></li>
+        <li class="inherited"><a href="ajwah_bloc/BaseEffect/toString.html">toString</a></li>
+    
+        <li class="section-title inherited"><a href="ajwah_bloc/BaseEffect-class.html#operators">Operators</a></li>
+        <li class="inherited"><a href="ajwah_bloc/BaseEffect/operator_equals.html">operator ==</a></li>
+    
+    
     
     
     
@@ -80,7 +83,7 @@
       <div><h1><span class="kind-method">registerEffects</span> method</h1></div>
 
     <section class="multi-line-signature">
-      <span class="returntype">List<span class="signature">&lt;<wbr><span class="type-parameter">Observable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="ajwah_bloc/Action-class.html">Action</a></span>&gt;</span></span>&gt;</span></span>
+      <span class="returntype">List<span class="signature">&lt;<wbr><span class="type-parameter">Stream<span class="signature">&lt;<wbr><span class="type-parameter"><a href="ajwah_bloc/Action-class.html">Action</a></span>&gt;</span></span>&gt;</span></span>
             <span class="name ">registerEffects</span>
 (<wbr><span class="parameter" id="registerEffects-param-action$"><span class="type-annotation"><a href="ajwah_bloc/Actions-class.html">Actions</a></span> <span class="parameter-name">action$</span>, </span> <span class="parameter" id="registerEffects-param-store$"><span class="type-annotation"><a href="ajwah_bloc/Store-class.html">Store</a></span> <span class="parameter-name">store$</span></span>)
       
@@ -90,7 +93,7 @@
 Please keep in mind that effects should not work until you register them.
 Here is the example how to register <strong>effectForAsyncInc</strong> effect.</p>
 <p><strong>Example</strong></p>
-<pre class="language-dart"><code class="language-dart">   List&lt;Observable&lt;Action&gt;&gt; registerEffects(Actions action$, Store store$) {
+<pre class="language-dart"><code class="language-dart">   List&lt;Stream&lt;Action&gt;&gt; registerEffects(Actions action$, Store store$) {
       return [effectForAsyncInc(action$, store$)];
    }
 </code></pre>
@@ -98,7 +101,7 @@ Here is the example how to register <strong>effectForAsyncInc</strong> effect.</
     
     <section class="summary source-code" id="source">
       <h2><span>Implementation</span></h2>
-      <pre class="language-dart"><code class="language-dart">List&lt;Observable&lt;Action&gt;&gt; registerEffects(Actions action$, Store store$);</code></pre>
+      <pre class="language-dart"><code class="language-dart">List&lt;Stream&lt;Action&gt;&gt; registerEffects(Actions action$, Store store$);</code></pre>
     </section>
 
   </div> <!-- /.main-content -->
@@ -110,10 +113,11 @@ Here is the example how to register <strong>effectForAsyncInc</strong> effect.</
 
 <footer>
   <span class="no-break">
-    ajwah_bloc 1.8.0
+    ajwah_bloc
+      1.8.1
   </span>
 
-  
+  <!-- footer-text placeholder -->
 </footer>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -121,7 +125,7 @@ Here is the example how to register <strong>effectForAsyncInc</strong> effect.</
 <script src="static-assets/highlight.pack.js"></script>
 <script src="static-assets/URI.js"></script>
 <script src="static-assets/script.js"></script>
-
+<!-- footer placeholder -->
 
 </body>
 

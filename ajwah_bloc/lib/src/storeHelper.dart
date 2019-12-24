@@ -19,7 +19,7 @@ class StoreHelper {
       _combineStates(_state$.value, action);
     });
   }
-  Observable<List<dynamic>> exportState() {
+  Stream<List<dynamic>> exportState() {
     return _state$.map((state) => [_action, state]);
   }
 
@@ -37,11 +37,11 @@ class StoreHelper {
     _dispatcher$.streamController.add(action);
   }
 
-  Observable<T> select<T>(String stateName) {
+  Stream<T> select<T>(String stateName) {
     return _state$.map<T>((dic) => dic[stateName]).distinct();
   }
 
-  Observable<T> select2<T>(T callback(Map<String, dynamic> state)) {
+  Stream<T> select2<T>(T callback(Map<String, dynamic> state)) {
     return _state$.map<T>(callback).distinct();
   }
 

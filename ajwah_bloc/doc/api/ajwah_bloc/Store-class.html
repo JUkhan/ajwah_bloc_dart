@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="static-assets/github.css">
   <link rel="stylesheet" href="static-assets/styles.css">
   <link rel="icon" href="static-assets/favicon.png">
-  
+  <!-- header placeholder -->
 </head>
 
 <body>
@@ -57,6 +57,7 @@
       <li><a href="ajwah_bloc/BaseEffect-class.html">BaseEffect</a></li>
       <li><a href="ajwah_bloc/BaseState-class.html">BaseState</a></li>
       <li><a href="ajwah_bloc/Store-class.html">Store</a></li>
+    
     
     
     
@@ -129,7 +130,7 @@
                   </dt>
         <dd>
           This method is usefull to add a single effect passing a callback <strong>(
-Actions action$, Store store$)=&gt;Observable</strong> and <strong>effectKey</strong> on demand. <a href="ajwah_bloc/Store/addEffect.html">[...]</a>
+Actions action$, Store store$)=&gt;Stream</strong> and <strong>effectKey</strong> on demand. <a href="ajwah_bloc/Store/addEffect.html">[...]</a>
                   
 </dd>
         <dt id="addEffects" class="callable">
@@ -170,7 +171,7 @@ Actions action$, Store store$)=&gt;Observable</strong> and <strong>effectKey</st
 </dd>
         <dt id="exportState" class="callable">
           <span class="name"><a href="ajwah_bloc/Store/exportState.html">exportState</a></span><span class="signature">(<wbr>)
-            <span class="returntype parameter">&#8594; Observable<span class="signature">&lt;<wbr><span class="type-parameter">List</span>&gt;</span></span>
+            <span class="returntype parameter">&#8594; Stream<span class="signature">&lt;<wbr><span class="type-parameter">List</span>&gt;</span></span>
           </span>
                   </dt>
         <dd>
@@ -206,16 +207,16 @@ Actions action$, Store store$)=&gt;Observable</strong> and <strong>effectKey</st
 </dd>
         <dt id="select" class="callable">
           <span class="name"><a href="ajwah_bloc/Store/select.html">select</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="select-param-stateName"><span class="type-annotation">String</span> <span class="parameter-name">stateName</span></span>)
-            <span class="returntype parameter">&#8594; Observable<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+            <span class="returntype parameter">&#8594; Stream<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
           </span>
                   </dt>
         <dd>
-          This method takes a single param <strong>String stateName</strong> and return Observable/Stream <a href="ajwah_bloc/Store/select.html">[...]</a>
+          This method takes a single param <strong>String stateName</strong> and return Stream/Stream <a href="ajwah_bloc/Store/select.html">[...]</a>
                   
 </dd>
         <dt id="select2" class="callable">
-          <span class="name"><a href="ajwah_bloc/Store/select2.html">select2</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="select2-param-callback"><span class="type-annotation">T</span> <span class="parameter-name">callback</span>(<span class="parameter" id="callback-param-state"><span class="type-annotation">Map<span class="signature">&lt;<wbr><span class="type-parameter">String</span>, <span class="type-parameter">dynamic</span>&gt;</span></span> <span class="parameter-name">state</span></span>)</span>)
-            <span class="returntype parameter">&#8594; Observable<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+          <span class="name"><a href="ajwah_bloc/Store/select2.html">select2</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="select2-param-callback"><span class="type-annotation">T</span> <span class="parameter-name">callback</span>(<span class="parameter" id="param-state"><span class="type-annotation">Map<span class="signature">&lt;<wbr><span class="type-parameter">String</span>, <span class="type-parameter">dynamic</span>&gt;</span></span> <span class="parameter-name">state</span></span>)</span>)
+            <span class="returntype parameter">&#8594; Stream<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
           </span>
                   </dt>
         <dd>
@@ -267,6 +268,7 @@ as value. <a href="ajwah_bloc/Store/select2.html">[...]</a>
 
   <div id="dartdoc-sidebar-right" class="col-xs-6 col-sm-6 col-md-2 sidebar sidebar-offcanvas-right">
     <ol>
+    
       <li class="section-title"><a href="ajwah_bloc/Store-class.html#constructors">Constructors</a></li>
       <li><a href="ajwah_bloc/Store/Store.html">Store</a></li>
     
@@ -296,6 +298,7 @@ as value. <a href="ajwah_bloc/Store/select2.html">[...]</a>
     
     
     
+    
     </ol>
   </div><!--/.sidebar-offcanvas-->
 
@@ -303,10 +306,11 @@ as value. <a href="ajwah_bloc/Store/select2.html">[...]</a>
 
 <footer>
   <span class="no-break">
-    ajwah_bloc 1.8.0
+    ajwah_bloc
+      1.8.1
   </span>
 
-  
+  <!-- footer-text placeholder -->
 </footer>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -314,7 +318,7 @@ as value. <a href="ajwah_bloc/Store/select2.html">[...]</a>
 <script src="static-assets/highlight.pack.js"></script>
 <script src="static-assets/URI.js"></script>
 <script src="static-assets/script.js"></script>
-
+<!-- footer placeholder -->
 
 </body>
 

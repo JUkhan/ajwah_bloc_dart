@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
-  <meta name="generator" content="made with love by dartdoc 0.28.2">
+  <meta name="generator" content="made with love by dartdoc 0.29.1">
   <meta name="description" content="ajwah_bloc API docs, for the Dart programming language.">
   <title>ajwah_bloc - Dart API docs</title>
 
@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="static-assets/github.css">
   <link rel="stylesheet" href="static-assets/styles.css">
   <link rel="icon" href="static-assets/favicon.png">
-  
+  <!-- header placeholder -->
 </head>
 
 <body>
@@ -181,7 +181,7 @@ class TodoState extends BaseState&lt;TodoModel&gt; {
 <h2 id="effects">Effects</h2>
 <p>Every effect class must derived from <code>BaseEffect</code> class. And it is optional to pass the
 <code>effectKey</code>. But it's mandatory if you want conditionally remove the effects by using
-<code>store.removeEffectsByKey('effectKey')</code>. The <code>BaseEffect</code> class has one abstract method <code>List&lt;Observable&lt;Action&gt;&gt; registerEffects(Actions action$, Store store$);</code>. This function should be invoked by system passing reference of Actions and Store classes. Please keep in mind that effects should not work until you register them.</p>
+<code>store.removeEffectsByKey('effectKey')</code>. The <code>BaseEffect</code> class has one abstract method <code>List&lt;Stream&lt;Action&gt;&gt; registerEffects(Actions action$, Store store$);</code>. This function should be invoked by system passing reference of Actions and Store classes. Please keep in mind that effects should not work until you register them.</p>
 <h4 id="example">Example</h4>
 <pre class="language-dart"><code class="language-dart">import 'package:ajwah_bloc/ajwah_bloc.dart';
 import 'package:rxdart/rxdart.dart';
@@ -189,14 +189,14 @@ import 'package:rxdart/rxdart.dart';
 import '../../actionTypes.dart';
 
 class CounterEffect extends BaseEffect {
-  Observable&lt;Action&gt; effectForAsyncInc(Actions action$, Store store$) {
+  Stream&lt;Action&gt; effectForAsyncInc(Actions action$, Store store$) {
     return action$
-        .ofType(ActionTypes.AsyncInc)
+        .whereType(ActionTypes.AsyncInc)
         .debounceTime(Duration(milliseconds: 500))
         .mapTo(Action(type: ActionTypes.Inc));
   }
 
-  List&lt;Observable&lt;Action&gt;&gt; registerEffects(Actions action$, Store store$) {
+  List&lt;Stream&lt;Action&gt;&gt; registerEffects(Actions action$, Store store$) {
     return [effectForAsyncInc(action$, store$)];
   }
 }
@@ -207,7 +207,7 @@ class CounterEffect extends BaseEffect {
 <p>Just call the <code>createStore(states:[], effects:[])</code> method from <code>main()</code> function. Now <code>store</code> instance should be available by the helper function <code>store()</code> throughout the application.</p>
 <p>Note:  <code>createStore(...)</code> method return store instance so that you can make a sate provider class(InheritedWidget) as your convenient.</p>
 <p>We can use <code>select</code> method to get <code>state</code> data (passing state name): <code>select('counter')</code>. or <code>select2(...)</code>.
-These methods return <code>Observable&lt;T&gt;</code>. Now pass this Observable inside a StreamBuilder to make a reactive widget.</p>
+These methods return <code>Stream&lt;T&gt;</code>. Now pass this Stream inside a StreamBuilder to make a reactive widget.</p>
 <h3 id="example-2">Example</h3>
 <pre class="language-dart"><code class="language-dart">StreamBuilder&lt;CounterModel&gt;(
     stream: select&lt;CounterModel&gt;('counter'),
@@ -223,7 +223,7 @@ These methods return <code>Observable&lt;T&gt;</code>. Now pass this Observable 
 )        
 </code></pre>
 <p>And also for dispatching state's action - we can use <code>dispatch(...)</code> or <code>store().dispatch(Action(type:'any', payload:any))</code> method.</p>
-<p><a href="https://github.com/JUkhan/ajwah_bloc_dart/tree/master/ajwah_block_examples">Please have a look at here for progressive examples</a></p>
+<p><a href="https://github.com/JUkhan/ajwah_bloc_dart/tree/master/ajwah_bloc_examples">Please have a look at here for progressive examples</a></p>
       </section>
       
         <section class="summary">
@@ -246,10 +246,11 @@ These methods return <code>Observable&lt;T&gt;</code>. Now pass this Observable 
 
 <footer>
   <span class="no-break">
-    ajwah_bloc 1.8.0
+    ajwah_bloc
+      1.8.1
   </span>
 
-  
+  <!-- footer-text placeholder -->
 </footer>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -257,7 +258,7 @@ These methods return <code>Observable&lt;T&gt;</code>. Now pass this Observable 
 <script src="static-assets/highlight.pack.js"></script>
 <script src="static-assets/URI.js"></script>
 <script src="static-assets/script.js"></script>
-
+<!-- footer placeholder -->
 
 </body>
 

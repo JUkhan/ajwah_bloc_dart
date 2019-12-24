@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="static-assets/github.css">
   <link rel="stylesheet" href="static-assets/styles.css">
   <link rel="icon" href="static-assets/favicon.png">
-  
+  <!-- header placeholder -->
 </head>
 
 <body>
@@ -53,32 +53,35 @@
     
     <h5>Store class</h5>
     <ol>
-      <li class="section-title"><a href="ajwah_bloc/Store-class.html#constructors">Constructors</a></li>
-      <li><a href="ajwah_bloc/Store/Store.html">Store</a></li>
     
-      <li class="section-title inherited">
-        <a href="ajwah_bloc/Store-class.html#instance-properties">Properties</a>
-      </li>
-      <li class="inherited"><a href="ajwah_bloc/Store/hashCode.html">hashCode</a></li>
-      <li class="inherited"><a href="ajwah_bloc/Store/runtimeType.html">runtimeType</a></li>
+        <li class="section-title"><a href="ajwah_bloc/Store-class.html#constructors">Constructors</a></li>
+        <li><a href="ajwah_bloc/Store/Store.html">Store</a></li>
     
-      <li class="section-title"><a href="ajwah_bloc/Store-class.html#instance-methods">Methods</a></li>
-      <li><a href="ajwah_bloc/Store/addEffect.html">addEffect</a></li>
-      <li><a href="ajwah_bloc/Store/addEffects.html">addEffects</a></li>
-      <li><a href="ajwah_bloc/Store/addState.html">addState</a></li>
-      <li><a href="ajwah_bloc/Store/dispatch.html">dispatch</a></li>
-      <li><a href="ajwah_bloc/Store/dispose.html">dispose</a></li>
-      <li><a href="ajwah_bloc/Store/exportState.html">exportState</a></li>
-      <li><a href="ajwah_bloc/Store/importState.html">importState</a></li>
-      <li><a href="ajwah_bloc/Store/removeEffectsByKey.html">removeEffectsByKey</a></li>
-      <li><a href="ajwah_bloc/Store/removeStateByStateName.html">removeStateByStateName</a></li>
-      <li><a href="ajwah_bloc/Store/select.html">select</a></li>
-      <li><a href="ajwah_bloc/Store/select2.html">select2</a></li>
-      <li class="inherited"><a href="ajwah_bloc/Store/noSuchMethod.html">noSuchMethod</a></li>
-      <li class="inherited"><a href="ajwah_bloc/Store/toString.html">toString</a></li>
+        <li class="section-title inherited">
+            <a href="ajwah_bloc/Store-class.html#instance-properties">Properties</a>
+        </li>
+        <li class="inherited"><a href="ajwah_bloc/Store/hashCode.html">hashCode</a></li>
+        <li class="inherited"><a href="ajwah_bloc/Store/runtimeType.html">runtimeType</a></li>
     
-      <li class="section-title inherited"><a href="ajwah_bloc/Store-class.html#operators">Operators</a></li>
-      <li class="inherited"><a href="ajwah_bloc/Store/operator_equals.html">operator ==</a></li>
+        <li class="section-title"><a href="ajwah_bloc/Store-class.html#instance-methods">Methods</a></li>
+        <li><a href="ajwah_bloc/Store/addEffect.html">addEffect</a></li>
+        <li><a href="ajwah_bloc/Store/addEffects.html">addEffects</a></li>
+        <li><a href="ajwah_bloc/Store/addState.html">addState</a></li>
+        <li><a href="ajwah_bloc/Store/dispatch.html">dispatch</a></li>
+        <li><a href="ajwah_bloc/Store/dispose.html">dispose</a></li>
+        <li><a href="ajwah_bloc/Store/exportState.html">exportState</a></li>
+        <li><a href="ajwah_bloc/Store/importState.html">importState</a></li>
+        <li><a href="ajwah_bloc/Store/removeEffectsByKey.html">removeEffectsByKey</a></li>
+        <li><a href="ajwah_bloc/Store/removeStateByStateName.html">removeStateByStateName</a></li>
+        <li><a href="ajwah_bloc/Store/select.html">select</a></li>
+        <li><a href="ajwah_bloc/Store/select2.html">select2</a></li>
+        <li class="inherited"><a href="ajwah_bloc/Store/noSuchMethod.html">noSuchMethod</a></li>
+        <li class="inherited"><a href="ajwah_bloc/Store/toString.html">toString</a></li>
+    
+        <li class="section-title inherited"><a href="ajwah_bloc/Store-class.html#operators">Operators</a></li>
+        <li class="inherited"><a href="ajwah_bloc/Store/operator_equals.html">operator ==</a></li>
+    
+    
     
     
     
@@ -89,13 +92,13 @@
       <div><h1><span class="kind-method">select&lt;<wbr><span class="type-parameter">T</span>&gt;</span> method</h1></div>
 
     <section class="multi-line-signature">
-      <span class="returntype">Observable<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
+      <span class="returntype">Stream<span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
             <span class="name ">select</span>
 &lt;<wbr><span class="type-parameter">T</span>&gt;(<wbr><span class="parameter" id="select-param-stateName"><span class="type-annotation">String</span> <span class="parameter-name">stateName</span></span>)
       
     </section>
     <section class="desc markdown">
-      <p>This method takes a single param <strong>String stateName</strong> and return Observable/Stream</p>
+      <p>This method takes a single param <strong>String stateName</strong> and return Stream/Stream</p>
 <p><strong>Example</strong></p>
 <pre class="language-daty"><code class="language-daty">store.select('counter')
 </code></pre>
@@ -103,7 +106,7 @@
     
     <section class="summary source-code" id="source">
       <h2><span>Implementation</span></h2>
-      <pre class="language-dart"><code class="language-dart">Observable&lt;T&gt; select&lt;T&gt;(String stateName) {
+      <pre class="language-dart"><code class="language-dart">Stream&lt;T&gt; select&lt;T&gt;(String stateName) {
   return _storeHelper.select&lt;T&gt;(stateName);
 }</code></pre>
     </section>
@@ -117,10 +120,11 @@
 
 <footer>
   <span class="no-break">
-    ajwah_bloc 1.8.0
+    ajwah_bloc
+      1.8.1
   </span>
 
-  
+  <!-- footer-text placeholder -->
 </footer>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -128,7 +132,7 @@
 <script src="static-assets/highlight.pack.js"></script>
 <script src="static-assets/URI.js"></script>
 <script src="static-assets/script.js"></script>
-
+<!-- footer placeholder -->
 
 </body>
 

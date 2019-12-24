@@ -9,8 +9,7 @@ import 'baseState.dart';
 import 'dispatcher.dart';
 import 'actions.dart';
 
-typedef EffectCallback = Observable<Action> Function(
-    Actions action$, Store store$);
+typedef EffectCallback = Stream<Action> Function(Actions action$, Store store$);
 
 ///A comfortable way to develop reactive widgets. You can dynamically add or remove effects and states and many more.
 class Store {
@@ -45,22 +44,22 @@ class Store {
   ///    .distinct();
   /// ```
   /// Note: You can take any combination from the overall application's state.
-  Observable<T> select2<T>(T callback(Map<String, dynamic> state)) {
+  Stream<T> select2<T>(T callback(Map<String, dynamic> state)) {
     return _storeHelper.select2(callback);
   }
 
-  ///This method takes a single param **String stateName** and return Observable/Stream
+  ///This method takes a single param **String stateName** and return Stream/Stream
   ///
   ///**Example**
   ///```daty
   ///store.select('counter')
   ///```
-  Observable<T> select<T>(String stateName) {
+  Stream<T> select<T>(String stateName) {
     return _storeHelper.select<T>(stateName);
   }
 
   ///This method is usefull to add a single effect passing a callback **(
-  ///Actions action$, Store store$)=>Observable** and **effectKey** on demand.
+  ///Actions action$, Store store$)=>Stream** and **effectKey** on demand.
   ///
   ///**Example**
   ///```dart
@@ -98,9 +97,6 @@ class Store {
 
   ///This method is usefull to add effects passing **effectInstance** on demand.
   Store addEffects(BaseEffect effectInstance) {
-    /*var effect =
-        StreamGroup.merge(effectInstance.registerEffects(_actions, this))
-            .asBroadcastStream();*/
     var effect = MergeStream(effectInstance.registerEffects(_actions, this))
         .asBroadcastStream();
     if (effectInstance.effectKey == null) {
@@ -121,7 +117,7 @@ class Store {
   ///    print(arr[1]);
   ///  });
   /// ```
-  Observable<List<dynamic>> exportState() {
+  Stream<List<dynamic>> exportState() {
     return _storeHelper.exportState();
   }
 

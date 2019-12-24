@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="static-assets/github.css">
   <link rel="stylesheet" href="static-assets/styles.css">
   <link rel="icon" href="static-assets/favicon.png">
-  
+  <!-- header placeholder -->
 </head>
 
 <body>
@@ -61,6 +61,7 @@
     
     
     
+    
       <li class="section-title"><a href="ajwah_bloc/ajwah_bloc-library.html#functions">Functions</a></li>
       <li><a href="ajwah_bloc/createStore.html">createStore</a></li>
       <li><a href="ajwah_bloc/dispatch.html">dispatch</a></li>
@@ -79,15 +80,14 @@
       <div><h1><span class="kind-typedef">EffectCallback</span> typedef </h1></div>
 
     <section class="multi-line-signature">
-        <span class="returntype">Observable<span class="signature">&lt;<wbr><span class="type-parameter"><a href="ajwah_bloc/Action-class.html">Action</a></span>&gt;</span></span>
+        <span class="returntype">Stream<span class="signature">&lt;<wbr><span class="type-parameter"><a href="ajwah_bloc/Action-class.html">Action</a></span>&gt;</span></span>
                 <span class="name ">EffectCallback</span>
 (<wbr><span class="parameter" id="EffectCallback-param-action$"><span class="type-annotation"><a href="ajwah_bloc/Actions-class.html">Actions</a></span> <span class="parameter-name">action$</span>, </span> <span class="parameter" id="EffectCallback-param-store$"><span class="type-annotation"><a href="ajwah_bloc/Store-class.html">Store</a></span> <span class="parameter-name">store$</span></span>)
     </section>
 
         <section class="summary source-code" id="source">
       <h2><span>Implementation</span></h2>
-      <pre class="language-dart"><code class="language-dart">typedef EffectCallback = Observable&lt;Action&gt; Function(
-    Actions action$, Store store$);</code></pre>
+      <pre class="language-dart"><code class="language-dart">typedef EffectCallback = Stream&lt;Action&gt; Function(Actions action$, Store store$);</code></pre>
     </section>
 
   </div> <!-- /.main-content -->
@@ -99,10 +99,11 @@
 
 <footer>
   <span class="no-break">
-    ajwah_bloc 1.8.0
+    ajwah_bloc
+      1.8.1
   </span>
 
-  
+  <!-- footer-text placeholder -->
 </footer>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -110,7 +111,7 @@
 <script src="static-assets/highlight.pack.js"></script>
 <script src="static-assets/URI.js"></script>
 <script src="static-assets/script.js"></script>
-
+<!-- footer placeholder -->
 
 </body>
 

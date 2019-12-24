@@ -1,5 +1,3 @@
-import 'package:rxdart/rxdart.dart';
-
 import 'action.dart';
 import 'actions.dart';
 import 'store.dart';
@@ -11,14 +9,14 @@ import 'store.dart';
 ///**Example**
 ///```dart
 ///class CounterEffect extends BaseEffect {
-///   Observable<Action> effectForAsyncInc(Actions action$, Store store$) {
+///   Stream<Action> effectForAsyncInc(Actions action$, Store store$) {
 ///     return action$
 ///           .ofType(ActionTypes.AsyncInc)
 ///           .debounceTime(Duration(milliseconds: 550))
 ///           .mapTo(Action(type: ActionTypes.Inc));
 ///    }
 ///
-///    List<Observable<Action>> registerEffects(Actions action$, Store store$) {
+///    List<Stream<Action>> registerEffects(Actions action$, Store store$) {
 ///       return [effectForAsyncInc(action$, store$)];
 ///    }
 ///
@@ -36,9 +34,9 @@ abstract class BaseEffect {
   ///
   ///**Example**
   ///```dart
-  ///    List<Observable<Action>> registerEffects(Actions action$, Store store$) {
+  ///    List<Stream<Action>> registerEffects(Actions action$, Store store$) {
   ///       return [effectForAsyncInc(action$, store$)];
   ///    }
   /// ```
-  List<Observable<Action>> registerEffects(Actions action$, Store store$);
+  List<Stream<Action>> registerEffects(Actions action$, Store store$);
 }

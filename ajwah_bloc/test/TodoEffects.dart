@@ -8,8 +8,8 @@ import 'todoApi.dart';
 class TodoEffects extends BaseEffect {
   effectForLoadTodos(Actions action$, Store store$) {
     return action$
-        .ofType(ActionTypes.LoadingTodos)
-        .flatMap((action) => Observable.fromFuture(TodoApi.getTodos()))
+        .whereType(ActionTypes.LoadingTodos)
+        .flatMap((action) => Stream.fromFuture(TodoApi.getTodos()))
         .map((data) => Action(type: ActionTypes.TodosData, payload: data))
         .doOnError((error, stacktrace) => store$.dispatch(
             Action(type: ActionTypes.TodoError, payload: error.toString())));
@@ -17,9 +17,8 @@ class TodoEffects extends BaseEffect {
 
   effectForAddTodos(Actions action$, Store store$) {
     return action$
-        .ofType(ActionTypes.AddTodo)
-        .flatMap(
-            (action) => Observable.fromFuture(TodoApi.addTodo(action.payload)))
+        .whereType(ActionTypes.AddTodo)
+        .flatMap((action) => Stream.fromFuture(TodoApi.addTodo(action.payload)))
         .withLatestFrom<TodoModel, List<Todo>>(
             store$.select('todo'), (a, b) => b.todoList..insert(0, a))
         .map((data) => Action(type: ActionTypes.TodosData, payload: data))
@@ -29,9 +28,9 @@ class TodoEffects extends BaseEffect {
 
   effectForUpdateTodos(Actions action$, Store store$) {
     return action$
-        .ofType(ActionTypes.UpdateTodo)
-        .flatMap((action) =>
-            Observable.fromFuture(TodoApi.updateTodo(action.payload)))
+        .whereType(ActionTypes.UpdateTodo)
+        .flatMap(
+            (action) => Stream.fromFuture(TodoApi.updateTodo(action.payload)))
         .withLatestFrom<TodoModel, List<Todo>>(
             store$.select('todo'), (a, b) => b.todoList)
         .map((data) => Action(type: ActionTypes.TodosData, payload: data))
@@ -41,9 +40,9 @@ class TodoEffects extends BaseEffect {
 
   effectForRemoveTodos(Actions action$, Store store$) {
     return action$
-        .ofType(ActionTypes.RemoveTodo)
-        .flatMap((action) =>
-            Observable.fromFuture(TodoApi.removeTodo(action.payload)))
+        .whereType(ActionTypes.RemoveTodo)
+        .flatMap(
+            (action) => Stream.fromFuture(TodoApi.removeTodo(action.payload)))
         .withLatestFrom<TodoModel, List<Todo>>(
             store$.select('todo'), (todo, b) => b.todoList..remove(todo))
         .map((data) => Action(type: ActionTypes.TodosData, payload: data))
@@ -51,7 +50,7 @@ class TodoEffects extends BaseEffect {
             Action(type: ActionTypes.TodoError, payload: error.toString())));
   }
 
-  List<Observable<Action>> registerEffects(Actions action$, Store store$) {
+  List<Stream<Action>> registerEffects(Actions action$, Store store$) {
     return [
       effectForLoadTodos(action$, store$),
       effectForAddTodos(action$, store$),

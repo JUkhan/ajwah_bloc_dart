@@ -131,7 +131,7 @@ class TodoState extends BaseState<TodoModel> {
 ## Effects
 Every effect class must derived from `BaseEffect` class. And it is optional to pass the
 `effectKey`. But it's mandatory if you want conditionally remove the effects by using
-`store.removeEffectsByKey('effectKey')`. The `BaseEffect` class has one abstract method `List<Observable<Action>> registerEffects(Actions action$, Store store$);`. This function should be invoked by system passing reference of Actions and Store classes. Please keep in mind that effects should not work until you register them.
+`store.removeEffectsByKey('effectKey')`. The `BaseEffect` class has one abstract method `List<Stream<Action>> registerEffects(Actions action$, Store store$);`. This function should be invoked by system passing reference of Actions and Store classes. Please keep in mind that effects should not work until you register them.
 
 #### Example
 ```dart
@@ -141,14 +141,14 @@ import 'package:rxdart/rxdart.dart';
 import '../../actionTypes.dart';
 
 class CounterEffect extends BaseEffect {
-  Observable<Action> effectForAsyncInc(Actions action$, Store store$) {
+  Stream<Action> effectForAsyncInc(Actions action$, Store store$) {
     return action$
-        .ofType(ActionTypes.AsyncInc)
+        .whereType(ActionTypes.AsyncInc)
         .debounceTime(Duration(milliseconds: 500))
         .mapTo(Action(type: ActionTypes.Inc));
   }
 
-  List<Observable<Action>> registerEffects(Actions action$, Store store$) {
+  List<Stream<Action>> registerEffects(Actions action$, Store store$) {
     return [effectForAsyncInc(action$, store$)];
   }
 }
@@ -164,7 +164,7 @@ Just call the `createStore(states:[], effects:[])` method from `main()` function
 Note:  `createStore(...)` method return store instance so that you can make a sate provider class(InheritedWidget) as your convenient.
 
 We can use `select` method to get `state` data (passing state name): `select('counter')`. or `select2(...)`.
-These methods return `Observable<T>`. Now pass this Observable inside a StreamBuilder to make a reactive widget.
+These methods return `Stream<T>`. Now pass this Stream inside a StreamBuilder to make a reactive widget.
 
 ### Example
 
@@ -187,4 +187,4 @@ And also for dispatching state's action - we can use `dispatch(...)` or `store()
 
 
 
-[Please have a look at here for progressive examples](https://github.com/JUkhan/ajwah_bloc_dart/tree/master/ajwah_block_examples)
+[Please have a look at here for progressive examples](https://github.com/JUkhan/ajwah_bloc_dart/tree/master/ajwah_bloc_examples)

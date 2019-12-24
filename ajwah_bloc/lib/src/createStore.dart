@@ -1,5 +1,4 @@
 import 'package:meta/meta.dart';
-import 'package:rxdart/rxdart.dart';
 import 'store.dart';
 import 'baseEffect.dart';
 import 'baseState.dart';
@@ -37,7 +36,7 @@ Store dispatch(String actionType, [dynamic payload]) {
 ///```daty
 ///final _counter$ =select('counter')
 ///```
-Observable<T> select<T>(String stateName) {
+Stream<T> select<T>(String stateName) {
   return _store.select<T>(stateName);
 }
 
@@ -52,6 +51,6 @@ Observable<T> select<T>(String stateName) {
 ///    .distinct();
 /// ```
 /// Note: You can take any combination from the overall application's state.
-Observable<T> select2<T>(T callback(Map<String, dynamic> state)) {
+Stream<T> select2<T>(T callback(Map<String, dynamic> state)) {
   return _store.select2(callback);
 }

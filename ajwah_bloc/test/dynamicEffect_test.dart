@@ -2,6 +2,7 @@ import 'package:ajwah_bloc/src/createStore.dart';
 import 'package:ajwah_bloc/src/store.dart';
 import "package:test/test.dart";
 import "package:ajwah_bloc/src/action.dart";
+import 'package:rxdart/rxdart.dart';
 import 'actionTypes.dart';
 import 'counterEffect.dart';
 import 'counterState.dart';
@@ -32,7 +33,7 @@ void main() {
   test("adding dynamic effect with keyName 'myEffect' removing also", () async {
     store.addEffect(
         (action$, store$) => action$
-            .ofTypes([ActionTypes.AsyncInc, ActionTypes.Dec])
+            .whereTypes([ActionTypes.AsyncInc, ActionTypes.Dec])
             .debounceTime(Duration(milliseconds: 2))
             .mapTo(Action(type: ActionTypes.Inc)),
         effectKey: 'myEffect');
