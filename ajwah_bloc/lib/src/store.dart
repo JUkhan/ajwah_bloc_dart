@@ -49,7 +49,7 @@ class Store {
 
   get value => _store.value;
 
-  dispatch(Action action) {
+  void dispatch(Action action) {
     _dispatcher.add(action);
   }
 
@@ -89,13 +89,13 @@ class Store {
   ///           .debounceTime(Duration(milliseconds: 1000))
   ///           .mapTo(Action(type: ActionTypes.Inc)), 'any-effectKey');
   ///```
-  addEffect(EffectCallback callback, {String effectKey}) {
+  void addEffect(EffectCallback callback, {String effectKey}) {
     removeEffectsByKey(effectKey);
     _subs[effectKey] = callback(_actions, this).listen(dispatch);
   }
 
   ///This method is usefull to remove effects passing **effectKey** on demand.
-  removeEffectsByKey(String effectKey) {
+  void removeEffectsByKey(String effectKey) {
     if (_subs.containsKey(effectKey)) {
       _subs[effectKey].cancel();
       _subs.remove(effectKey);
@@ -103,7 +103,7 @@ class Store {
   }
 
   ///This method is usefull to add a state passing **stateInstance** on demand.
-  addState(BaseState stateInstance) {
+  void addState(BaseState stateInstance) {
     removeStateByStateName(stateInstance.name, false);
     _states.add(stateInstance);
     dispatch(Action(type: 'add_state(${stateInstance.name})'));
@@ -125,7 +125,7 @@ class Store {
   }
 
   ///This method is usefull to add effects passing **effectInstance** on demand.
-  Store addEffects(BaseEffect effectInstance) {
+  void addEffects(BaseEffect effectInstance) {
     var effect = MergeStream(effectInstance.registerEffects(_actions, this))
         .asBroadcastStream();
     if (effectInstance.effectKey == null) {
@@ -134,7 +134,6 @@ class Store {
       removeEffectsByKey(effectInstance.effectKey);
       _subs[effectInstance.effectKey] = effect.listen(dispatch);
     }
-    return this;
   }
 
   ///return latest stream of [action, state] array.

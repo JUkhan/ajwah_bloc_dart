@@ -31,7 +31,7 @@ Store getStore() {
 }
 
 ///This is a helper function of **store().dispatch(Action action).**
-dispatch(String actionType, [dynamic payload]) {
+void dispatch(String actionType, [dynamic payload]) {
   _store.dispatch(Action(type: actionType, payload: payload));
 }
 
@@ -61,22 +61,22 @@ Stream<T> select2<T>(T callback(Map<String, dynamic> state)) {
 }
 
 ///This method is usefull to remove effects passing **effectKey** on demand.
-removeEffectsByKey(String effectKey) {
+void removeEffectsByKey(String effectKey) {
   _store.removeEffectsByKey(effectKey);
 }
 
 ///This method is usefull to add a state passing **stateInstance** on demand.
-addState(BaseState stateInstance) {
+void addState(BaseState stateInstance) {
   _store.addState(stateInstance);
 }
 
 ///This method is usefull to remove a state passing **stateName** on demand.
-removeStateByStateName(String stateName) {
+void removeStateByStateName(String stateName) {
   _store.removeStateByStateName(stateName);
 }
 
 ///This method is usefull to add effects passing **effectInstance** on demand.
-addEffects(BaseEffect effectInstance) {
+void addEffects(BaseEffect effectInstance) {
   _store.addEffects(effectInstance);
 }
 
@@ -100,7 +100,7 @@ Stream<List<dynamic>> exportState() {
 /// var state={'counter':CounterModel(count:5, isLoading:false)};
 /// importState(state);
 /// ```
-importState(Map<String, dynamic> state) {
+void importState(Map<String, dynamic> state) {
   _store.importState(state);
 }
 
@@ -114,6 +114,6 @@ importState(Map<String, dynamic> state) {
 ///           .debounceTime(Duration(milliseconds: 1000))
 ///           .mapTo(Action(type: ActionTypes.Inc)), 'any-effectKey');
 ///```
-addEffect(EffectCallback callback, {String effectKey}) {
+void addEffect(EffectCallback callback, {String effectKey}) {
   _store.addEffect(callback, effectKey: effectKey);
 }
