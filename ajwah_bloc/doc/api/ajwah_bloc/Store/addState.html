@@ -57,9 +57,10 @@
         <li class="section-title"><a href="ajwah_bloc/Store-class.html#constructors">Constructors</a></li>
         <li><a href="ajwah_bloc/Store/Store.html">Store</a></li>
     
-        <li class="section-title inherited">
+        <li class="section-title">
             <a href="ajwah_bloc/Store-class.html#instance-properties">Properties</a>
         </li>
+        <li><a href="ajwah_bloc/Store/value.html">value</a></li>
         <li class="inherited"><a href="ajwah_bloc/Store/hashCode.html">hashCode</a></li>
         <li class="inherited"><a href="ajwah_bloc/Store/runtimeType.html">runtimeType</a></li>
     
@@ -92,7 +93,7 @@
       <div><h1><span class="kind-method">addState</span> method</h1></div>
 
     <section class="multi-line-signature">
-      <span class="returntype"><a href="ajwah_bloc/Store-class.html">Store</a></span>
+      <span class="returntype">dynamic</span>
             <span class="name ">addState</span>
 (<wbr><span class="parameter" id="addState-param-stateInstance"><span class="type-annotation"><a href="ajwah_bloc/BaseState-class.html">BaseState</a></span> <span class="parameter-name">stateInstance</span></span>)
       
@@ -103,9 +104,10 @@
     
     <section class="summary source-code" id="source">
       <h2><span>Implementation</span></h2>
-      <pre class="language-dart"><code class="language-dart">Store addState(BaseState stateInstance) {
-  _storeHelper.addState(stateInstance);
-  return this;
+      <pre class="language-dart"><code class="language-dart">addState(BaseState stateInstance) {
+  removeStateByStateName(stateInstance.name, false);
+  _states.add(stateInstance);
+  dispatch(Action(type: &#39;add_state(${stateInstance.name})&#39;));
 }</code></pre>
     </section>
 
@@ -119,7 +121,7 @@
 <footer>
   <span class="no-break">
     ajwah_bloc
-      1.8.4
+      1.8.5
   </span>
 
   <!-- footer-text placeholder -->

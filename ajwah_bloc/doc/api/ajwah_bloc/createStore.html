@@ -63,11 +63,18 @@
     
     
       <li class="section-title"><a href="ajwah_bloc/ajwah_bloc-library.html#functions">Functions</a></li>
+      <li><a href="ajwah_bloc/addEffect.html">addEffect</a></li>
+      <li><a href="ajwah_bloc/addEffects.html">addEffects</a></li>
+      <li><a href="ajwah_bloc/addState.html">addState</a></li>
       <li><a href="ajwah_bloc/createStore.html">createStore</a></li>
       <li><a href="ajwah_bloc/dispatch.html">dispatch</a></li>
+      <li><a href="ajwah_bloc/exportState.html">exportState</a></li>
+      <li><a href="ajwah_bloc/getStore.html">getStore</a></li>
+      <li><a href="ajwah_bloc/importState.html">importState</a></li>
+      <li><a href="ajwah_bloc/removeEffectsByKey.html">removeEffectsByKey</a></li>
+      <li><a href="ajwah_bloc/removeStateByStateName.html">removeStateByStateName</a></li>
       <li><a href="ajwah_bloc/select.html">select</a></li>
       <li><a href="ajwah_bloc/select2.html">select2</a></li>
-      <li><a href="ajwah_bloc/store.html">store</a></li>
     
     
       <li class="section-title"><a href="ajwah_bloc/ajwah_bloc-library.html#typedefs">Typedefs</a></li>
@@ -80,13 +87,13 @@
       <div><h1><span class="kind-function">createStore</span> function </h1></div>
 
     <section class="multi-line-signature">
-        <span class="returntype"><a href="ajwah_bloc/Store-class.html">Store</a></span>
+        <span class="returntype">dynamic</span>
                 <span class="name ">createStore</span>
-(<wbr>{<span class="parameter" id="createStore-param-states"><span>@required</span> <span class="type-annotation">List<span class="signature">&lt;<wbr><span class="type-parameter"><a href="ajwah_bloc/BaseState-class.html">BaseState</a></span>&gt;</span></span> <span class="parameter-name">states</span>, </span> <span class="parameter" id="createStore-param-effects"><span class="type-annotation">List<span class="signature">&lt;<wbr><span class="type-parameter"><a href="ajwah_bloc/BaseEffect-class.html">BaseEffect</a></span>&gt;</span></span> <span class="parameter-name">effects</span>: <span class="default-value">const []</span></span> })
+(<wbr>{<span class="parameter" id="createStore-param-states"><span class="type-annotation">List<span class="signature">&lt;<wbr><span class="type-parameter"><a href="ajwah_bloc/BaseState-class.html">BaseState</a></span>&gt;</span></span> <span class="parameter-name">states</span>, </span> <span class="parameter" id="createStore-param-effects"><span class="type-annotation">List<span class="signature">&lt;<wbr><span class="type-parameter"><a href="ajwah_bloc/BaseEffect-class.html">BaseEffect</a></span>&gt;</span></span> <span class="parameter-name">effects</span>: <span class="default-value">const []</span>, </span> <span class="parameter" id="createStore-param-block"><span class="type-annotation">bool</span> <span class="parameter-name">block</span>: <span class="default-value">false</span></span> })
     </section>
     <section class="desc markdown">
       <p>This is the entry point of the ajwah store.
-You may pass necessay states and effects through this method.
+You may pass necessay states and effects is optional.
 Also you can dynamically <strong>add</strong> or <strong>remove</strong> state and effect
 using <strong>addState(BaseState stateInstance)</strong> ,<strong>removeStateByStateName(String stateName)</strong>,
 <strong>addEffects(BaseEffect effectInstance)</strong>, <strong>addEffect(EffectCallback callback, {@required String key})</strong>, <strong>removeEffectsByKey(String key)</strong></p>
@@ -94,13 +101,19 @@ using <strong>addState(BaseState stateInstance)</strong> ,<strong>removeStateByS
     
     <section class="summary source-code" id="source">
       <h2><span>Implementation</span></h2>
-      <pre class="language-dart"><code class="language-dart">Store createStore(
-    {@required List&lt;BaseState&gt; states, List&lt;BaseEffect&gt; effects = const []}) {
-  _store = Store(states);
-  effects.forEach((effect) {
-    _store.addEffects(effect);
-  });
-  return _store;
+      <pre class="language-dart"><code class="language-dart">createStore(
+    {List&lt;BaseState&gt; states,
+    List&lt;BaseEffect&gt; effects = const [],
+    bool block = false}) {
+  var fx = () {
+    _store = Store(states);
+    Future.delayed(Duration(seconds: 5));
+    effects.forEach((effect) {
+      _store.addEffects(effect);
+    });
+    return _store;
+  };
+  return block ? fx() : Future.microtask(fx);
 }</code></pre>
     </section>
 
@@ -114,7 +127,7 @@ using <strong>addState(BaseState stateInstance)</strong> ,<strong>removeStateByS
 <footer>
   <span class="no-break">
     ajwah_bloc
-      1.8.4
+      1.8.5
   </span>
 
   <!-- footer-text placeholder -->

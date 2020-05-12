@@ -1,4 +1,5 @@
-import 'dispatcher.dart';
+import 'package:rxdart/subjects.dart';
+
 import 'action.dart';
 
 ///used for making effects applying filters on action type(s).
@@ -7,26 +8,25 @@ import 'action.dart';
 ///```dart
 ///Stream<Action> effectForAsyncInc(Actions action$, Store store$) {
 ///    return action$
-///        .ofType(ActionTypes.AsyncInc)
+///        .whereType(ActionTypes.AsyncInc)
 ///        .debounceTime(Duration(milliseconds: 550))
 ///        .mapTo(Action(type: ActionTypes.Inc));
 ///  }
 ///```
 class Actions {
-  final Dispatcher _dispatcher;
+  final BehaviorSubject<Action> _dispatcher;
   Actions(this._dispatcher);
 
   ///This function takes **String actionType** param
   ///and apply filter on actionType and return Stream<Action>
   Stream<Action> whereType(String actionType) {
-    return _dispatcher.streamController
-        .where((action) => action.type == actionType);
+    return _dispatcher.where((action) => action.type == actionType);
   }
 
   ///This function takes **List<String> actionTypes** param
   ///and apply filter on actionTypes and return Stream<Action>
   Stream<Action> whereTypes(List<String> actionTypes) {
-    return _dispatcher.streamController.where((action) =>
+    return _dispatcher.where((action) =>
         actionTypes.indexWhere((type) => type == action.type) != -1);
   }
 }

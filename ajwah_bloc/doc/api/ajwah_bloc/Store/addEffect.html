@@ -57,9 +57,10 @@
         <li class="section-title"><a href="ajwah_bloc/Store-class.html#constructors">Constructors</a></li>
         <li><a href="ajwah_bloc/Store/Store.html">Store</a></li>
     
-        <li class="section-title inherited">
+        <li class="section-title">
             <a href="ajwah_bloc/Store-class.html#instance-properties">Properties</a>
         </li>
+        <li><a href="ajwah_bloc/Store/value.html">value</a></li>
         <li class="inherited"><a href="ajwah_bloc/Store/hashCode.html">hashCode</a></li>
         <li class="inherited"><a href="ajwah_bloc/Store/runtimeType.html">runtimeType</a></li>
     
@@ -92,17 +93,17 @@
       <div><h1><span class="kind-method">addEffect</span> method</h1></div>
 
     <section class="multi-line-signature">
-      <span class="returntype"><a href="ajwah_bloc/Store-class.html">Store</a></span>
+      <span class="returntype">dynamic</span>
             <span class="name ">addEffect</span>
-(<wbr><span class="parameter" id="addEffect-param-callback"><span class="type-annotation"><a href="ajwah_bloc/EffectCallback.html">EffectCallback</a></span> <span class="parameter-name">callback</span>, {</span> <span class="parameter" id="addEffect-param-effectKey"><span>@required</span> <span class="type-annotation">String</span> <span class="parameter-name">effectKey</span></span> })
+(<wbr><span class="parameter" id="addEffect-param-callback"><span class="type-annotation"><a href="ajwah_bloc/EffectCallback.html">EffectCallback</a></span> <span class="parameter-name">callback</span>, {</span> <span class="parameter" id="addEffect-param-effectKey"><span class="type-annotation">String</span> <span class="parameter-name">effectKey</span></span> })
       
     </section>
     <section class="desc markdown">
       <p>This method is usefull to add a single effect passing a callback <strong>(
 Actions action$, Store store$)=&gt;Stream</strong> and <strong>effectKey</strong> on demand.</p>
 <p><strong>Example</strong></p>
-<pre class="language-dart"><code class="language-dart">store.addEffect((action$, store$)=&gt;action$
-          .ofType(ActionTypes.AsyncInc)
+<pre class="language-dart"><code class="language-dart">addEffect((action$, store$)=&gt;action$
+          .whereType(ActionTypes.AsyncInc)
           .debounceTime(Duration(milliseconds: 1000))
           .mapTo(Action(type: ActionTypes.Inc)), 'any-effectKey');
 </code></pre>
@@ -110,10 +111,9 @@ Actions action$, Store store$)=&gt;Stream</strong> and <strong>effectKey</strong
     
     <section class="summary source-code" id="source">
       <h2><span>Implementation</span></h2>
-      <pre class="language-dart"><code class="language-dart">Store addEffect(EffectCallback callback, {@required String effectKey}) {
+      <pre class="language-dart"><code class="language-dart">addEffect(EffectCallback callback, {String effectKey}) {
   removeEffectsByKey(effectKey);
-  _subs[effectKey] = callback(_actions, this).listen(_dispatcher.dispatch);
-  return this;
+  _subs[effectKey] = callback(_actions, this).listen(dispatch);
 }</code></pre>
     </section>
 
@@ -127,7 +127,7 @@ Actions action$, Store store$)=&gt;Stream</strong> and <strong>effectKey</strong
 <footer>
   <span class="no-break">
     ajwah_bloc
-      1.8.4
+      1.8.5
   </span>
 
   <!-- footer-text placeholder -->

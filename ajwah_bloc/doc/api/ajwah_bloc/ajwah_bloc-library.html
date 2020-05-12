@@ -106,14 +106,42 @@ state <code>name</code> and <code>initialState</code>. <a href="ajwah_bloc/BaseS
       <h2>Functions</h2>
 
       <dl class="callables">
+        <dt id="addEffect" class="callable">
+          <span class="name"><a href="ajwah_bloc/addEffect.html">addEffect</a></span><span class="signature">(<wbr><span class="parameter" id="addEffect-param-callback"><span class="type-annotation"><a href="ajwah_bloc/EffectCallback.html">EffectCallback</a></span> <span class="parameter-name">callback</span>, {</span> <span class="parameter" id="addEffect-param-effectKey"><span class="type-annotation">String</span> <span class="parameter-name">effectKey</span></span> })
+            <span class="returntype parameter">&#8594; dynamic</span>
+          </span>
+                  </dt>
+        <dd>
+          This method is usefull to add a single effect passing a callback <strong>(
+Actions action$, Store store$)=&gt;Stream</strong> and <strong>effectKey</strong> on demand. <a href="ajwah_bloc/addEffect.html">[...]</a>
+                  
+</dd>
+        <dt id="addEffects" class="callable">
+          <span class="name"><a href="ajwah_bloc/addEffects.html">addEffects</a></span><span class="signature">(<wbr><span class="parameter" id="addEffects-param-effectInstance"><span class="type-annotation"><a href="ajwah_bloc/BaseEffect-class.html">BaseEffect</a></span> <span class="parameter-name">effectInstance</span></span>)
+            <span class="returntype parameter">&#8594; dynamic</span>
+          </span>
+                  </dt>
+        <dd>
+          This method is usefull to add effects passing <strong>effectInstance</strong> on demand.
+                  
+</dd>
+        <dt id="addState" class="callable">
+          <span class="name"><a href="ajwah_bloc/addState.html">addState</a></span><span class="signature">(<wbr><span class="parameter" id="addState-param-stateInstance"><span class="type-annotation"><a href="ajwah_bloc/BaseState-class.html">BaseState</a></span> <span class="parameter-name">stateInstance</span></span>)
+            <span class="returntype parameter">&#8594; dynamic</span>
+          </span>
+                  </dt>
+        <dd>
+          This method is usefull to add a state passing <strong>stateInstance</strong> on demand.
+                  
+</dd>
         <dt id="createStore" class="callable">
-          <span class="name"><a href="ajwah_bloc/createStore.html">createStore</a></span><span class="signature">(<wbr>{<span class="parameter" id="createStore-param-states"><span class="type-annotation">List<span class="signature">&lt;<wbr><span class="type-parameter"><a href="ajwah_bloc/BaseState-class.html">BaseState</a></span>&gt;</span></span> <span class="parameter-name">states</span>, </span> <span class="parameter" id="createStore-param-effects"><span class="type-annotation">List<span class="signature">&lt;<wbr><span class="type-parameter"><a href="ajwah_bloc/BaseEffect-class.html">BaseEffect</a></span>&gt;</span></span> <span class="parameter-name">effects</span>: <span class="default-value">const []</span></span> })
-            <span class="returntype parameter">&#8594; <a href="ajwah_bloc/Store-class.html">Store</a></span>
+          <span class="name"><a href="ajwah_bloc/createStore.html">createStore</a></span><span class="signature">(<wbr>{<span class="parameter" id="createStore-param-states"><span class="type-annotation">List<span class="signature">&lt;<wbr><span class="type-parameter"><a href="ajwah_bloc/BaseState-class.html">BaseState</a></span>&gt;</span></span> <span class="parameter-name">states</span>, </span> <span class="parameter" id="createStore-param-effects"><span class="type-annotation">List<span class="signature">&lt;<wbr><span class="type-parameter"><a href="ajwah_bloc/BaseEffect-class.html">BaseEffect</a></span>&gt;</span></span> <span class="parameter-name">effects</span>: <span class="default-value">const []</span>, </span> <span class="parameter" id="createStore-param-block"><span class="type-annotation">bool</span> <span class="parameter-name">block</span>: <span class="default-value">false</span></span> })
+            <span class="returntype parameter">&#8594; dynamic</span>
           </span>
                   </dt>
         <dd>
           This is the entry point of the ajwah store.
-You may pass necessay states and effects through this method.
+You may pass necessay states and effects is optional.
 Also you can dynamically <strong>add</strong> or <strong>remove</strong> state and effect
 using <strong>addState(BaseState stateInstance)</strong> ,<strong>removeStateByStateName(String stateName)</strong>,
 <strong>addEffects(BaseEffect effectInstance)</strong>, <strong>addEffect(EffectCallback callback, {@required String key})</strong>, <strong>removeEffectsByKey(String key)</strong>
@@ -121,11 +149,56 @@ using <strong>addState(BaseState stateInstance)</strong> ,<strong>removeStateByS
 </dd>
         <dt id="dispatch" class="callable">
           <span class="name"><a href="ajwah_bloc/dispatch.html">dispatch</a></span><span class="signature">(<wbr><span class="parameter" id="dispatch-param-actionType"><span class="type-annotation">String</span> <span class="parameter-name">actionType</span>, [</span> <span class="parameter" id="dispatch-param-payload"><span class="type-annotation">dynamic</span> <span class="parameter-name">payload</span></span> ])
-            <span class="returntype parameter">&#8594; <a href="ajwah_bloc/Store-class.html">Store</a></span>
+            <span class="returntype parameter">&#8594; dynamic</span>
           </span>
                   </dt>
         <dd>
           This is a helper function of <strong>store().dispatch(Action action).</strong>
+                  
+</dd>
+        <dt id="exportState" class="callable">
+          <span class="name"><a href="ajwah_bloc/exportState.html">exportState</a></span><span class="signature">(<wbr>)
+            <span class="returntype parameter">&#8594; Stream<span class="signature">&lt;<wbr><span class="type-parameter">List</span>&gt;</span></span>
+          </span>
+                  </dt>
+        <dd>
+          return latest stream of <code>action, state</code> array. <a href="ajwah_bloc/exportState.html">[...]</a>
+                  
+</dd>
+        <dt id="getStore" class="callable">
+          <span class="name"><a href="ajwah_bloc/getStore.html">getStore</a></span><span class="signature">(<wbr>)
+            <span class="returntype parameter">&#8594; <a href="ajwah_bloc/Store-class.html">Store</a></span>
+          </span>
+                  </dt>
+        <dd>
+          return <strong>Store</strong> instance.
+                  
+</dd>
+        <dt id="importState" class="callable">
+          <span class="name"><a href="ajwah_bloc/importState.html">importState</a></span><span class="signature">(<wbr><span class="parameter" id="importState-param-state"><span class="type-annotation">Map<span class="signature">&lt;<wbr><span class="type-parameter">String</span>, <span class="type-parameter">dynamic</span>&gt;</span></span> <span class="parameter-name">state</span></span>)
+            <span class="returntype parameter">&#8594; dynamic</span>
+          </span>
+                  </dt>
+        <dd>
+          state object should be a <strong>Map&lt;String, dynamic&gt; state</strong> <a href="ajwah_bloc/importState.html">[...]</a>
+                  
+</dd>
+        <dt id="removeEffectsByKey" class="callable">
+          <span class="name"><a href="ajwah_bloc/removeEffectsByKey.html">removeEffectsByKey</a></span><span class="signature">(<wbr><span class="parameter" id="removeEffectsByKey-param-effectKey"><span class="type-annotation">String</span> <span class="parameter-name">effectKey</span></span>)
+            <span class="returntype parameter">&#8594; dynamic</span>
+          </span>
+                  </dt>
+        <dd>
+          This method is usefull to remove effects passing <strong>effectKey</strong> on demand.
+                  
+</dd>
+        <dt id="removeStateByStateName" class="callable">
+          <span class="name"><a href="ajwah_bloc/removeStateByStateName.html">removeStateByStateName</a></span><span class="signature">(<wbr><span class="parameter" id="removeStateByStateName-param-stateName"><span class="type-annotation">String</span> <span class="parameter-name">stateName</span></span>)
+            <span class="returntype parameter">&#8594; dynamic</span>
+          </span>
+                  </dt>
+        <dd>
+          This method is usefull to remove a state passing <strong>stateName</strong> on demand.
                   
 </dd>
         <dt id="select" class="callable">
@@ -146,15 +219,6 @@ using <strong>addState(BaseState stateInstance)</strong> ,<strong>removeStateByS
           This method takes a callback which has a single <strong>Map&lt;String, dynamic&gt;</strong> type arg.
 If you pass Map key as a state name then you will get corresponding model instance
 as value. <a href="ajwah_bloc/select2.html">[...]</a>
-                  
-</dd>
-        <dt id="store" class="callable">
-          <span class="name"><a href="ajwah_bloc/store.html">store</a></span><span class="signature">(<wbr>)
-            <span class="returntype parameter">&#8594; <a href="ajwah_bloc/Store-class.html">Store</a></span>
-          </span>
-                  </dt>
-        <dd>
-          return <strong>Store</strong> instance.
                   
 </dd>
       </dl>
@@ -195,11 +259,18 @@ as value. <a href="ajwah_bloc/select2.html">[...]</a>
     
     
       <li class="section-title"><a href="ajwah_bloc/ajwah_bloc-library.html#functions">Functions</a></li>
+      <li><a href="ajwah_bloc/addEffect.html">addEffect</a></li>
+      <li><a href="ajwah_bloc/addEffects.html">addEffects</a></li>
+      <li><a href="ajwah_bloc/addState.html">addState</a></li>
       <li><a href="ajwah_bloc/createStore.html">createStore</a></li>
       <li><a href="ajwah_bloc/dispatch.html">dispatch</a></li>
+      <li><a href="ajwah_bloc/exportState.html">exportState</a></li>
+      <li><a href="ajwah_bloc/getStore.html">getStore</a></li>
+      <li><a href="ajwah_bloc/importState.html">importState</a></li>
+      <li><a href="ajwah_bloc/removeEffectsByKey.html">removeEffectsByKey</a></li>
+      <li><a href="ajwah_bloc/removeStateByStateName.html">removeStateByStateName</a></li>
       <li><a href="ajwah_bloc/select.html">select</a></li>
       <li><a href="ajwah_bloc/select2.html">select2</a></li>
-      <li><a href="ajwah_bloc/store.html">store</a></li>
     
     
       <li class="section-title"><a href="ajwah_bloc/ajwah_bloc-library.html#typedefs">Typedefs</a></li>
@@ -213,7 +284,7 @@ as value. <a href="ajwah_bloc/select2.html">[...]</a>
 <footer>
   <span class="no-break">
     ajwah_bloc
-      1.8.4
+      1.8.5
   </span>
 
   <!-- footer-text placeholder -->

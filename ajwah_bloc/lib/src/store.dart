@@ -1,35 +1,56 @@
 import 'dart:async';
 import 'baseEffect.dart';
 import 'effectSubscription.dart';
-import 'package:meta/meta.dart';
 import 'package:rxdart/rxdart.dart';
-import 'storeHelper.dart';
 import 'action.dart';
 import 'baseState.dart';
-import 'dispatcher.dart';
 import 'actions.dart';
 
 typedef EffectCallback = Stream<Action> Function(Actions action$, Store store$);
 
 ///A comfortable way to develop reactive widgets. You can dynamically add or remove effects and states and many more.
 class Store {
-  Dispatcher _dispatcher;
+  BehaviorSubject<Action> _dispatcher;
+  BehaviorSubject<Map<String, dynamic>> _store;
   Actions _actions;
-  StoreHelper _storeHelper;
+  //StoreHelper _storeHelper;
   Map<String, StreamSubscription<Action>> _subs;
   EffectSubscription _effSub;
+  List<BaseState> _states;
+  Action _action = Action(type: '@@INIT');
+  StreamSubscription _dispatcherSubscription;
 
   Store(List<BaseState> states) {
-    _dispatcher = Dispatcher();
+    _dispatcher = BehaviorSubject<Action>.seeded(_action);
+    _store =
+        BehaviorSubject<Map<String, dynamic>>.seeded(Map<String, dynamic>());
     _actions = Actions(_dispatcher);
-    _storeHelper = StoreHelper(_dispatcher, states);
+    _states = states;
     _subs = Map<String, StreamSubscription<Action>>();
     _effSub = EffectSubscription(_dispatcher);
+    _dispatcherSubscription = _dispatcher.listen((action) {
+      _combineStates(_store.value, action);
+    });
+  }
+  void _combineStates(Map<String, dynamic> state, Action action) {
+    _states.forEach((stateObj) {
+      stateObj
+          .mapActionToState(
+              state[stateObj.name] ?? stateObj.initialState, action)
+          .listen((newSubState) {
+        if (newSubState != state[stateObj.name]) {
+          state[stateObj.name] = newSubState;
+          _action = action;
+          _store.add(state);
+        }
+      });
+    });
   }
 
-  Store dispatch(Action action) {
-    _storeHelper.dispatch(action);
-    return this;
+  get value => _store.value;
+
+  dispatch(Action action) {
+    _dispatcher.add(action);
   }
 
   ///This method takes a callback which has a single **Map<String, dynamic>** type arg.
@@ -45,7 +66,7 @@ class Store {
   /// ```
   /// Note: You can take any combination from the overall application's state.
   Stream<T> select2<T>(T callback(Map<String, dynamic> state)) {
-    return _storeHelper.select2(callback);
+    return _store.map<T>(callback);
   }
 
   ///This method takes a single param **String stateName** and return Stream/Stream
@@ -55,7 +76,7 @@ class Store {
   ///store.select('counter')
   ///```
   Stream<T> select<T>(String stateName) {
-    return _storeHelper.select<T>(stateName);
+    return _store.map<T>((dic) => dic[stateName]);
   }
 
   ///This method is usefull to add a single effect passing a callback **(
@@ -63,36 +84,44 @@ class Store {
   ///
   ///**Example**
   ///```dart
-  ///store.addEffect((action$, store$)=>action$
-  ///           .ofType(ActionTypes.AsyncInc)
+  ///addEffect((action$, store$)=>action$
+  ///           .whereType(ActionTypes.AsyncInc)
   ///           .debounceTime(Duration(milliseconds: 1000))
   ///           .mapTo(Action(type: ActionTypes.Inc)), 'any-effectKey');
   ///```
-  Store addEffect(EffectCallback callback, {@required String effectKey}) {
+  addEffect(EffectCallback callback, {String effectKey}) {
     removeEffectsByKey(effectKey);
-    _subs[effectKey] = callback(_actions, this).listen(_dispatcher.dispatch);
-    return this;
+    _subs[effectKey] = callback(_actions, this).listen(dispatch);
   }
 
   ///This method is usefull to remove effects passing **effectKey** on demand.
-  Store removeEffectsByKey(String effectKey) {
+  removeEffectsByKey(String effectKey) {
     if (_subs.containsKey(effectKey)) {
       _subs[effectKey].cancel();
       _subs.remove(effectKey);
     }
-    return this;
   }
 
   ///This method is usefull to add a state passing **stateInstance** on demand.
-  Store addState(BaseState stateInstance) {
-    _storeHelper.addState(stateInstance);
-    return this;
+  addState(BaseState stateInstance) {
+    removeStateByStateName(stateInstance.name, false);
+    _states.add(stateInstance);
+    dispatch(Action(type: 'add_state(${stateInstance.name})'));
   }
 
   ///This method is usefull to remove a state passing **stateName** on demand.
-  Store removeStateByStateName(String stateName) {
-    _storeHelper.removeStateByStateName(stateName);
-    return this;
+  void removeStateByStateName(String stateName, [bool shouldDispatch = true]) {
+    var index = _states.indexWhere((bs) => bs.name == stateName);
+    if (index != -1) {
+      _states.removeAt(index);
+      if (shouldDispatch) {
+        //dispatch(Action(type: 'remove_state(${stateName})'));
+        _action = Action(type: 'remove_state(${stateName})');
+        var state = value;
+        state.remove(stateName);
+        _store.add(state);
+      }
+    }
   }
 
   ///This method is usefull to add effects passing **effectInstance** on demand.
@@ -103,7 +132,7 @@ class Store {
       _effSub.addEffects(effect);
     } else {
       removeEffectsByKey(effectInstance.effectKey);
-      _subs[effectInstance.effectKey] = effect.listen(_dispatcher.dispatch);
+      _subs[effectInstance.effectKey] = effect.listen(dispatch);
     }
     return this;
   }
@@ -118,7 +147,7 @@ class Store {
   ///  });
   /// ```
   Stream<List<dynamic>> exportState() {
-    return _storeHelper.exportState();
+    return _store.map((state) => [_action, state]);
   }
 
   ///state object should be a **Map<String, dynamic> state**
@@ -129,12 +158,23 @@ class Store {
   /// store.importState(state);
   /// ```
   void importState(Map<String, dynamic> state) {
-    _storeHelper.importState(state);
+    _states.forEach((s) {
+      if (!state.containsKey(s.name)) {
+        state[s.name] = s.initialState;
+      }
+    });
+    _action = Action(type: '@importState');
+    _store.add(state);
   }
 
   ///It's a clean up function.
   void dispose() {
-    _storeHelper.dispose();
+    _subs.forEach((key, value) {
+      value.cancel();
+    });
     _effSub.dispose();
+    _dispatcherSubscription.cancel();
+    _dispatcher.close();
+    _store.close();
   }
 }

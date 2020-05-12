@@ -1,5 +1,6 @@
+import 'package:ajwah_bloc/ajwah_bloc.dart';
 import 'package:ajwah_bloc/src/createStore.dart';
-import 'package:ajwah_bloc/src/store.dart';
+
 import "package:test/test.dart";
 import "package:ajwah_bloc/src/action.dart";
 import 'package:rxdart/rxdart.dart';
@@ -13,17 +14,19 @@ import 'util.dart';
 //dart --pause-isolates-on-exit --enable_asserts --enable-vm-service \
 //  test/.test_coverage.dart
 
-Store storeFactoty() {
-  return createStore(states: [CounterState()]);
+storeFactoty() {
+  return createStore(states: [CounterState()], block: true);
 }
 
 void main() {
-  final store = storeFactoty();
+  Store store = storeFactoty();
   var isFirst = true;
   setUp(() {
     isFirst = true;
   });
-
+  tearDownAll(() {
+    store.dispose();
+  });
   test("initial store should be:{count:0, isLoading:false}", () {
     store.select<CounterModel>('counter').take(1).listen((counterModel) {
       expect(counterModel.count, equals(0));
@@ -38,8 +41,12 @@ void main() {
             .mapTo(Action(type: ActionTypes.Inc)),
         effectKey: 'myEffect');
     await delay(100);
-    dispatch(ActionTypes.AsyncInc);
-    store.select<CounterModel>('counter').take(2).listen((counterModel) {
+    store.dispatch(Action(type: ActionTypes.AsyncInc));
+    store
+        .select<CounterModel>('counter')
+        .skip(1)
+        .take(2)
+        .listen((counterModel) {
       if (isFirst) {
         expect(counterModel.isLoading, equals(true));
       } else {
@@ -48,11 +55,15 @@ void main() {
       isFirst = false;
     });
 
-    await delay(5);
+    await delay(50);
 
     isFirst = true;
-    dispatch(ActionTypes.Dec);
-    store.select<CounterModel>('counter').take(2).listen((counterModel) {
+    store.dispatch(Action(type: ActionTypes.Dec));
+    store
+        .select<CounterModel>('counter')
+        .skip(1)
+        .take(2)
+        .listen((counterModel) {
       if (isFirst) {
         expect(counterModel.count, equals(0));
       } else {
@@ -60,22 +71,26 @@ void main() {
       }
       isFirst = false;
     });
-    await delay(5);
+    await delay(50);
     store.removeEffectsByKey('myEffect');
-    dispatch(ActionTypes.AsyncInc);
-    await delay(5);
+    store.dispatch(Action(type: ActionTypes.AsyncInc));
+    await delay(50);
     store.select<CounterModel>('counter').take(1).listen((counterModel) {
       expect(counterModel.count, equals(1));
     });
   });
 
   test("adding CounterEffect", () async {
-    store.importState({'counter': CounterModel(count: 0, isLoading: false)});
+    store.importState({'counter': CounterModel(count: -1, isLoading: false)});
     store.addEffects(CounterEffect());
 
-    await delay(5);
-    dispatch(ActionTypes.AsyncInc);
-    store.select<CounterModel>('counter').take(2).listen((counterModel) {
+    await delay(100);
+    store.dispatch(Action(type: ActionTypes.AsyncInc));
+    store
+        .select<CounterModel>('counter')
+        .skip(1)
+        .take(2)
+        .listen((counterModel) {
       if (isFirst) {
         expect(counterModel.isLoading, equals(true));
       } else {
@@ -86,9 +101,13 @@ void main() {
 
     await delay(5);
     store.removeEffectsByKey('counterEffect');
-    dispatch(ActionTypes.AsyncInc);
+    store.dispatch(Action(type: ActionTypes.AsyncInc));
     await delay(5);
-    store.select<CounterModel>('counter').take(1).listen((counterModel) {
+    store
+        .select<CounterModel>('counter')
+        .skip(1)
+        .take(1)
+        .listen((counterModel) {
       expect(counterModel.count, equals(1));
     });
   });

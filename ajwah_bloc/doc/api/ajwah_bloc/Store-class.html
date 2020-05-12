@@ -63,11 +63,18 @@
     
     
       <li class="section-title"><a href="ajwah_bloc/ajwah_bloc-library.html#functions">Functions</a></li>
+      <li><a href="ajwah_bloc/addEffect.html">addEffect</a></li>
+      <li><a href="ajwah_bloc/addEffects.html">addEffects</a></li>
+      <li><a href="ajwah_bloc/addState.html">addState</a></li>
       <li><a href="ajwah_bloc/createStore.html">createStore</a></li>
       <li><a href="ajwah_bloc/dispatch.html">dispatch</a></li>
+      <li><a href="ajwah_bloc/exportState.html">exportState</a></li>
+      <li><a href="ajwah_bloc/getStore.html">getStore</a></li>
+      <li><a href="ajwah_bloc/importState.html">importState</a></li>
+      <li><a href="ajwah_bloc/removeEffectsByKey.html">removeEffectsByKey</a></li>
+      <li><a href="ajwah_bloc/removeStateByStateName.html">removeStateByStateName</a></li>
       <li><a href="ajwah_bloc/select.html">select</a></li>
       <li><a href="ajwah_bloc/select2.html">select2</a></li>
-      <li><a href="ajwah_bloc/store.html">store</a></li>
     
     
       <li class="section-title"><a href="ajwah_bloc/ajwah_bloc-library.html#typedefs">Typedefs</a></li>
@@ -97,10 +104,18 @@
       </dl>
     </section>
 
-    <section class="summary offset-anchor inherited" id="instance-properties">
+    <section class="summary offset-anchor" id="instance-properties">
       <h2>Properties</h2>
 
       <dl class="properties">
+        <dt id="value" class="property">
+          <span class="name"><a href="ajwah_bloc/Store/value.html">value</a></span>
+          <span class="signature">&#8594; dynamic</span>         
+        </dt>
+        <dd>
+          
+                  <div class="features">read-only</div>
+</dd>
         <dt id="hashCode" class="property inherited">
           <span class="name"><a href="ajwah_bloc/Store/hashCode.html">hashCode</a></span>
           <span class="signature">&#8594; int</span>         
@@ -125,7 +140,7 @@
       <dl class="callables">
         <dt id="addEffect" class="callable">
           <span class="name"><a href="ajwah_bloc/Store/addEffect.html">addEffect</a></span><span class="signature">(<wbr><span class="parameter" id="addEffect-param-callback"><span class="type-annotation"><a href="ajwah_bloc/EffectCallback.html">EffectCallback</a></span> <span class="parameter-name">callback</span>, {</span> <span class="parameter" id="addEffect-param-effectKey"><span class="type-annotation">String</span> <span class="parameter-name">effectKey</span></span> })
-            <span class="returntype parameter">&#8594; <a href="ajwah_bloc/Store-class.html">Store</a></span>
+            <span class="returntype parameter">&#8594; dynamic</span>
           </span>
                   </dt>
         <dd>
@@ -144,7 +159,7 @@ Actions action$, Store store$)=&gt;Stream</strong> and <strong>effectKey</strong
 </dd>
         <dt id="addState" class="callable">
           <span class="name"><a href="ajwah_bloc/Store/addState.html">addState</a></span><span class="signature">(<wbr><span class="parameter" id="addState-param-stateInstance"><span class="type-annotation"><a href="ajwah_bloc/BaseState-class.html">BaseState</a></span> <span class="parameter-name">stateInstance</span></span>)
-            <span class="returntype parameter">&#8594; <a href="ajwah_bloc/Store-class.html">Store</a></span>
+            <span class="returntype parameter">&#8594; dynamic</span>
           </span>
                   </dt>
         <dd>
@@ -153,7 +168,7 @@ Actions action$, Store store$)=&gt;Stream</strong> and <strong>effectKey</strong
 </dd>
         <dt id="dispatch" class="callable">
           <span class="name"><a href="ajwah_bloc/Store/dispatch.html">dispatch</a></span><span class="signature">(<wbr><span class="parameter" id="dispatch-param-action"><span class="type-annotation"><a href="ajwah_bloc/Action-class.html">Action</a></span> <span class="parameter-name">action</span></span>)
-            <span class="returntype parameter">&#8594; <a href="ajwah_bloc/Store-class.html">Store</a></span>
+            <span class="returntype parameter">&#8594; dynamic</span>
           </span>
                   </dt>
         <dd>
@@ -189,7 +204,7 @@ Actions action$, Store store$)=&gt;Stream</strong> and <strong>effectKey</strong
 </dd>
         <dt id="removeEffectsByKey" class="callable">
           <span class="name"><a href="ajwah_bloc/Store/removeEffectsByKey.html">removeEffectsByKey</a></span><span class="signature">(<wbr><span class="parameter" id="removeEffectsByKey-param-effectKey"><span class="type-annotation">String</span> <span class="parameter-name">effectKey</span></span>)
-            <span class="returntype parameter">&#8594; <a href="ajwah_bloc/Store-class.html">Store</a></span>
+            <span class="returntype parameter">&#8594; dynamic</span>
           </span>
                   </dt>
         <dd>
@@ -197,8 +212,8 @@ Actions action$, Store store$)=&gt;Stream</strong> and <strong>effectKey</strong
                   
 </dd>
         <dt id="removeStateByStateName" class="callable">
-          <span class="name"><a href="ajwah_bloc/Store/removeStateByStateName.html">removeStateByStateName</a></span><span class="signature">(<wbr><span class="parameter" id="removeStateByStateName-param-stateName"><span class="type-annotation">String</span> <span class="parameter-name">stateName</span></span>)
-            <span class="returntype parameter">&#8594; <a href="ajwah_bloc/Store-class.html">Store</a></span>
+          <span class="name"><a href="ajwah_bloc/Store/removeStateByStateName.html">removeStateByStateName</a></span><span class="signature">(<wbr><span class="parameter" id="removeStateByStateName-param-stateName"><span class="type-annotation">String</span> <span class="parameter-name">stateName</span>, [</span> <span class="parameter" id="removeStateByStateName-param-shouldDispatch"><span class="type-annotation">bool</span> <span class="parameter-name">shouldDispatch</span> = <span class="default-value">true</span></span> ])
+            <span class="returntype parameter">&#8594; void</span>
           </span>
                   </dt>
         <dd>
@@ -272,9 +287,10 @@ as value. <a href="ajwah_bloc/Store/select2.html">[...]</a>
       <li class="section-title"><a href="ajwah_bloc/Store-class.html#constructors">Constructors</a></li>
       <li><a href="ajwah_bloc/Store/Store.html">Store</a></li>
     
-      <li class="section-title inherited">
+      <li class="section-title">
         <a href="ajwah_bloc/Store-class.html#instance-properties">Properties</a>
       </li>
+      <li><a href="ajwah_bloc/Store/value.html">value</a></li>
       <li class="inherited"><a href="ajwah_bloc/Store/hashCode.html">hashCode</a></li>
       <li class="inherited"><a href="ajwah_bloc/Store/runtimeType.html">runtimeType</a></li>
     
@@ -307,7 +323,7 @@ as value. <a href="ajwah_bloc/Store/select2.html">[...]</a>
 <footer>
   <span class="no-break">
     ajwah_bloc
-      1.8.4
+      1.8.5
   </span>
 
   <!-- footer-text placeholder -->

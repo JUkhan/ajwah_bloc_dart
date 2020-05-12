@@ -84,13 +84,13 @@
 
     <section class="multi-line-signature">
       
-      <span class="name ">BaseState&lt;<wbr><span class="type-parameter">T</span>&gt;</span>(<wbr>{<span class="parameter" id="-param-name"><span>@required</span> <span class="type-annotation">String</span> <span class="parameter-name">name</span>, </span> <span class="parameter" id="-param-initialState"><span>@required</span> <span class="type-annotation">T</span> <span class="parameter-name">initialState</span></span> })
+      <span class="name ">BaseState&lt;<wbr><span class="type-parameter">T</span>&gt;</span>(<wbr>{<span class="parameter" id="-param-name"><span class="type-annotation">String</span> <span class="parameter-name">name</span>, </span> <span class="parameter" id="-param-initialState"><span class="type-annotation">T</span> <span class="parameter-name">initialState</span></span> })
     </section>
 
     
     <section class="summary source-code" id="source">
       <h2><span>Implementation</span></h2>
-      <pre class="language-dart"><code class="language-dart">BaseState({@required this.name, @required this.initialState})
+      <pre class="language-dart"><code class="language-dart">BaseState({this.name, this.initialState})
     : assert(name != null &amp;&amp; name.isNotEmpty
           ? true
           : throw &#39;state name should not be empty or null.&#39;),
@@ -107,7 +107,7 @@
 <footer>
   <span class="no-break">
     ajwah_bloc
-      1.8.4
+      1.8.5
   </span>
 
   <!-- footer-text placeholder -->

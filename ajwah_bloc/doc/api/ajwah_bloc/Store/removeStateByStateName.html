@@ -57,9 +57,10 @@
         <li class="section-title"><a href="ajwah_bloc/Store-class.html#constructors">Constructors</a></li>
         <li><a href="ajwah_bloc/Store/Store.html">Store</a></li>
     
-        <li class="section-title inherited">
+        <li class="section-title">
             <a href="ajwah_bloc/Store-class.html#instance-properties">Properties</a>
         </li>
+        <li><a href="ajwah_bloc/Store/value.html">value</a></li>
         <li class="inherited"><a href="ajwah_bloc/Store/hashCode.html">hashCode</a></li>
         <li class="inherited"><a href="ajwah_bloc/Store/runtimeType.html">runtimeType</a></li>
     
@@ -92,9 +93,9 @@
       <div><h1><span class="kind-method">removeStateByStateName</span> method</h1></div>
 
     <section class="multi-line-signature">
-      <span class="returntype"><a href="ajwah_bloc/Store-class.html">Store</a></span>
+      <span class="returntype">void</span>
             <span class="name ">removeStateByStateName</span>
-(<wbr><span class="parameter" id="removeStateByStateName-param-stateName"><span class="type-annotation">String</span> <span class="parameter-name">stateName</span></span>)
+(<wbr><span class="parameter" id="removeStateByStateName-param-stateName"><span class="type-annotation">String</span> <span class="parameter-name">stateName</span>, [</span> <span class="parameter" id="removeStateByStateName-param-shouldDispatch"><span class="type-annotation">bool</span> <span class="parameter-name">shouldDispatch</span> = <span class="default-value">true</span></span> ])
       
     </section>
     <section class="desc markdown">
@@ -103,9 +104,18 @@
     
     <section class="summary source-code" id="source">
       <h2><span>Implementation</span></h2>
-      <pre class="language-dart"><code class="language-dart">Store removeStateByStateName(String stateName) {
-  _storeHelper.removeStateByStateName(stateName);
-  return this;
+      <pre class="language-dart"><code class="language-dart">void removeStateByStateName(String stateName, [bool shouldDispatch = true]) {
+  var index = _states.indexWhere((bs) =&gt; bs.name == stateName);
+  if (index != -1) {
+    _states.removeAt(index);
+    if (shouldDispatch) {
+      &#47;&#47;dispatch(Action(type: &#39;remove_state(${stateName})&#39;));
+      _action = Action(type: &#39;remove_state(${stateName})&#39;);
+      var state = value;
+      state.remove(stateName);
+      _store.add(state);
+    }
+  }
 }</code></pre>
     </section>
 
@@ -119,7 +129,7 @@
 <footer>
   <span class="no-break">
     ajwah_bloc
-      1.8.4
+      1.8.5
   </span>
 
   <!-- footer-text placeholder -->

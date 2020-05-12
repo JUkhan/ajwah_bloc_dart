@@ -96,8 +96,7 @@ and apply filter on actionType and return Stream<action></action></p>
     <section class="summary source-code" id="source">
       <h2><span>Implementation</span></h2>
       <pre class="language-dart"><code class="language-dart">Stream&lt;Action&gt; whereType(String actionType) {
-  return _dispatcher.streamController
-      .where((action) =&gt; action.type == actionType);
+  return _dispatcher.where((action) =&gt; action.type == actionType);
 }</code></pre>
     </section>
 
@@ -111,7 +110,7 @@ and apply filter on actionType and return Stream<action></action></p>
 <footer>
   <span class="no-break">
     ajwah_bloc
-      1.8.4
+      1.8.5
   </span>
 
   <!-- footer-text placeholder -->

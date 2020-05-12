@@ -1,5 +1,3 @@
-import 'package:meta/meta.dart';
-
 import 'action.dart';
 
 ///Every state class must derived from `BaseState<T>` class. And it is mandatory to pass the
@@ -54,7 +52,7 @@ import 'action.dart';
 abstract class BaseState<T> {
   final String name;
   final T initialState;
-  BaseState({@required this.name, @required this.initialState})
+  BaseState({this.name, this.initialState})
       : assert(name != null && name.isNotEmpty
             ? true
             : throw 'state name should not be empty or null.'),

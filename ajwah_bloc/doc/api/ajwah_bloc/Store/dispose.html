@@ -57,9 +57,10 @@
         <li class="section-title"><a href="ajwah_bloc/Store-class.html#constructors">Constructors</a></li>
         <li><a href="ajwah_bloc/Store/Store.html">Store</a></li>
     
-        <li class="section-title inherited">
+        <li class="section-title">
             <a href="ajwah_bloc/Store-class.html#instance-properties">Properties</a>
         </li>
+        <li><a href="ajwah_bloc/Store/value.html">value</a></li>
         <li class="inherited"><a href="ajwah_bloc/Store/hashCode.html">hashCode</a></li>
         <li class="inherited"><a href="ajwah_bloc/Store/runtimeType.html">runtimeType</a></li>
     
@@ -104,8 +105,13 @@
     <section class="summary source-code" id="source">
       <h2><span>Implementation</span></h2>
       <pre class="language-dart"><code class="language-dart">void dispose() {
-  _storeHelper.dispose();
+  _subs.forEach((key, value) {
+    value.cancel();
+  });
   _effSub.dispose();
+  _dispatcherSubscription.cancel();
+  _dispatcher.close();
+  _store.close();
 }</code></pre>
     </section>
 
@@ -119,7 +125,7 @@
 <footer>
   <span class="no-break">
     ajwah_bloc
-      1.8.4
+      1.8.5
   </span>
 
   <!-- footer-text placeholder -->

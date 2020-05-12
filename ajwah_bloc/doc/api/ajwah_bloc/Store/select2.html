@@ -57,9 +57,10 @@
         <li class="section-title"><a href="ajwah_bloc/Store-class.html#constructors">Constructors</a></li>
         <li><a href="ajwah_bloc/Store/Store.html">Store</a></li>
     
-        <li class="section-title inherited">
+        <li class="section-title">
             <a href="ajwah_bloc/Store-class.html#instance-properties">Properties</a>
         </li>
+        <li><a href="ajwah_bloc/Store/value.html">value</a></li>
         <li class="inherited"><a href="ajwah_bloc/Store/hashCode.html">hashCode</a></li>
         <li class="inherited"><a href="ajwah_bloc/Store/runtimeType.html">runtimeType</a></li>
     
@@ -113,7 +114,7 @@ as value.</p>
     <section class="summary source-code" id="source">
       <h2><span>Implementation</span></h2>
       <pre class="language-dart"><code class="language-dart">Stream&lt;T&gt; select2&lt;T&gt;(T callback(Map&lt;String, dynamic&gt; state)) {
-  return _storeHelper.select2(callback);
+  return _store.map&lt;T&gt;(callback);
 }</code></pre>
     </section>
 
@@ -127,7 +128,7 @@ as value.</p>
 <footer>
   <span class="no-break">
     ajwah_bloc
-      1.8.4
+      1.8.5
   </span>
 
   <!-- footer-text placeholder -->

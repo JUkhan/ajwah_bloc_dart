@@ -1,59 +1,148 @@
-import 'package:flutter/material.dart';
 import 'package:ajwah_bloc/ajwah_bloc.dart';
-import 'package:ajwah_bloc_examples/appStateProvider.dart';
-import 'package:ajwah_bloc_examples/counter/components/counterComponent.dart';
-import 'package:ajwah_bloc_examples/store/effects/searchEffect.dart';
-import 'package:ajwah_bloc_examples/store/states/SearchState.dart';
-import 'package:ajwah_bloc_examples/store/states/TodoState.dart';
-import 'package:ajwah_bloc_examples/store/states/counterState.dart';
-import 'package:ajwah_bloc_examples/todo/components/todoContainer.dart';
-import 'package:ajwah_bloc_examples/widgets/dynamicStateAndEffect.dart';
-import 'package:ajwah_bloc_examples/wikiSearch/components/searchComponent.dart';
+import 'package:flutter/material.dart';
+import 'package:ajwah_bloc/ajwah_bloc.dart' as store;
 
-void main() => runApp(App(
-    store: createStore(
-        states: [CounterState(), SearchState(), TodoState()],
-        effects: [SearchEffect()])));
+void main() {
+  createStore(states: [CounterState()]);
 
-class App extends StatefulWidget {
-  App({Key key, this.store}) : super(key: key);
-  final Store store;
-  _AppState createState() => _AppState();
+  runApp(MyApp());
 }
 
-class _AppState extends State<App> {
+class MyApp extends StatelessWidget {
   @override
-  void initState() {
-    store().exportState().listen((arr) {
-      print(arr[0].type);
-    });
-    super.initState();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+      home: MyHomePage(),
+    );
   }
+}
+
+class MyHomePage extends StatelessWidget {
+  const MyHomePage({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return AppStateProvider(
-      store: widget.store,
-      child: MaterialApp(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        debugShowCheckedModeBanner: false,
-        initialRoute: "/",
-        routes: {
-          '/': (_) => CounterComponent(),
-          '/search': (_) => SearchComponent(),
-          '/todo': (_) => TodoContainer(),
-          '/dynamicse': (_) => DynamicStateAndEffectWidget()
-        },
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Ajwah Store'),
       ),
+      body: Container(
+          child: Column(
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              RaisedButton(
+                onPressed: () => removeStateByStateName('counter'),
+                child: Text('Remove State'),
+              ),
+              RaisedButton(
+                onPressed: () => addState(CounterState()),
+                child: Text('Add State'),
+              ),
+              RaisedButton(
+                onPressed: () => importState(
+                    {'counter': CounterModel(count: 999, isLoading: false)}),
+                child: Text('Import State'),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              RaisedButton(
+                onPressed: () => dispatch('Inc'),
+                child: Text('+'),
+              ),
+              RaisedButton(
+                onPressed: () => dispatch('Dec'),
+                child: Text('-'),
+              ),
+              RaisedButton(
+                onPressed: () => dispatch('AsyncInc'),
+                child: Text('Async +'),
+              ),
+              StreamBuilder<CounterModel>(
+                stream: select('counter'),
+                builder: (BuildContext context,
+                    AsyncSnapshot<CounterModel> snapshot) {
+                  if (snapshot.hasData) {
+                    return snapshot.data.isLoading
+                        ? CircularProgressIndicator()
+                        : Text(
+                            '  ${snapshot.data.count}',
+                            style: TextStyle(fontSize: 24, color: Colors.blue),
+                          );
+                  }
+                  return Container();
+                },
+              ),
+            ],
+          ),
+          Text(
+            'Export State',
+            style: TextStyle(color: Colors.indigo),
+          ),
+          StreamBuilder(
+            stream: exportState(),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (snapshot.hasData) {
+                var state = snapshot.data[1].length > 0
+                    ? snapshot.data[1]['counter']?.toString() ?? ''
+                    : 'empty';
+                return Container(
+                  child: Text(
+                    'actionType:${snapshot.data[0].type} \nstate:$state',
+                    style: TextStyle(color: Colors.purple, fontSize: 24),
+                  ),
+                );
+              }
+              return Container();
+            },
+          ),
+        ],
+      )),
     );
   }
+}
 
+class CounterModel {
+  final int count;
+  final bool isLoading;
+  CounterModel({this.count, this.isLoading});
+  CounterModel.init() : this(count: 10, isLoading: false);
+  CounterModel copyWith({int count, bool isLoading}) => CounterModel(
+      count: count ?? this.count, isLoading: isLoading ?? this.isLoading);
   @override
-  void dispose() {
-    widget.store.dispose();
-    super.dispose();
+  String toString() {
+    return '{coun:$count, isLoading:$isLoading}';
+  }
+}
+
+class CounterState extends BaseState<CounterModel> {
+  CounterState() : super(name: 'counter', initialState: CounterModel.init());
+
+  Stream<CounterModel> mapActionToState(
+      CounterModel state, store.Action action) async* {
+    switch (action.type) {
+      case 'Inc':
+        yield state.copyWith(count: state.count + 1, isLoading: false);
+        break;
+      case 'Dec':
+        yield state.copyWith(count: state.count - 1, isLoading: false);
+        break;
+      case 'AsyncInc':
+        yield state.copyWith(isLoading: true);
+        await Future.delayed(Duration(seconds: 1));
+        dispatch('Inc');
+        break;
+      default:
+        yield state;
+    }
   }
 }

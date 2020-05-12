@@ -106,83 +106,31 @@ class CounterState extends BaseState&lt;CounterModel&gt; {
 }
 
 </code></pre>
-<h4 id="example-todostate">Example TodoState</h4>
-<pre class="language-dart"><code class="language-dart">import 'package:ajwah_bloc/ajwah_bloc.dart';
-import 'package:ajwah_block_examples/actionTypes.dart';
-import 'package:ajwah_block_examples/todoApi.dart';
-
-class Todo {
-  final int id;
-  final String title;
-  bool completed;
-  Todo({this.id, this.title, this.completed});
-  factory Todo.fromJson(dynamic json) {
-    return Todo(
-        id: json['id'] as int,
-        title: json['title'] as String,
-        completed: json['completed'] as bool);
-  }
-  dynamic toJson() {
-    return {'id': id, 'title': title, 'completed': completed};
-  }
-}
-
-class TodoModel {
-  String message;
-  List&lt;Todo&gt; todoList = [];
-  TodoModel({this.message, this.todoList});
-  TodoModel copyWith({String message, List&lt;Todo&gt; todoList}) {
-    return TodoModel(
-        message: message ?? this.message, todoList: todoList ?? this.todoList);
-  }
-}
-
-class TodoState extends BaseState&lt;TodoModel&gt; {
-  TodoState()
-      : super(name: 'todo', initialState: TodoModel(message: '', todoList: []));
-
-  Stream&lt;TodoModel&gt; mapActionToState(TodoModel state, Action action) async* {
-    try {
-      switch (action.type) {
-        case ActionTypes.LoadingTodos:
-          yield state.copyWith(message: 'Loading todos.');
-          state.todoList = await TodoApi.getTodos();
-          yield state.copyWith(message: '');
-          break;
-        case ActionTypes.AddTodo:
-          yield state.copyWith(message: 'Adding todo.');
-          var todo = await TodoApi.addTodo(action.payload);
-          state.todoList = List.from(state.todoList)..insert(0, todo);
-          yield state.copyWith(message: '');
-          break;
-        case ActionTypes.UpdateTodo:
-          yield state.copyWith(message: 'Updating todo.');
-          await TodoApi.updateTodo(action.payload);
-          state.todoList = List&lt;Todo&gt;.from(state.todoList);
-          yield state.copyWith(message: '');
-          break;
-        case ActionTypes.RemoveTodo:
-          yield state.copyWith(message: 'Removing todo.');
-          var todo = await TodoApi.removeTodo(action.payload);
-          state.todoList =
-              state.todoList.where((it) =&gt; it.id != todo.id).toList();
-          yield state.copyWith(message: '');
-          break;
-        default:
-          yield state;
-      }
-    } catch (err) {
-      yield state.copyWith(message: err.toString());
-    }
-  }
-}
-
+<h2 id="using-state-in-components">Using state in components</h2>
+<p>Ajwah provides a comfortable way to use states in components and dispatching actions.</p>
+<p>Just call the <code>createStore(states:[], /*effects:[] optional*/)</code> method and there you go.</p>
+<p>We can use <code>select</code> method to get <code>state</code> data (passing state name): <code>select('counter')</code>. or <code>select2(...)</code>.
+These methods return <code>Stream&lt;T&gt;</code>. Now pass this Stream inside a StreamBuilder to make a reactive widget.</p>
+<h3 id="example">Example</h3>
+<pre class="language-dart"><code class="language-dart">StreamBuilder&lt;CounterModel&gt;(
+    stream: select&lt;CounterModel&gt;('counter'),
+    builder:(BuildContext context, AsyncSnapshot&lt;CounterModel&gt; snapshot) {
+        if (snapshot.data.isLoading) {
+          return CircularProgressIndicator();
+        }
+        return Text(
+            snapshot.data.count.toString(),
+            style: Theme.of(context).textTheme.title,
+          );
+    },
+)
 </code></pre>
-<h2 id="effects">Effects</h2>
+<p>Also for dispatching state's action - we can use <code>dispatch(...)</code></p>
+<h2 id="effects-optional">Effects (optional)</h2>
 <p>Every effect class must derived from <code>BaseEffect</code> class. And it is optional to pass the
 <code>effectKey</code>. But it's mandatory if you want conditionally remove the effects by using
 <code>store.removeEffectsByKey('effectKey')</code>. The <code>BaseEffect</code> class has one abstract method <code>List&lt;Stream&lt;Action&gt;&gt; registerEffects(Actions action$, Store store$);</code>. This function should be invoked by system passing reference of Actions and Store classes. Please keep in mind that effects should not work until you register them.</p>
-<h4 id="example">Example</h4>
+<h4 id="example-2">Example</h4>
 <pre class="language-dart"><code class="language-dart">import 'package:ajwah_bloc/ajwah_bloc.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -202,28 +150,18 @@ class CounterEffect extends BaseEffect {
 }
 
 </code></pre>
-<h2 id="using-state-in-components">Using state in components</h2>
-<p>Ajwah provides a comfortable way to use states in components and dispatching actions.</p>
-<p>Just call the <code>createStore(states:[], effects:[])</code> method from <code>main()</code> function. Now <code>store</code> instance should be available by the helper function <code>store()</code> throughout the application.</p>
-<p>Note:  <code>createStore(...)</code> method return store instance so that you can make a sate provider class(InheritedWidget) as your convenient.</p>
-<p>We can use <code>select</code> method to get <code>state</code> data (passing state name): <code>select('counter')</code>. or <code>select2(...)</code>.
-These methods return <code>Stream&lt;T&gt;</code>. Now pass this Stream inside a StreamBuilder to make a reactive widget.</p>
-<h3 id="example-2">Example</h3>
-<pre class="language-dart"><code class="language-dart">StreamBuilder&lt;CounterModel&gt;(
-    stream: select&lt;CounterModel&gt;('counter'),
-    builder:(BuildContext context, AsyncSnapshot&lt;CounterModel&gt; snapshot) {
-        if (snapshot.data.isLoading) {
-          return CircularProgressIndicator();
-        }
-        return Text(
-            snapshot.data.count.toString(),
-            style: Theme.of(context).textTheme.title,
-          );
-    },
-)        
+<h3 id="api">Api</h3>
+<pre class="language-dart"><code class="language-dart">dispatch(String actionType, [dynamic payload])
+Stream&lt;T&gt; select&lt;T&gt;(String stateName)
+Stream&lt;T&gt; select2&lt;T&gt;(T callback(Map&lt;String, dynamic&gt; state))
+addState(BaseState stateInstance)
+removeStateByStateName(String stateName)
+addEffects(BaseEffect effectInstance)
+removeEffectsByKey(String effectKey)
+Stream&lt;List&lt;dynamic&gt;&gt; exportState()
+importState(Map&lt;String, dynamic&gt; state)
+addEffect(EffectCallback callback, {String effectKey})
 </code></pre>
-<p>And also for dispatching state's action - we can use <code>dispatch(...)</code> or <code>store().dispatch(Action(type:'any', payload:any))</code> method.</p>
-<p><a href="https://github.com/JUkhan/ajwah_bloc_dart/tree/master/ajwah_bloc_examples">Please have a look at here for progressive examples</a></p>
       </section>
       
         <section class="summary">
@@ -247,7 +185,7 @@ These methods return <code>Stream&lt;T&gt;</code>. Now pass this Stream inside a
 <footer>
   <span class="no-break">
     ajwah_bloc
-      1.8.4
+      1.8.5
   </span>
 
   <!-- footer-text placeholder -->
