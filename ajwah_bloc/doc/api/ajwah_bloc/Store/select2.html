@@ -114,7 +114,7 @@ as value.</p>
     <section class="summary source-code" id="source">
       <h2><span>Implementation</span></h2>
       <pre class="language-dart"><code class="language-dart">Stream&lt;T&gt; select2&lt;T&gt;(T callback(Map&lt;String, dynamic&gt; state)) {
-  return _store.map&lt;T&gt;(callback);
+  return _store.map&lt;T&gt;(callback).distinct();
 }</code></pre>
     </section>
 
@@ -128,7 +128,7 @@ as value.</p>
 <footer>
   <span class="no-break">
     ajwah_bloc
-      1.8.5
+      1.8.6
   </span>
 
   <!-- footer-text placeholder -->

@@ -93,7 +93,7 @@
       <div><h1><span class="kind-method">addEffect</span> method</h1></div>
 
     <section class="multi-line-signature">
-      <span class="returntype">dynamic</span>
+      <span class="returntype">void</span>
             <span class="name ">addEffect</span>
 (<wbr><span class="parameter" id="addEffect-param-callback"><span class="type-annotation"><a href="ajwah_bloc/EffectCallback.html">EffectCallback</a></span> <span class="parameter-name">callback</span>, {</span> <span class="parameter" id="addEffect-param-effectKey"><span class="type-annotation">String</span> <span class="parameter-name">effectKey</span></span> })
       
@@ -111,7 +111,7 @@ Actions action$, Store store$)=&gt;Stream</strong> and <strong>effectKey</strong
     
     <section class="summary source-code" id="source">
       <h2><span>Implementation</span></h2>
-      <pre class="language-dart"><code class="language-dart">addEffect(EffectCallback callback, {String effectKey}) {
+      <pre class="language-dart"><code class="language-dart">void addEffect(EffectCallback callback, {String effectKey}) {
   removeEffectsByKey(effectKey);
   _subs[effectKey] = callback(_actions, this).listen(dispatch);
 }</code></pre>
@@ -127,7 +127,7 @@ Actions action$, Store store$)=&gt;Stream</strong> and <strong>effectKey</strong
 <footer>
   <span class="no-break">
     ajwah_bloc
-      1.8.5
+      1.8.6
   </span>
 
   <!-- footer-text placeholder -->

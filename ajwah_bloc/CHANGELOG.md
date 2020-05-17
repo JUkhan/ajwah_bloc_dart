@@ -78,3 +78,7 @@ fixed: The method dispose should have a return type but doesn't.
 ## 1.8.5
 
 code refactoring and removed meta dependency
+
+## 1.8.6
+
+added minor functionallty and also select retuen distinct value(s)

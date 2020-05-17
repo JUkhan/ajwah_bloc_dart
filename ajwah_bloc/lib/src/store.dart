@@ -66,7 +66,7 @@ class Store {
   /// ```
   /// Note: You can take any combination from the overall application's state.
   Stream<T> select2<T>(T callback(Map<String, dynamic> state)) {
-    return _store.map<T>(callback);
+    return _store.map<T>(callback).distinct();
   }
 
   ///This method takes a single param **String stateName** and return Stream/Stream
@@ -76,7 +76,7 @@ class Store {
   ///store.select('counter')
   ///```
   Stream<T> select<T>(String stateName) {
-    return _store.map<T>((dic) => dic[stateName]);
+    return _store.map<T>((dic) => dic[stateName]).distinct();
   }
 
   ///This method is usefull to add a single effect passing a callback **(
