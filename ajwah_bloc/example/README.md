@@ -7,6 +7,7 @@ import 'package:ajwah_bloc/ajwah_bloc.dart' as store;
 
 void main() {
   createStore(states: [CounterState()]);
+
   runApp(MyApp());
 }
 
@@ -36,79 +37,113 @@ class MyHomePage extends StatelessWidget {
       body: Container(
           child: Column(
         children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              RaisedButton(
-                onPressed: () => removeStateByStateName('counter'),
-                child: Text('Remove State'),
-              ),
-              RaisedButton(
-                onPressed: () => addState(CounterState()),
-                child: Text('Add State'),
-              ),
-              RaisedButton(
-                onPressed: () => importState(
-                    {'counter': CounterModel(count: 999, isLoading: false)}),
-                child: Text('Import State'),
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              RaisedButton(
-                onPressed: () => dispatch('Inc'),
-                child: Text('+'),
-              ),
-              RaisedButton(
-                onPressed: () => dispatch('Dec'),
-                child: Text('-'),
-              ),
-              RaisedButton(
-                onPressed: () => dispatch('AsyncInc'),
-                child: Text('Async +'),
-              ),
-              StreamBuilder<CounterModel>(
-                stream: select('counter'),
-                builder: (BuildContext context,
-                    AsyncSnapshot<CounterModel> snapshot) {
-                  if (snapshot.hasData) {
-                    return snapshot.data.isLoading
-                        ? CircularProgressIndicator()
-                        : Text(
-                            '  ${snapshot.data.count}',
-                            style: TextStyle(fontSize: 24, color: Colors.blue),
-                          );
-                  }
-                  return Container();
-                },
-              ),
-            ],
-          ),
-          Text(
-            'Export State',
-            style: TextStyle(color: Colors.indigo),
-          ),
-          StreamBuilder(
-            stream: exportState(),
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if (snapshot.hasData) {
-                var state = snapshot.data[1].length > 0
-                    ? snapshot.data[1]['counter']?.toString() ?? ''
-                    : 'empty';
-                return Container(
-                  child: Text(
-                    'actionType:${snapshot.data[0].type} \nstate:$state',
-                    style: TextStyle(color: Colors.purple, fontSize: 24),
-                  ),
-                );
-              }
-              return Container();
-            },
-          ),
+          StateOnDemand(),
+          Counter(),
+          ExportState(),
         ],
       )),
+    );
+  }
+}
+
+class Counter extends StatelessWidget {
+  const Counter({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        RaisedButton(
+          onPressed: () => dispatch('Inc'),
+          child: Text('+'),
+        ),
+        RaisedButton(
+          onPressed: () => dispatch('Dec'),
+          child: Text('-'),
+        ),
+        RaisedButton(
+          onPressed: () => dispatch('AsyncInc'),
+          child: Text('Async +'),
+        ),
+        StreamBuilder<CounterModel>(
+          stream: select('counter'),
+          builder:
+              (BuildContext context, AsyncSnapshot<CounterModel> snapshot) {
+            if (snapshot.hasData) {
+              return snapshot.data.isLoading
+                  ? CircularProgressIndicator()
+                  : Text(
+                      '  ${snapshot.data.count}',
+                      style: TextStyle(fontSize: 24, color: Colors.blue),
+                    );
+            }
+            return Container();
+          },
+        ),
+      ],
+    );
+  }
+}
+
+class StateOnDemand extends StatelessWidget {
+  const StateOnDemand({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: <Widget>[
+        RaisedButton(
+          onPressed: () => removeStateByStateName('counter'),
+          child: Text('Remove State'),
+        ),
+        RaisedButton(
+          onPressed: () => addState(CounterState()),
+          child: Text('Add State'),
+        ),
+        RaisedButton(
+          onPressed: () => importState(
+              {'counter': CounterModel(count: 999, isLoading: false)}),
+          child: Text('Import State'),
+        ),
+      ],
+    );
+  }
+}
+
+class ExportState extends StatelessWidget {
+  const ExportState({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+      stream: exportState(),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.hasData) {
+          var state = snapshot.data[1].length > 0
+              ? snapshot.data[1]['counter']?.toString() ?? ''
+              : 'empty';
+          return Container(
+            child: Text.rich(
+              TextSpan(text: 'Export State\n', children: [
+                TextSpan(
+                    text: 'actionType:${snapshot.data[0].type} \nstate:$state',
+                    style: TextStyle(color: Colors.purple, fontSize: 24))
+              ]),
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.indigo, fontSize: 20),
+            ),
+          );
+        }
+        return Container();
+      },
     );
   }
 }
@@ -148,5 +183,6 @@ class CounterState extends BaseState<CounterModel> {
     }
   }
 }
+
 
 ```
