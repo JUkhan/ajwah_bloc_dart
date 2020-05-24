@@ -1,4 +1,4 @@
-[exaple lib/main.dart](https://github.com/JUkhan/ajwah_bloc_dart/tree/master/ajwah_bloc_examples/lib/main.dart)
+[example lib/main.dart](https://github.com/JUkhan/ajwah_bloc_dart/tree/master/ajwah_bloc_examples/lib/main.dart)
 
 ```dart
 import 'package:ajwah_bloc/ajwah_bloc.dart';
