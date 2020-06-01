@@ -30,6 +30,11 @@ Store getStore() {
   return _store;
 }
 
+///return latest state data by state obj.
+dynamic latestState(BaseState obj) {
+  return _store.value[obj.name] ?? obj.initialState;
+}
+
 ///This is a helper function of **store().dispatch(Action action).**
 void dispatch(String actionType, [dynamic payload]) {
   _store.dispatch(Action(type: actionType, payload: payload));

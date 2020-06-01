@@ -179,7 +179,7 @@ class CounterState extends BaseState<CounterModel> {
         dispatch('Inc');
         break;
       default:
-        yield state;
+        yield latestState(this);
     }
   }
 }

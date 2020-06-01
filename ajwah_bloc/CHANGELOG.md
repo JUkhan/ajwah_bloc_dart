@@ -82,3 +82,7 @@ code refactoring and removed meta dependency
 ## 1.8.6
 
 added minor functionallty and also select retuen distinct value(s)
+
+## 1.8.7
+
+update api: latestStateValue(BaseState obj)

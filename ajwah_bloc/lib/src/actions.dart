@@ -1,5 +1,4 @@
 import 'package:rxdart/subjects.dart';
-
 import 'action.dart';
 
 ///used for making effects applying filters on action type(s).

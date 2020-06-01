@@ -39,7 +39,7 @@ class CounterState extends BaseState<CounterModel> {
         yield await getCount(state.count);
         break;
       default:
-        yield state;
+        yield latestState(this);
     }
   }
 
@@ -121,4 +121,5 @@ removeEffectsByKey(String effectKey)
 Stream<List<dynamic>> exportState()
 importState(Map<String, dynamic> state)
 addEffect(EffectCallback callback, {String effectKey})
+latestStateValue(BaseState obj)
 ```
