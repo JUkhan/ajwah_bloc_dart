@@ -1,53 +1,42 @@
 import 'package:ajwah_bloc/ajwah_bloc.dart';
 import 'package:ajwah_bloc/src/createStore.dart';
+import 'package:ajwah_bloc_test/ajwah_bloc_test.dart';
 import "package:test/test.dart";
 import "package:ajwah_bloc/src/action.dart";
 import 'actionTypes.dart';
 import 'counterState.dart';
 import 'TodoState.dart';
-import 'util.dart';
-//pub run test test/ajwah_test.dart
-//dart --pause-isolates-on-exit --enable_asserts --enable-vm-service   test/.test_coverage.dart
-
-storeFactoty() {
-  return createStore(states: [CounterState()], block: true);
-}
 
 void main() {
-  Store store = storeFactoty();
+  Store store;
+
+  setUpAll(() {
+    store = createStore(states: [CounterState()], block: true);
+  });
+
   tearDownAll(() {
     store.dispose();
   });
-  test("initial store should be:{count:0, isLoading:false}", () {
-    store.select<CounterModel>('counter').take(1).listen((counterModel) {
-      expect(counterModel.count, equals(0));
-      expect(counterModel.isLoading, equals(false));
-    });
-  });
 
-  test(
-      "after addState(TodoState()) todo state should be:{message:'', todoList:[]}",
-      () {
-    store.addState(TodoState());
-    store.select<TodoModel>('todo').skip(1).take(1).listen((todoModel) {
-      expect(todoModel.message, equals(''));
-      expect(todoModel.todoList, equals([]));
-    });
-  });
-  test(
+  ajwahTest("initial store should be:{count:0, isLoading:false}",
+      build: () => store.select('counter'), expect: [CounterModel.init()]);
+
+  ajwahTest(
+    "after addState(TodoState()) todo state should be:{message:'', todoList:[]}",
+    build: () {
+      store.addState(TodoState());
+      return store.select('todo');
+    },
+    skip: 1,
+    expect: [isA<TodoModel>()],
+  );
+
+  ajwahTest(
       "after dispatch(actionType: ActionTypes.Dec) counter state should be:{count:-1, isLoading:false}",
-      () {
-    store.dispatch(Action(type: ActionTypes.Dec));
-    //await delay(20);
-    store
-        .select<CounterModel>('counter')
-        .skip(1)
-        .take(1)
-        .listen((counterModel) {
-      expect(counterModel.count, equals(-1));
-      expect(counterModel.isLoading, equals(false));
-    });
-  });
+      build: () => store.select<CounterModel>('counter'),
+      act: () => store.dispatch(Action(type: ActionTypes.Dec)),
+      skip: 1,
+      expect: [CounterModel(count: -1, isLoading: false)]);
 
   test(
       "after dispatch(actionType: ActionTypes.LoadingTodos) todo state should be:{message:'Loading todos.',todoList:[]}",

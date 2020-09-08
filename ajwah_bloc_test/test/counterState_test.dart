@@ -24,11 +24,14 @@ void main() {
       build: () => store.select<CounterModel>('counter'),
       expect: [CounterModel.init()]);
 
-  ajwahTest(
+  ajwahTest<CounterModel>(
       "after dispatch(actionType: ActionTypes.Inc) state should be:{count:1, isLoading:false}",
       build: () => store.select('counter'),
       act: () => store.dispatch(Action(type: ActionTypes.Inc)),
       skip: 1,
+      verify: (models) {
+        expect(models[0].count, 1);
+      },
       expect: [CounterModel(count: 1, isLoading: false)]);
 
   ajwahTest(

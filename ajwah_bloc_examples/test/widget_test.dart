@@ -5,26 +5,56 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:flutter/material.dart';
+import 'package:ajwah_bloc/ajwah_bloc.dart';
+import 'package:ajwah_bloc_test/ajwah_bloc_test.dart';
+
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:ajwahh_block_examples/main.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(MyApp());
-
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+  Store store;
+  setUpAll(() {
+    store = createStore(states: [CounterState()], block: true);
   });
+  ajwahTest(
+    "initial counter state data[10,flase]",
+    build: () => store.select('counter').map((event) => event.toString()),
+    expect: ['{coun:10, isLoading:false}'],
+  );
+  ajwahTest(
+    "check increment[11,false]",
+    build: () => store.select('counter').map((event) => event.toString()),
+    act: () => store.dispatch(Action(type: 'Inc')),
+    skip: 1,
+    expect: ['{coun:11, isLoading:false}'],
+  );
+  ajwahTest(
+    "check decrement[10,false]",
+    build: () => store.select('counter').map((event) => event.toString()),
+    act: () => store.dispatch(Action(type: 'Dec')),
+    skip: 1,
+    expect: ['{coun:10, isLoading:false}'],
+  );
+  print("one");
+  ajwahTest(
+    "check async increment[11,false]",
+    build: () => store.select('counter').map((event) => event.toString()),
+    act: () => store.dispatch(Action(type: 'AsyncInc')),
+    wait: const Duration(milliseconds: 1000),
+    skip: 1,
+    expect: [
+      '{coun:10, isLoading:true}',
+      '{coun:11, isLoading:false}',
+    ],
+  );
+  print('two--');
+  ajwahTest(
+    "check decrement[10,false]",
+    build: () => store.select('counter').map((event) => event.toString()),
+    act: () => store.dispatch(Action(type: 'Dec')),
+    skip: 1,
+    expect: ['{coun:10, isLoading:false}'],
+  );
+  print('three...');
 }

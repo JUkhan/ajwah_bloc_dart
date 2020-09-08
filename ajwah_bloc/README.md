@@ -121,5 +121,5 @@ removeEffectsByKey(String effectKey)
 Stream<List<dynamic>> exportState()
 importState(Map<String, dynamic> state)
 addEffect(EffectCallback callback, {String effectKey})
-latestStateValue(BaseState obj)
+latestState(BaseState obj)
 ```

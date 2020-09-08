@@ -31,9 +31,11 @@ dependencies:
     path: ../ajwah_bloc
 
 dev_dependencies:
+  test: ^1.6.3
   flutter_test:
     sdk: flutter
-
+  ajwah_bloc_test:
+    path: ../ajwah_bloc_test
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

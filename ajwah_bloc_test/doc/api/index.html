@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, user-scalable=no">
+  <meta name="generator" content="made with love by dartdoc 0.32.1">
+  <meta name="description" content="ajwah_bloc_test API docs, for the Dart programming language.">
+  <title>ajwah_bloc_test - Dart API docs</title>
+
+  
+  <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500,400i,400,300|Source+Sans+Pro:400,300,700" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="static-assets/github.css">
+  <link rel="stylesheet" href="static-assets/styles.css">
+  <link rel="icon" href="static-assets/favicon.png">
+
+</head>
+
+<body data-base-href=""
+      data-using-base-href="false">
+
+<div id="overlay-under-drawer"></div>
+
+<header id="title">
+  <button id="sidenav-left-toggle" type="button">&nbsp;</button>
+  <ol class="breadcrumbs gt-separated dark hidden-xs">
+    <li><a href="https://github.com/JUkhan/ajwah_bloc_dart">ajwah_bloc_test package</a></li>
+  </ol>
+  <div class="self-name">ajwah_bloc_test</div>
+  <form class="search navbar-right" role="search">
+    <input type="text" id="search-box" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+  </form>
+</header>
+
+<main>
+
+  <div id="dartdoc-sidebar-left" class="col-xs-6 col-sm-3 col-md-2 sidebar sidebar-offcanvas-left">
+    <header id="header-search-sidebar" class="hidden-l">
+      <form class="search-sidebar" role="search">
+        <input type="text" id="search-sidebar" autocomplete="off" disabled class="form-control typeahead" placeholder="Loading search...">
+      </form>
+    </header>
+    
+    <ol class="breadcrumbs gt-separated dark hidden-l" id="sidebar-nav">
+      <li><a href="https://github.com/JUkhan/ajwah_bloc_dart">ajwah_bloc_test package</a></li>
+    </ol>
+    
+    <h5 class="hidden-xs"><span class="package-name">ajwah_bloc_test</span> <span class="package-kind">package</span></h5>
+    <ol>
+          <li class="section-title">Libraries</li>
+          <li><a href="ajwah_bloc_test/ajwah_bloc_test-library.html">ajwah_bloc_test</a></li>
+    </ol>
+  </div>
+
+  <div id="dartdoc-main-content" class="col-xs-12 col-sm-9 col-md-8 main-content">
+      <section class="desc markdown">
+        <h1 id="ajwah_bloc_test">ajwah_bloc_test</h1>
+<p>A Dart package that makes testing ajwah_bloc easy.</p>
+<h2 id="unit-test-with-bloctest">Unit Test with blocTest</h2>
+<p><code>ajwahStore</code> must notify it's subscriber with it's current state when subscription
+point start listening.</p>
+<p>Creates a new test case with the given <code>description</code>.
+<code>ajwahTest</code> will handle asserting that the <code>store</code> emits the <code>expect</code>ed
+states (in order) after <code>act</code> is executed.</p>
+<p><code>build</code> should be used for initialization and preparation
+and must return part of the <code>stream</code> under test.</p>
+<p><code>act</code> is an optional callback which will be invoked to dispatch action/s under
+test.</p>
+<p><code>skip</code> is an optional <code>int</code> which can be used to skip any number of states.
+<code>skip</code> defaults to 0.</p>
+<p><code>wait</code> is an optional <code>Duration</code> which can be used to wait for
+async operations within the <code>store</code> such as <code>debounceTime</code>.</p>
+<p><code>expect</code> is an optional <code>Iterable</code> of matchers which is expected to emit after
+<code>act</code> is executed.</p>
+<p><code>verify</code> is an optional callback which is invoked after <code>expect</code>
+and can be used for additional verification/assertions.
+<code>verify</code> is called with the emited <code>list of state</code>.</p>
+<p><code>tearDown</code> is an optional callback for clean up if you want.</p>
+<pre class="language-dart"><code class="language-dart">ajwahTest(
+  'CounterState emits [1] when `dispatch('inc')`',
+  build: () =&gt; select('counter'),
+  act: () =&gt; dispatch('inc'),
+  expect: [0, 1],
+);
+</code></pre>
+<p><code>ajwahTest</code> can also be used to test the initial state of the <code>counter</code> state
+by omitting <code>act</code>.</p>
+<pre class="language-dart"><code class="language-dart">ajwahTest(
+  'CounterState emits [0] when nothing is called',
+  build: () =&gt; select('counter'),
+  expect: [0],
+);
+</code></pre>
+<p><code>ajwahTest</code> can also be used to <code>skip</code> any number of emitted states
+before asserting against the expected states.
+<code>skip</code> defaults to 0.</p>
+<pre class="language-dart"><code class="language-dart">ajwahTest(
+  'CounterState emits [2] when dispatch `inc` action twice',
+  build: () =&gt; select('counter'),
+  act: () {
+    dispatch('inc');
+    dispatch('inc');
+  },
+  skip: 2,
+  expect: [2],
+);
+</code></pre>
+<p><code>ajwahTest</code> can also be used to wait for async operations
+by optionally providing a <code>Duration</code> to <code>wait</code>.</p>
+<pre class="language-dart"><code class="language-dart">ajwahTest(
+  'CounterState emits [1] when dispatch `inc` action',
+  build: () =&gt; select('counter'),
+  act: () =&gt; dispatch('inc'),
+  wait: const Duration(milliseconds: 300),
+  expect: [0,1],
+);
+</code></pre>
+<p><code>ajwahTest</code> can also be used to <code>verify</code> internal stream functionality.</p>
+<pre class="language-dart"><code class="language-dart">ajwahTest(
+  'CounterState emits [1] when dispatch `inc` action',
+  build: () =&gt; select('counter'),
+  act: () =&gt; dispatch('inc'),
+  expect: [0, 1],
+  verify: (_) {
+    verify(repository.someMethod(any)).called(1);
+  }
+);
+</code></pre>
+<p><strong>Note:</strong> when using <code>ajwahTest</code> with state classes which don't override
+<code>==</code> and <code>hashCode</code> you can provide an <code>Iterable</code> of matchers instead of
+explicit state instances.</p>
+<pre class="language-dart"><code class="language-dart">ajwahTest(
+ 'emits [CounterModel] when dispatch `inc` action',
+ build: () =&gt; select('counter'),
+ act: () =&gt;  dispatch('inc'),
+ expect: [isA&lt;CounterModel&gt;()],
+);
+</code></pre>
+      </section>
+      
+        <section class="summary">
+            <h2>Libraries</h2>
+          <dl>
+            <dt id="ajwah_bloc_test">
+              <span class="name"><a href="ajwah_bloc_test/ajwah_bloc_test-library.html">ajwah_bloc_test</a></span>             
+            </dt>
+            <dd>
+               
+            </dd>
+          </dl>
+        </section>
+
+  </div> <!-- /.main-content -->
+
+  <div id="dartdoc-sidebar-right" class="col-xs-6 col-sm-6 col-md-2 sidebar sidebar-offcanvas-right">
+  </div>
+
+</main>
+
+<footer>
+  <span class="no-break">
+    ajwah_bloc_test
+      0.1.0
+  </span>
+
+</footer>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="static-assets/typeahead.bundle.min.js"></script>
+<script src="static-assets/highlight.pack.js"></script>
+<script src="static-assets/URI.js"></script>
+<script src="static-assets/script.js"></script>
+
+
+</body>
+
+</html>
