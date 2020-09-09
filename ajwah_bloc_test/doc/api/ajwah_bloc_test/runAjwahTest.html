@@ -87,7 +87,10 @@
 </ol>
 ), </span></li>
 <li><span class="parameter" id="runAjwahTest-param-errors"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.9.2/dart-core/Iterable-class.html">Iterable</a></span> <span class="parameter-name">errors</span>, </span></li>
-<li><span class="parameter" id="runAjwahTest-param-tearDown"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.9.2/dart-core/Function-class.html">Function</a></span> <span class="parameter-name">tearDown</span>}</span></li>
+<li><span class="parameter" id="runAjwahTest-param-tearDown"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.9.2/dart-core/Function-class.html">Function</a></span> <span class="parameter-name">tearDown</span>, </span></li>
+<li><span class="parameter" id="runAjwahTest-param-log"><span class="type-annotation">dynamic</span> <span class="parameter-name">log</span>(<ol class="parameter-list"><li><span class="parameter" id="param-models"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.9.2/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">State</span>&gt;</span></span> <span class="parameter-name">models</span></span></li>
+</ol>
+)}</span></li>
 </ol>)
     </section>
     <section class="desc markdown">
@@ -108,6 +111,7 @@ Future&lt;void&gt; runAjwahTest&lt;State&gt;(
   Function(List&lt;State&gt; models) verify,
   Iterable errors,
   Function tearDown,
+  Function(List&lt;State&gt; models) log,
 }) async {
   final unhandledErrors = &lt;Object&gt;[];
   await runZoned(
@@ -118,6 +122,7 @@ Future&lt;void&gt; runAjwahTest&lt;State&gt;(
       await act?.call();
       if (wait != null) await Future&lt;void&gt;.delayed(wait);
       await Future&lt;void&gt;.delayed(Duration.zero);
+      await log?.call(states);
       if (expect != null) test.expect(states, expect);
       await subscription.cancel();
       await verify?.call(states);
@@ -141,7 +146,7 @@ Future&lt;void&gt; runAjwahTest&lt;State&gt;(
 <footer>
   <span class="no-break">
     ajwah_bloc_test
-      0.1.0
+      0.1.1
   </span>
 
 </footer>

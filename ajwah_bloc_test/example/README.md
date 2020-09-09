@@ -1,44 +1,192 @@
-## CounterModel and CounterState
+**Here is the [git hub](https://github.com/JUkhan/flutter_test_project) repo to run on your locals!**
+
+## ActionTypes.dart
 
 ```dart
 
-class CounterModel {
-  final int count;
-  final bool isLoading;
-  CounterModel({this.count, this.isLoading});
-  CounterModel.init() : this(count: 0, isLoading: false);
-  CounterModel copyWith({int count, bool isLoading}) => CounterModel(
-      count: count ?? this.count, isLoading: isLoading ?? this.isLoading);
-  @override
-  String toString() {
-    return '{coun:$count, isLoading:$isLoading}';
-  }
-  @override
-  bool operator ==(other) =>
-      other is CounterModel &&
-      other.isLoading == isLoading &&
-      other.count == count;
-
-  @override
-  int get hashCode => count.hashCode;
+class ActionTypes {
+  static const String ChangeTheme = "change_theme";
+  static const String FetchTodo = "FetchTodo";
+  static const String FetchTodos = "FetchTodos";
+  static const String SaveTodo = "SaveTodo";
+  static const String UpdateTodo = "UpdateTodo";
 }
 
-class CounterState extends BaseState<CounterModel> {
-  CounterState() : super(name: 'counter', initialState: CounterModel.init());
 
-  Stream<CounterModel> mapActionToState(
-      CounterModel state, store.Action action) async* {
+```
+
+## AsyncData.dart
+
+```dart
+import 'package:ajwah_bloc/ajwah_bloc.dart';
+
+Action getAction(String actionType, [dynamic payload]) {
+  return Action(type: actionType, payload: payload);
+}
+
+enum AsyncStatus { Loading, Loaded, Error }
+
+class AsyncData<T> {
+  final T data;
+  final AsyncStatus asyncStatus;
+  final String error;
+  AsyncData({this.data, this.asyncStatus, this.error});
+
+  AsyncData.loaded(T data)
+      : this(
+          data: data,
+          asyncStatus: AsyncStatus.Loaded,
+          error: null,
+        );
+
+  AsyncData.error(String message)
+      : this(
+          data: null,
+          asyncStatus: AsyncStatus.Error,
+          error: message,
+        );
+  AsyncData.loading()
+      : this(
+          data: null,
+          asyncStatus: AsyncStatus.Loading,
+          error: null,
+        );
+}
+
+String baseUrl = "https://jsonplaceholder.typicode.com/";
+```
+
+## Todo.dart
+
+```dart
+class Todo {
+  final int userId;
+  final int id;
+  final String title;
+  final bool completed;
+  Todo({this.userId, this.id, this.title, this.completed});
+  factory Todo.fromJson(Map<String, dynamic> json) {
+    return Todo(
+      userId: json['userId'] as int,
+      id: json['id'] as int,
+      title: json['title'] as String,
+      completed: json['completed'] as bool,
+    );
+  }
+  Map<String, dynamic> toJson() {
+    return {'id': id, 'userId': userId, 'title': title, 'completed': completed};
+  }
+}
+
+```
+
+## TodoApi.dart
+
+```dart
+import 'package:flutter_test_myself/models/Todo.dart';
+import 'package:flutter_test_myself/utils/AsyncData.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+class TodoApi {
+  http.Client client;
+
+  TodoApi() {
+    client = http.Client();
+  }
+  TodoApi.withMocks({this.client});
+
+  Future<Todo> fetchTodo(String path) {
+    return client
+        .get(baseUrl + path)
+        .then((response) => json.decode(response.body))
+        .then((jsond) => Todo.fromJson(jsond));
+  }
+
+  Future<List<Todo>> fetchTodos(String path) {
+    return client
+        .get(baseUrl + path)
+        .then((response) => json.decode(response.body) as List<dynamic>)
+        .then((data) => data.map((e) => Todo.fromJson(e)).toList());
+  }
+
+  Future<Todo> saveTodo(String path, Todo todo) {
+    return client
+        .post(
+          baseUrl + path,
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(todo),
+        )
+        .then((response) => json.decode(response.body))
+        .then((json) => Todo.fromJson(json));
+  }
+
+  Future<Todo> updateTodo(String path, Todo todo) {
+    return client
+        .put(
+          baseUrl + path,
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(todo),
+        )
+        .then((response) => json.decode(response.body))
+        .then((json) => Todo.fromJson(json));
+  }
+}
+
+
+```
+
+## TodoState.dart
+
+```dart
+import 'package:ajwah_bloc/ajwah_bloc.dart';
+import 'package:flutter_test_myself/models/Todo.dart';
+import 'package:flutter_test_myself/services/todoApi.dart';
+import 'package:flutter_test_myself/utils/ActionTypes.dart';
+import 'package:flutter_test_myself/utils/AsyncData.dart';
+import 'package:get_it/get_it.dart';
+
+class TodoModel {
+  final AsyncData<Todo> todo;
+  final AsyncData<List<Todo>> todos;
+
+  TodoModel({
+    this.todo,
+    this.todos,
+  });
+
+  TodoModel copyWith({
+    AsyncData<Todo> todo,
+    AsyncData<List<Todo>> todos,
+  }) {
+    return TodoModel(
+      todo: todo ?? this.todo,
+      todos: todos ?? this.todos,
+    );
+  }
+
+  TodoModel.init()
+      : this(todo: AsyncData.loading(), todos: AsyncData.loading());
+}
+
+class TodoState extends BaseState<TodoModel> {
+  TodoState() : super(name: "todo", initialState: TodoModel.init());
+  var api = GetIt.I<TodoApi>();
+  @override
+  Stream<TodoModel> mapActionToState(TodoModel state, Action action) async* {
     switch (action.type) {
-      case 'Inc':
-        yield state.copyWith(count: state.count + 1, isLoading: false);
-        break;
-      case 'Dec':
-        yield state.copyWith(count: state.count - 1, isLoading: false);
-        break;
-      case 'AsyncInc':
-        yield state.copyWith(isLoading: true);
-        await Future.delayed(Duration(seconds: 1));
-        dispatch('Inc');
+      case ActionTypes.FetchTodo:
+        yield state.copyWith(todo: AsyncData.loading());
+        try {
+          var data = await api.fetchTodo('todos/2');
+          yield state.copyWith(todo: AsyncData.loaded(data));
+        } catch (ex) {
+          yield state.copyWith(todo: AsyncData.error(ex.toString()));
+        }
         break;
       default:
         yield latestState(this);
@@ -46,126 +194,57 @@ class CounterState extends BaseState<CounterModel> {
   }
 }
 
-class CounterEffect extends BaseEffect {
-  CounterEffect() : super(effectKey: 'counterEffect');
-  Stream<Action> effectForAsyncInc(Actions action$, Store store$) {
-    return action$
-        .whereType(ActionTypes.AsyncInc)
-        .debounceTime(Duration(milliseconds: 2))
-        .mapTo(Action(type: ActionTypes.Inc));
-  }
-
-  List<Stream<Action>> registerEffects(Actions action$, Store store$) {
-    return [effectForAsyncInc(action$, store$)];
-  }
-}
 
 ```
 
-## testing
+## todo_test.dart
 
 ```dart
 import 'package:ajwah_bloc/ajwah_bloc.dart';
-import 'package:ajwah_bloc/src/createStore.dart';
+import 'package:get_it/get_it.dart';
+import 'package:http/http.dart' as http;
 import 'package:ajwah_bloc_test/ajwah_bloc_test.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_test_myself/services/todoApi.dart';
+import 'package:flutter_test_myself/store/TodoState.dart';
+import 'package:flutter_test_myself/utils/ActionTypes.dart';
+import 'package:flutter_test_myself/utils/AsyncData.dart';
+import 'package:mockito/mockito.dart';
 
-import "package:test/test.dart";
-import "package:ajwah_bloc/src/action.dart";
-import 'package:rxdart/rxdart.dart';
-import 'actionTypes.dart';
-import 'counterEffect.dart';
-import 'counterState.dart';
+class MockClient extends Mock implements http.Client {}
 
 void main() {
   Store store;
-
+  MockClient client;
   setUpAll(() {
-    store = createStore(states: [CounterState()], block: true);
+    client = MockClient();
+    GetIt.I.registerSingleton<TodoApi>(TodoApi.withMocks(client: client));
+    store = createStore(states: [TodoState()]);
   });
-
   tearDownAll(() {
     store.dispose();
   });
-
-  ajwahTest("initial store should be:{count:0, isLoading:false}",
-      build: () => store.select<CounterModel>('counter'),
-      expect: [CounterModel.init()]);
-
-  ajwahTest("adding dynamic effect with keyName 'myEffect' removing also",
+  ajwahTest<TodoModel>(
+      "emits a loading state then result state when api call succeeds",
       build: () {
-        store
-            .importState({'counter': CounterModel(count: 0, isLoading: false)});
-        store.addEffect(
-            (action$, store$) => action$
-                .whereTypes([ActionTypes.AsyncInc, ActionTypes.Dec])
-                .debounceTime(Duration(milliseconds: 2))
-                .mapTo(Action(type: ActionTypes.Inc)),
-            effectKey: 'myEffect');
-        return store.select('counter');
-      },
-      act: () {
-        store.dispatch(Action(type: ActionTypes.AsyncInc));
+        when(client.get(baseUrl + 'todos/2')).thenAnswer((_) async =>
+            http.Response(
+                '{"id":2,"userId":1,"title":"learn ajwah_bloc","completed":false}',
+                202));
+
+        return store.select("todo");
       },
       skip: 1,
-      wait: const Duration(milliseconds: 5),
-      expect: [
-        CounterModel(count: 0, isLoading: true),
-        CounterModel(count: 1, isLoading: false),
-      ],
-      tearDown: () {
-        store.removeEffectsByKey('myEffect');
-      });
-
-  ajwahTest(
-    "Async inc should not working now",
-    build: () {
-      return store.select<CounterModel>('counter');
-    },
-    act: () {
-      store.dispatch(Action(type: ActionTypes.AsyncInc));
-    },
-    skip: 1,
-    expect: [
-      CounterModel(count: 1, isLoading: true),
-    ],
-  );
-
-  ajwahTest("adding CounterEffect() and removed also",
-      build: () {
-        store
-            .importState({'counter': CounterModel(count: 0, isLoading: false)});
-        store.addEffects(CounterEffect());
-        return store.select<CounterModel>('counter');
+      log: (arr) {
+        print(arr[1].todo.data.title);
       },
-      act: () {
-        store.dispatch(Action(type: ActionTypes.AsyncInc));
-      },
-      wait: const Duration(milliseconds: 10),
-      skip: 1,
-      expect: [
-        CounterModel(count: 0, isLoading: true),
-        CounterModel(count: 1, isLoading: false),
-      ],
-      tearDown: () {
-        store.removeEffectsByKey('counterEffect');
+      act: () => store.dispatch(getAction(ActionTypes.FetchTodo)),
+      expect: [isA<TodoModel>(), isA<TodoModel>()],
+      verify: (arr) {
+        expect(arr[0].todo.asyncStatus, AsyncStatus.Loading);
+        expect(arr[1].todo.asyncStatus, AsyncStatus.Loaded);
+        expect(arr[1].todo.data.title, "learn ajwah_bloc");
       });
-
-  ajwahTest(
-    "last Async inc should not working now",
-    build: () {
-      store.importState({'counter': CounterModel(count: 1, isLoading: false)});
-      return store.select<CounterModel>('counter');
-    },
-    act: () {
-      store.dispatch(Action(type: ActionTypes.AsyncInc));
-    },
-    skip: 1,
-    expect: [
-      CounterModel(count: 1, isLoading: true),
-    ],
-  );
 }
-
-
 
 ```

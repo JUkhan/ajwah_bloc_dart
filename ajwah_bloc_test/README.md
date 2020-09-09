@@ -1,8 +1,8 @@
 # ajwah_bloc_test
 
-A Dart package that makes testing ajwah_bloc easy.
+A Dart package that makes testing ajwah_bloc easy. Built to work with [ajwah_bloc](https://pub.dev/packages/ajwah_bloc) and [mockito](https://pub.dev/packages/mockito).
 
-## Unit Test with blocTest
+## Unit Test with ajwah_bloc_test
 
 [ajwahStore] must notify it's subscriber with it's current state when subscription
 point start listening.
@@ -31,6 +31,9 @@ and can be used for additional verification/assertions.
 [verify] is called with the emited `list of state`.
 
 [tearDown] is an optional callback for clean up if you want.
+
+[log] is an optional callback which is invoked before [expect].
+[log] is called with the emited `list of state`.
 
 ```dart
 ajwahTest(

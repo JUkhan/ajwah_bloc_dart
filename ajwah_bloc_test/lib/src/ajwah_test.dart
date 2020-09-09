@@ -32,6 +32,9 @@ import 'package:test/test.dart' as test;
 ///
 /// [tearDown] is an optional callback for clean up if you want.
 ///
+/// [log] is an optional callback which is invoked before [expect].
+/// [log] is called with the emited `list of state`.
+///
 /// ```dart
 /// ajwahTest(
 ///   'CounterState emits [1] when `dispatch('inc')`',
@@ -119,6 +122,7 @@ void ajwahTest<State>(
   Function(List<State> models) verify,
   Iterable errors,
   Function tearDown,
+  Function(List<State> models) log,
 }) {
   test.test(description, () async {
     await runAjwahTest<State>(
@@ -131,6 +135,7 @@ void ajwahTest<State>(
       verify: verify,
       errors: errors,
       tearDown: tearDown,
+      log: log,
     );
   });
 }
@@ -148,6 +153,7 @@ Future<void> runAjwahTest<State>(
   Function(List<State> models) verify,
   Iterable errors,
   Function tearDown,
+  Function(List<State> models) log,
 }) async {
   final unhandledErrors = <Object>[];
   await runZoned(
@@ -158,6 +164,7 @@ Future<void> runAjwahTest<State>(
       await act?.call();
       if (wait != null) await Future<void>.delayed(wait);
       await Future<void>.delayed(Duration.zero);
+      await log?.call(states);
       if (expect != null) test.expect(states, expect);
       await subscription.cancel();
       await verify?.call(states);

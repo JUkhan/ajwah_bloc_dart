@@ -15,7 +15,7 @@ import 'package:ajwahh_block_examples/main.dart';
 void main() {
   Store store;
   setUpAll(() {
-    store = createStore(states: [CounterState()], block: true);
+    store = createStore(states: [CounterState()]);
   });
   ajwahTest(
     "initial counter state data[10,flase]",
@@ -36,7 +36,7 @@ void main() {
     skip: 1,
     expect: ['{coun:10, isLoading:false}'],
   );
-  print("one");
+
   ajwahTest(
     "check async increment[11,false]",
     build: () => store.select('counter').map((event) => event.toString()),
@@ -48,7 +48,7 @@ void main() {
       '{coun:11, isLoading:false}',
     ],
   );
-  print('two--');
+
   ajwahTest(
     "check decrement[10,false]",
     build: () => store.select('counter').map((event) => event.toString()),
@@ -56,5 +56,4 @@ void main() {
     skip: 1,
     expect: ['{coun:10, isLoading:false}'],
   );
-  print('three...');
 }

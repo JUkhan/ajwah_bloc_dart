@@ -86,3 +86,7 @@ added minor functionallty and also select retuen distinct value(s)
 ## 1.8.7
 
 update api: latestStateValue(BaseState obj)
+
+## 1.8.8
+
+update api: crateStore(...) rerurn Store instance

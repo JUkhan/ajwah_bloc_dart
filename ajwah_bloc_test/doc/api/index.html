@@ -56,8 +56,8 @@
   <div id="dartdoc-main-content" class="col-xs-12 col-sm-9 col-md-8 main-content">
       <section class="desc markdown">
         <h1 id="ajwah_bloc_test">ajwah_bloc_test</h1>
-<p>A Dart package that makes testing ajwah_bloc easy.</p>
-<h2 id="unit-test-with-bloctest">Unit Test with blocTest</h2>
+<p>A Dart package that makes testing ajwah_bloc easy. Built to work with <a href="https://pub.dev/packages/ajwah_bloc">ajwah_bloc</a> and <a href="https://pub.dev/packages/mockito">mockito</a>.</p>
+<h2 id="unit-test-with-ajwah_bloc_test">Unit Test with ajwah_bloc_test</h2>
 <p><code>ajwahStore</code> must notify it's subscriber with it's current state when subscription
 point start listening.</p>
 <p>Creates a new test case with the given <code>description</code>.
@@ -77,6 +77,8 @@ async operations within the <code>store</code> such as <code>debounceTime</code>
 and can be used for additional verification/assertions.
 <code>verify</code> is called with the emited <code>list of state</code>.</p>
 <p><code>tearDown</code> is an optional callback for clean up if you want.</p>
+<p><code>log</code> is an optional callback which is invoked before <code>expect</code>.
+<code>log</code> is called with the emited <code>list of state</code>.</p>
 <pre class="language-dart"><code class="language-dart">ajwahTest(
   'CounterState emits [1] when `dispatch('inc')`',
   build: () =&gt; select('counter'),
@@ -161,7 +163,7 @@ explicit state instances.</p>
 <footer>
   <span class="no-break">
     ajwah_bloc_test
-      0.1.0
+      0.1.1
   </span>
 
 </footer>

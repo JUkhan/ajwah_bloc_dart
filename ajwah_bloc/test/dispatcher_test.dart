@@ -13,7 +13,7 @@ void main() {
   Store store;
 
   setUpAll(() {
-    store = createStore(states: [CounterState()], block: true);
+    store = createStore(states: [CounterState()]);
   });
 
   tearDownAll(() {

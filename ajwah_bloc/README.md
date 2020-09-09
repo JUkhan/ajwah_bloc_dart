@@ -2,6 +2,8 @@
 
 Rx based state management library. Manage your application's states, effects, and actions easy way.
 
+**Learn more about testing `ajwah_bloc` with [ajwah_bloc_test](https://pub.dev/packages/ajwah_bloc_test)!**
+
 ## States
 
 Every state class must derived from `BaseState<T>` class. And it is mandatory to pass the

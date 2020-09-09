@@ -87,7 +87,10 @@
 </ol>
 ), </span></li>
 <li><span class="parameter" id="ajwahTest-param-errors"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.9.2/dart-core/Iterable-class.html">Iterable</a></span> <span class="parameter-name">errors</span>, </span></li>
-<li><span class="parameter" id="ajwahTest-param-tearDown"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.9.2/dart-core/Function-class.html">Function</a></span> <span class="parameter-name">tearDown</span>}</span></li>
+<li><span class="parameter" id="ajwahTest-param-tearDown"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.9.2/dart-core/Function-class.html">Function</a></span> <span class="parameter-name">tearDown</span>, </span></li>
+<li><span class="parameter" id="ajwahTest-param-log"><span class="type-annotation">dynamic</span> <span class="parameter-name">log</span>(<ol class="parameter-list"><li><span class="parameter" id="param-models"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.9.2/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter">State</span>&gt;</span></span> <span class="parameter-name">models</span></span></li>
+</ol>
+)}</span></li>
 </ol>)
     </section>
     <section class="desc markdown">
@@ -110,6 +113,8 @@ async operations within the <code>store</code> such as <code>debounceTime</code>
 and can be used for additional verification/assertions.
 <code>verify</code> is called with the emited <code>list of state</code>.</p>
 <p><code>tearDown</code> is an optional callback for clean up if you want.</p>
+<p><code>log</code> is an optional callback which is invoked before <code>expect</code>.
+<code>log</code> is called with the emited <code>list of state</code>.</p>
 <pre class="language-dart"><code class="language-dart">ajwahTest(
   'CounterState emits [1] when `dispatch('inc')`',
   build: () =&gt; select('counter'),
@@ -195,6 +200,9 @@ explicit state instances.</p>
 &#47;&#47;&#47; [verify] is called with the emited `list of state`.
 &#47;&#47;&#47;
 &#47;&#47;&#47; [tearDown] is an optional callback for clean up if you want.
+&#47;&#47;&#47;
+&#47;&#47;&#47; [log] is an optional callback which is invoked before [expect].
+&#47;&#47;&#47; [log] is called with the emited `list of state`.
 &#47;&#47;&#47;
 &#47;&#47;&#47; ```dart
 &#47;&#47;&#47; ajwahTest(
@@ -283,6 +291,7 @@ void ajwahTest&lt;State&gt;(
   Function(List&lt;State&gt; models) verify,
   Iterable errors,
   Function tearDown,
+  Function(List&lt;State&gt; models) log,
 }) {
   test.test(description, () async {
     await runAjwahTest&lt;State&gt;(
@@ -295,6 +304,7 @@ void ajwahTest&lt;State&gt;(
       verify: verify,
       errors: errors,
       tearDown: tearDown,
+      log: log,
     );
   });
 }</code></pre>
@@ -310,7 +320,7 @@ void ajwahTest&lt;State&gt;(
 <footer>
   <span class="no-break">
     ajwah_bloc_test
-      0.1.0
+      0.1.1
   </span>
 
 </footer>
