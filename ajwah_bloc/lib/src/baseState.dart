@@ -1,4 +1,5 @@
 import 'action.dart';
+import 'store.dart';
 
 ///Every state class must derived from `BaseState<T>` class. And it is mandatory to pass the
 ///state `name` and `initialState`.
@@ -23,7 +24,7 @@ import 'action.dart';
 ///  CounterState() : super(name: 'counter', initialState: CounterModel.init());
 ///
 ///  Stream<CounterModel> mapActionToState(
-///      CounterModel state, Action action) async* {
+///      CounterModel state, Action action, Store store) async* {
 ///    switch (action.type) {
 ///      case ActionTypes.Inc:
 ///        state.count++;
@@ -38,7 +39,7 @@ import 'action.dart';
 ///        yield await getCount(state.count);
 ///        break;
 ///      default:
-///        yield state;
+///        yield getState(store);
 ///    }
 ///  }
 ///
@@ -52,11 +53,16 @@ import 'action.dart';
 abstract class BaseState<T> {
   final String name;
   final T initialState;
+
   BaseState({this.name, this.initialState})
       : assert(name != null && name.isNotEmpty
             ? true
             : throw 'state name should not be empty or null.'),
         assert(initialState != null);
+
+  T getState(Store store) {
+    return store.value[name] ?? initialState;
+  }
 
   ///This method should be invoked by sysytem passing current state and action.
   ///You should mutate the state based on action
@@ -74,6 +80,6 @@ abstract class BaseState<T> {
   ///   }
   /// ```
 
-  Stream<T> mapActionToState(T state, Action action);
+  Stream<T> mapActionToState(T state, Action action, Store store);
   //T reduce(T state, Action action);
 }

@@ -36,7 +36,7 @@ class Store {
     _states.forEach((stateObj) {
       stateObj
           .mapActionToState(
-              state[stateObj.name] ?? stateObj.initialState, action)
+              state[stateObj.name] ?? stateObj.initialState, action, this)
           .listen((newSubState) {
         if (newSubState != state[stateObj.name]) {
           state[stateObj.name] = newSubState;
@@ -49,8 +49,12 @@ class Store {
 
   get value => _store.value;
 
-  void dispatch(Action action) {
+  void dispatcH(Action action) {
     _dispatcher.add(action);
+  }
+
+  void dispatch(String actionType, [dynamic payload]) {
+    _dispatcher.add(Action(type: actionType, payload: payload));
   }
 
   ///This method takes a callback which has a single **Map<String, dynamic>** type arg.
@@ -65,7 +69,7 @@ class Store {
   ///    .distinct();
   /// ```
   /// Note: You can take any combination from the overall application's state.
-  Stream<T> select2<T>(T callback(Map<String, dynamic> state)) {
+  Stream<T> selectMany<T>(T callback(Map<String, dynamic> state)) {
     return _store.map<T>(callback).distinct();
   }
 
@@ -91,7 +95,7 @@ class Store {
   ///```
   void addEffect(EffectCallback callback, {String effectKey}) {
     removeEffectsByKey(effectKey);
-    _subs[effectKey] = callback(_actions, this).listen(dispatch);
+    _subs[effectKey] = callback(_actions, this).listen(dispatcH);
   }
 
   ///This method is usefull to remove effects passing **effectKey** on demand.
@@ -106,7 +110,7 @@ class Store {
   void addState(BaseState stateInstance) {
     removeStateByStateName(stateInstance.name, false);
     _states.add(stateInstance);
-    dispatch(Action(type: 'add_state(${stateInstance.name})'));
+    dispatcH(Action(type: 'add_state(${stateInstance.name})'));
   }
 
   ///This method is usefull to remove a state passing **stateName** on demand.
@@ -132,7 +136,7 @@ class Store {
       _effSub.addEffects(effect);
     } else {
       removeEffectsByKey(effectInstance.effectKey);
-      _subs[effectInstance.effectKey] = effect.listen(dispatch);
+      _subs[effectInstance.effectKey] = effect.listen(dispatcH);
     }
   }
 

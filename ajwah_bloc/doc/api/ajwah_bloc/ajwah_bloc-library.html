@@ -135,16 +135,12 @@ Actions action$, Store store$)=&gt;Stream</strong> and <strong>effectKey</strong
                   
 </dd>
         <dt id="createStore" class="callable">
-          <span class="name"><a href="../ajwah_bloc/createStore.html">createStore</a></span><span class="signature">(<wbr><span class="parameter" id="createStore-param-states">{<span class="type-annotation"><a href="https://api.dart.dev/stable/2.9.2/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../ajwah_bloc/BaseState-class.html">BaseState</a></span>&gt;</span></span> <span class="parameter-name">states</span>, </span><wbr><span class="parameter" id="createStore-param-effects"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.9.2/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../ajwah_bloc/BaseEffect-class.html">BaseEffect</a></span>&gt;</span></span> <span class="parameter-name">effects</span>: <span class="default-value">const []</span>}</span><wbr>)
+          <span class="name"><a href="../ajwah_bloc/createStore.html">createStore</a></span><span class="signature">(<wbr><span class="parameter" id="createStore-param-states">{<span class="type-annotation"><a href="https://api.dart.dev/stable/2.9.2/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../ajwah_bloc/BaseState-class.html">BaseState</a></span>&gt;</span></span> <span class="parameter-name">states</span>, </span><wbr><span class="parameter" id="createStore-param-effects"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.9.2/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../ajwah_bloc/BaseEffect-class.html">BaseEffect</a></span>&gt;</span></span> <span class="parameter-name">effects</span>: <span class="default-value">const []</span>, </span><wbr><span class="parameter" id="createStore-param-enableGlobalApi"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.9.2/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">enableGlobalApi</span>: <span class="default-value">false</span>}</span><wbr>)
             <span class="returntype parameter">&#8594; <a href="../ajwah_bloc/Store-class.html">Store</a></span>
           </span>
                   </dt>
         <dd>
-          This is the entry point of the ajwah store.
-You may pass necessay states and effects is optional.
-Also you can dynamically <strong>add</strong> or <strong>remove</strong> state and effect
-using <strong>addState(BaseState stateInstance)</strong> ,<strong>removeStateByStateName(String stateName)</strong>,
-<strong>addEffects(BaseEffect effectInstance)</strong>, <strong>addEffect(EffectCallback callback, {@required String key})</strong>, <strong>removeEffectsByKey(String key)</strong> 
+          This is the entry point of the ajwah store. <a href="../ajwah_bloc/createStore.html">[...]</a>
                   
 </dd>
         <dt id="dispatch" class="callable">
@@ -165,15 +161,6 @@ using <strong>addState(BaseState stateInstance)</strong> ,<strong>removeStateByS
           return latest stream of <code>action, state</code> array. <a href="../ajwah_bloc/exportState.html">[...]</a>
                   
 </dd>
-        <dt id="getStore" class="callable">
-          <span class="name"><a href="../ajwah_bloc/getStore.html">getStore</a></span><span class="signature">(<wbr>)
-            <span class="returntype parameter">&#8594; <a href="../ajwah_bloc/Store-class.html">Store</a></span>
-          </span>
-                  </dt>
-        <dd>
-          return <strong>Store</strong> instance. 
-                  
-</dd>
         <dt id="importState" class="callable">
           <span class="name"><a href="../ajwah_bloc/importState.html">importState</a></span><span class="signature">(<wbr><span class="parameter" id="importState-param-state"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.9.2/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/2.9.2/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span></span> <span class="parameter-name">state</span></span><wbr>)
             <span class="returntype parameter">&#8594; void</span>
@@ -181,15 +168,6 @@ using <strong>addState(BaseState stateInstance)</strong> ,<strong>removeStateByS
                   </dt>
         <dd>
           state object should be a <strong>Map&lt;String, dynamic&gt; state</strong> <a href="../ajwah_bloc/importState.html">[...]</a>
-                  
-</dd>
-        <dt id="latestState" class="callable">
-          <span class="name"><a href="../ajwah_bloc/latestState.html">latestState</a></span><span class="signature">(<wbr><span class="parameter" id="latestState-param-obj"><span class="type-annotation"><a href="../ajwah_bloc/BaseState-class.html">BaseState</a></span> <span class="parameter-name">obj</span></span><wbr>)
-            <span class="returntype parameter">&#8594; dynamic</span>
-          </span>
-                  </dt>
-        <dd>
-          return latest state data by state obj. 
                   
 </dd>
         <dt id="removeEffectsByKey" class="callable">
@@ -219,15 +197,15 @@ using <strong>addState(BaseState stateInstance)</strong> ,<strong>removeStateByS
           This is a helper function of <strong>store().select(String stateName).</strong> <a href="../ajwah_bloc/select.html">[...]</a>
                   
 </dd>
-        <dt id="select2" class="callable">
-          <span class="name"><a href="../ajwah_bloc/select2.html">select2</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="select2-param-callback"><span class="type-annotation">T</span> <span class="parameter-name">callback</span>(<span class="parameter" id="param-state"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.9.2/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/2.9.2/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span></span> <span class="parameter-name">state</span></span><wbr>)</span><wbr>)
+        <dt id="selectMany" class="callable">
+          <span class="name"><a href="../ajwah_bloc/selectMany.html">selectMany</a></span><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span><span class="signature">(<wbr><span class="parameter" id="selectMany-param-callback"><span class="type-annotation">T</span> <span class="parameter-name">callback</span>(<span class="parameter" id="param-state"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.9.2/dart-core/Map-class.html">Map</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="https://api.dart.dev/stable/2.9.2/dart-core/String-class.html">String</a></span>, <span class="type-parameter">dynamic</span>&gt;</span></span> <span class="parameter-name">state</span></span><wbr>)</span><wbr>)
             <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/2.9.2/dart-async/Stream-class.html">Stream</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
           </span>
                   </dt>
         <dd>
           This method takes a callback which has a single <strong>Map&lt;String, dynamic&gt;</strong> type arg.
 If you pass Map key as a state name then you will get corresponding model instance
-as value. <a href="../ajwah_bloc/select2.html">[...]</a>
+as value. <a href="../ajwah_bloc/selectMany.html">[...]</a>
                   
 </dd>
       </dl>
@@ -274,13 +252,11 @@ as value. <a href="../ajwah_bloc/select2.html">[...]</a>
       <li><a href="../ajwah_bloc/createStore.html">createStore</a></li>
       <li><a href="../ajwah_bloc/dispatch.html">dispatch</a></li>
       <li><a href="../ajwah_bloc/exportState.html">exportState</a></li>
-      <li><a href="../ajwah_bloc/getStore.html">getStore</a></li>
       <li><a href="../ajwah_bloc/importState.html">importState</a></li>
-      <li><a href="../ajwah_bloc/latestState.html">latestState</a></li>
       <li><a href="../ajwah_bloc/removeEffectsByKey.html">removeEffectsByKey</a></li>
       <li><a href="../ajwah_bloc/removeStateByStateName.html">removeStateByStateName</a></li>
       <li><a href="../ajwah_bloc/select.html">select</a></li>
-      <li><a href="../ajwah_bloc/select2.html">select2</a></li>
+      <li><a href="../ajwah_bloc/selectMany.html">selectMany</a></li>
     
     
       <li class="section-title"><a href="../ajwah_bloc/ajwah_bloc-library.html#typedefs">Typedefs</a></li>
@@ -294,7 +270,7 @@ as value. <a href="../ajwah_bloc/select2.html">[...]</a>
 <footer>
   <span class="no-break">
     ajwah_bloc
-      1.8.8
+      1.8.10
   </span>
 
 </footer>

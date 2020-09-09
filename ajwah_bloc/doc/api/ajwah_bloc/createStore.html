@@ -69,13 +69,11 @@
       <li><a href="../ajwah_bloc/createStore.html">createStore</a></li>
       <li><a href="../ajwah_bloc/dispatch.html">dispatch</a></li>
       <li><a href="../ajwah_bloc/exportState.html">exportState</a></li>
-      <li><a href="../ajwah_bloc/getStore.html">getStore</a></li>
       <li><a href="../ajwah_bloc/importState.html">importState</a></li>
-      <li><a href="../ajwah_bloc/latestState.html">latestState</a></li>
       <li><a href="../ajwah_bloc/removeEffectsByKey.html">removeEffectsByKey</a></li>
       <li><a href="../ajwah_bloc/removeStateByStateName.html">removeStateByStateName</a></li>
       <li><a href="../ajwah_bloc/select.html">select</a></li>
-      <li><a href="../ajwah_bloc/select2.html">select2</a></li>
+      <li><a href="../ajwah_bloc/selectMany.html">selectMany</a></li>
     
     
       <li class="section-title"><a href="../ajwah_bloc/ajwah_bloc-library.html#typedefs">Typedefs</a></li>
@@ -91,30 +89,40 @@
         <span class="returntype"><a href="../ajwah_bloc/Store-class.html">Store</a></span>
                 <span class="name ">createStore</span>
 (<wbr><ol class="parameter-list"><li><span class="parameter" id="createStore-param-states">{<span class="type-annotation"><a href="https://api.dart.dev/stable/2.9.2/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../ajwah_bloc/BaseState-class.html">BaseState</a></span>&gt;</span></span> <span class="parameter-name">states</span>, </span></li>
-<li><span class="parameter" id="createStore-param-effects"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.9.2/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../ajwah_bloc/BaseEffect-class.html">BaseEffect</a></span>&gt;</span></span> <span class="parameter-name">effects</span>: <span class="default-value">const []</span>}</span></li>
+<li><span class="parameter" id="createStore-param-effects"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.9.2/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../ajwah_bloc/BaseEffect-class.html">BaseEffect</a></span>&gt;</span></span> <span class="parameter-name">effects</span>: <span class="default-value">const []</span>, </span></li>
+<li><span class="parameter" id="createStore-param-enableGlobalApi"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.9.2/dart-core/bool-class.html">bool</a></span> <span class="parameter-name">enableGlobalApi</span>: <span class="default-value">false</span>}</span></li>
 </ol>)
     </section>
     <section class="desc markdown">
-      <p>This is the entry point of the ajwah store.
-You may pass necessay states and effects is optional.
-Also you can dynamically <strong>add</strong> or <strong>remove</strong> state and effect
+      <p>This is the entry point of the ajwah store.</p>
+<p><code>states</code> is a mandatory param. And it should not be null or empty.</p>
+<p><code>effects</code> is an optional param.</p>
+<p><code>enableGlobalApi</code> by default it is <code>false</code>. If you pass <code>true</code> then global
+functions like dispatch(), select() etc should be exposed.</p>
+<p>Also you can dynamically <strong>add</strong> or <strong>remove</strong> state and effect
 using <strong>addState(BaseState stateInstance)</strong> ,<strong>removeStateByStateName(String stateName)</strong>,
 <strong>addEffects(BaseEffect effectInstance)</strong>, <strong>addEffect(EffectCallback callback, {@required String key})</strong>, <strong>removeEffectsByKey(String key)</strong></p>
     </section>
     
     <section class="summary source-code" id="source">
       <h2><span>Implementation</span></h2>
-      <pre class="language-dart"><code class="language-dart">Store createStore({
-  List&lt;BaseState&gt; states,
-  List&lt;BaseEffect&gt; effects = const [],
-}) {
-  _store = Store(states);
+      <pre class="language-dart"><code class="language-dart">Store createStore(
+    {List&lt;BaseState&gt; states,
+    List&lt;BaseEffect&gt; effects = const [],
+    bool enableGlobalApi = false}) {
+  assert(states != null &amp;&amp; states.length &gt; 0
+      ? true
+      : throw &#39;states should not be null or empty.&#39;);
+
+  var store = Store(states);
 
   effects.forEach((effect) {
-    _store.addEffects(effect);
+    store.addEffects(effect);
   });
-
-  return _store;
+  if (enableGlobalApi) {
+    _store = store;
+  }
+  return store;
 }</code></pre>
     </section>
 
@@ -128,7 +136,7 @@ using <strong>addState(BaseState stateInstance)</strong> ,<strong>removeStateByS
 <footer>
   <span class="no-break">
     ajwah_bloc
-      1.8.8
+      1.8.10
   </span>
 
 </footer>

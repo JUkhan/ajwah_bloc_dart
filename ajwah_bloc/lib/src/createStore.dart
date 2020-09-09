@@ -1,41 +1,47 @@
 import 'store.dart';
 import 'baseEffect.dart';
 import 'baseState.dart';
-import 'action.dart';
 
 Store _store;
 
 ///This is the entry point of the ajwah store.
-///You may pass necessay states and effects is optional.
+///
+///[states] is a mandatory param. And it should not be null or empty.
+///
+///[effects] is an optional param.
+///
+///[enableGlobalApi] by default it is `false`. If you pass `true` then global
+///functions like dispatch(), select() etc should be exposed.
+///
 ///Also you can dynamically **add** or **remove** state and effect
 ///using **addState(BaseState stateInstance)** ,**removeStateByStateName(String stateName)**,
 ///**addEffects(BaseEffect effectInstance)**, **addEffect(EffectCallback callback, {@required String key})**, **removeEffectsByKey(String key)**
-Store createStore({
-  List<BaseState> states,
-  List<BaseEffect> effects = const [],
-}) {
-  _store = Store(states);
+Store createStore(
+    {List<BaseState> states,
+    List<BaseEffect> effects = const [],
+    bool enableGlobalApi = false}) {
+  assert(states != null && states.length > 0
+      ? true
+      : throw 'states should not be null or empty.');
+
+  var store = Store(states);
 
   effects.forEach((effect) {
-    _store.addEffects(effect);
+    store.addEffects(effect);
   });
-
-  return _store;
-}
-
-///return **Store** instance.
-Store getStore() {
-  return _store;
-}
-
-///return latest state data by state obj.
-dynamic latestState(BaseState obj) {
-  return _store.value[obj.name] ?? obj.initialState;
+  if (enableGlobalApi) {
+    _store = store;
+  }
+  return store;
 }
 
 ///This is a helper function of **store().dispatch(Action action).**
 void dispatch(String actionType, [dynamic payload]) {
-  _store.dispatch(Action(type: actionType, payload: payload));
+  try {
+    _store.dispatch(actionType, payload);
+  } catch (_) {
+    throw "dispatch() function should not work until you enableGlobalApi:true inside createStore() function.";
+  }
 }
 
 ///This is a helper function of **store().select(String stateName).**
@@ -45,7 +51,11 @@ void dispatch(String actionType, [dynamic payload]) {
 ///final _counter$ =select('counter')
 ///```
 Stream<T> select<T>(String stateName) {
-  return _store.select<T>(stateName);
+  try {
+    return _store.select<T>(stateName);
+  } catch (_) {
+    throw "select() function should not work until you enableGlobalApi:true inside createStore() function.";
+  }
 }
 
 ///This method takes a callback which has a single **Map<String, dynamic>** type arg.
@@ -59,8 +69,8 @@ Stream<T> select<T>(String stateName) {
 ///    .distinct();
 /// ```
 /// Note: You can take any combination from the overall application's state.
-Stream<T> select2<T>(T callback(Map<String, dynamic> state)) {
-  return _store.select2(callback);
+Stream<T> selectMany<T>(T callback(Map<String, dynamic> state)) {
+  return _store.selectMany(callback);
 }
 
 ///This method is usefull to remove effects passing **effectKey** on demand.

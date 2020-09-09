@@ -27,13 +27,13 @@ void main() {
   ajwahTest(
       "after dispatch(actionType: ActionTypes.Inc) state should be:{count:1, isLoading:false}",
       build: () => store.select('counter'),
-      act: () => store.dispatch(Action(type: ActionTypes.Inc)),
+      act: () => store.dispatch(ActionTypes.Inc),
       skip: 1,
       expect: [CounterModel(count: 1, isLoading: false)]);
 
   ajwahTest(
     "after dispatch(actionType: ActionTypes.Dec) state should be:{count:0, isLoading:false}",
-    act: () => store.dispatch(Action(type: ActionTypes.Dec)),
+    act: () => store.dispatch(ActionTypes.Dec),
     build: () => store.select<CounterModel>('counter'),
     skip: 1,
     expect: [CounterModel.init()],

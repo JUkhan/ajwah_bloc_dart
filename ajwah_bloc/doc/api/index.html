@@ -78,7 +78,7 @@ class CounterState extends BaseState&lt;CounterModel&gt; {
   CounterState() : super(name: 'counter', initialState: CounterModel.init());
 
   Stream&lt;CounterModel&gt; mapActionToState(
-      CounterModel state, Action action) async* {
+      CounterModel state, Action action, Store store) async* {
     switch (action.type) {
       case ActionTypes.Inc:
         yield state.copyWith(count: state.count + 1, isLoading: false);
@@ -91,7 +91,7 @@ class CounterState extends BaseState&lt;CounterModel&gt; {
         yield await getCount(state.count);
         break;
       default:
-        yield latestState(this);
+        yield getState(store);
     }
   }
 
@@ -149,7 +149,7 @@ class CounterEffect extends BaseEffect {
 <h3 id="api">Api</h3>
 <pre class="language-dart"><code class="language-dart">dispatch(String actionType, [dynamic payload])
 Stream&lt;T&gt; select&lt;T&gt;(String stateName)
-Stream&lt;T&gt; select2&lt;T&gt;(T callback(Map&lt;String, dynamic&gt; state))
+Stream&lt;T&gt; selectMany&lt;T&gt;(T callback(Map&lt;String, dynamic&gt; state))
 addState(BaseState stateInstance)
 removeStateByStateName(String stateName)
 addEffects(BaseEffect effectInstance)
@@ -157,7 +157,7 @@ removeEffectsByKey(String effectKey)
 Stream&lt;List&lt;dynamic&gt;&gt; exportState()
 importState(Map&lt;String, dynamic&gt; state)
 addEffect(EffectCallback callback, {String effectKey})
-latestState(BaseState obj)
+
 </code></pre>
       </section>
       
@@ -183,7 +183,7 @@ latestState(BaseState obj)
 <footer>
   <span class="no-break">
     ajwah_bloc
-      1.8.8
+      1.8.10
   </span>
 
 </footer>

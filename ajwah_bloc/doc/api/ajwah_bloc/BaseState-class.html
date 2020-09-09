@@ -69,13 +69,11 @@
       <li><a href="../ajwah_bloc/createStore.html">createStore</a></li>
       <li><a href="../ajwah_bloc/dispatch.html">dispatch</a></li>
       <li><a href="../ajwah_bloc/exportState.html">exportState</a></li>
-      <li><a href="../ajwah_bloc/getStore.html">getStore</a></li>
       <li><a href="../ajwah_bloc/importState.html">importState</a></li>
-      <li><a href="../ajwah_bloc/latestState.html">latestState</a></li>
       <li><a href="../ajwah_bloc/removeEffectsByKey.html">removeEffectsByKey</a></li>
       <li><a href="../ajwah_bloc/removeStateByStateName.html">removeStateByStateName</a></li>
       <li><a href="../ajwah_bloc/select.html">select</a></li>
-      <li><a href="../ajwah_bloc/select2.html">select2</a></li>
+      <li><a href="../ajwah_bloc/selectMany.html">selectMany</a></li>
     
     
       <li class="section-title"><a href="../ajwah_bloc/ajwah_bloc-library.html#typedefs">Typedefs</a></li>
@@ -109,7 +107,7 @@ class CounterState extends BaseState&lt;CounterModel&gt; {
  CounterState() : super(name: 'counter', initialState: CounterModel.init());
 
  Stream&lt;CounterModel&gt; mapActionToState(
-     CounterModel state, Action action) async* {
+     CounterModel state, Action action, Store store) async* {
    switch (action.type) {
      case ActionTypes.Inc:
        state.count++;
@@ -124,7 +122,7 @@ class CounterState extends BaseState&lt;CounterModel&gt; {
        yield await getCount(state.count);
        break;
      default:
-       yield state;
+       yield getState(store);
    }
  }
 
@@ -193,8 +191,17 @@ class CounterState extends BaseState&lt;CounterModel&gt; {
     <section class="summary offset-anchor" id="instance-methods">
       <h2>Methods</h2>
       <dl class="callables">
+        <dt id="getState" class="callable">
+          <span class="name"><a href="../ajwah_bloc/BaseState/getState.html">getState</a></span><span class="signature">(<wbr><span class="parameter" id="getState-param-store"><span class="type-annotation"><a href="../ajwah_bloc/Store-class.html">Store</a></span> <span class="parameter-name">store</span></span><wbr>)
+            <span class="returntype parameter">&#8594; T</span>
+          </span>
+                  </dt>
+        <dd>
+           
+                  
+</dd>
         <dt id="mapActionToState" class="callable">
-          <span class="name"><a href="../ajwah_bloc/BaseState/mapActionToState.html">mapActionToState</a></span><span class="signature">(<wbr><span class="parameter" id="mapActionToState-param-state"><span class="type-annotation">T</span> <span class="parameter-name">state</span>, </span><wbr><span class="parameter" id="mapActionToState-param-action"><span class="type-annotation"><a href="../ajwah_bloc/Action-class.html">Action</a></span> <span class="parameter-name">action</span></span><wbr>)
+          <span class="name"><a href="../ajwah_bloc/BaseState/mapActionToState.html">mapActionToState</a></span><span class="signature">(<wbr><span class="parameter" id="mapActionToState-param-state"><span class="type-annotation">T</span> <span class="parameter-name">state</span>, </span><wbr><span class="parameter" id="mapActionToState-param-action"><span class="type-annotation"><a href="../ajwah_bloc/Action-class.html">Action</a></span> <span class="parameter-name">action</span>, </span><wbr><span class="parameter" id="mapActionToState-param-store"><span class="type-annotation"><a href="../ajwah_bloc/Store-class.html">Store</a></span> <span class="parameter-name">store</span></span><wbr>)
             <span class="returntype parameter">&#8594; <a href="https://api.dart.dev/stable/2.9.2/dart-async/Stream-class.html">Stream</a><span class="signature">&lt;<wbr><span class="type-parameter">T</span>&gt;</span></span>
           </span>
                   </dt>
@@ -259,6 +266,7 @@ You should mutate the state based on action <a href="../ajwah_bloc/BaseState/map
       <li class="inherited"><a href="https://api.dart.dev/stable/2.9.2/dart-core/Object/runtimeType.html">runtimeType</a></li>
     
       <li class="section-title"><a href="../ajwah_bloc/BaseState-class.html#instance-methods">Methods</a></li>
+      <li><a href="../ajwah_bloc/BaseState/getState.html">getState</a></li>
       <li><a href="../ajwah_bloc/BaseState/mapActionToState.html">mapActionToState</a></li>
       <li class="inherited"><a href="https://api.dart.dev/stable/2.9.2/dart-core/Object/noSuchMethod.html">noSuchMethod</a></li>
       <li class="inherited"><a href="https://api.dart.dev/stable/2.9.2/dart-core/Object/toString.html">toString</a></li>
@@ -277,7 +285,7 @@ You should mutate the state based on action <a href="../ajwah_bloc/BaseState/map
 <footer>
   <span class="no-break">
     ajwah_bloc
-      1.8.8
+      1.8.10
   </span>
 
 </footer>

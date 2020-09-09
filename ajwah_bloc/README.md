@@ -28,7 +28,7 @@ class CounterState extends BaseState<CounterModel> {
   CounterState() : super(name: 'counter', initialState: CounterModel.init());
 
   Stream<CounterModel> mapActionToState(
-      CounterModel state, Action action) async* {
+      CounterModel state, Action action, Store store) async* {
     switch (action.type) {
       case ActionTypes.Inc:
         yield state.copyWith(count: state.count + 1, isLoading: false);
@@ -41,7 +41,7 @@ class CounterState extends BaseState<CounterModel> {
         yield await getCount(state.count);
         break;
       default:
-        yield latestState(this);
+        yield getState(store);
     }
   }
 
@@ -115,7 +115,7 @@ class CounterEffect extends BaseEffect {
 ```dart
 dispatch(String actionType, [dynamic payload])
 Stream<T> select<T>(String stateName)
-Stream<T> select2<T>(T callback(Map<String, dynamic> state))
+Stream<T> selectMany<T>(T callback(Map<String, dynamic> state))
 addState(BaseState stateInstance)
 removeStateByStateName(String stateName)
 addEffects(BaseEffect effectInstance)
@@ -123,5 +123,5 @@ removeEffectsByKey(String effectKey)
 Stream<List<dynamic>> exportState()
 importState(Map<String, dynamic> state)
 addEffect(EffectCallback callback, {String effectKey})
-latestState(BaseState obj)
+
 ```

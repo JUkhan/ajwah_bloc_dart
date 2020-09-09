@@ -11,7 +11,7 @@ class TodoEffects extends BaseEffect {
         .whereType(ActionTypes.LoadingTodos)
         .flatMap((action) => Stream.fromFuture(TodoApi.getTodos()))
         .map((data) => Action(type: ActionTypes.TodosData, payload: data))
-        .doOnError((error, stacktrace) => store$.dispatch(
+        .doOnError((error, stacktrace) => store$.dispatcH(
             Action(type: ActionTypes.TodoError, payload: error.toString())));
   }
 
@@ -22,7 +22,7 @@ class TodoEffects extends BaseEffect {
         .withLatestFrom<TodoModel, List<Todo>>(
             store$.select('todo'), (a, b) => b.todoList..insert(0, a))
         .map((data) => Action(type: ActionTypes.TodosData, payload: data))
-        .doOnError((error, stacktrace) => store$.dispatch(
+        .doOnError((error, stacktrace) => store$.dispatcH(
             Action(type: ActionTypes.TodoError, payload: error.toString())));
   }
 
@@ -34,7 +34,7 @@ class TodoEffects extends BaseEffect {
         .withLatestFrom<TodoModel, List<Todo>>(
             store$.select('todo'), (a, b) => b.todoList)
         .map((data) => Action(type: ActionTypes.TodosData, payload: data))
-        .doOnError((error, stacktrace) => store$.dispatch(
+        .doOnError((error, stacktrace) => store$.dispatcH(
             Action(type: ActionTypes.TodoError, payload: error.toString())));
   }
 
@@ -46,7 +46,7 @@ class TodoEffects extends BaseEffect {
         .withLatestFrom<TodoModel, List<Todo>>(
             store$.select('todo'), (todo, b) => b.todoList..remove(todo))
         .map((data) => Action(type: ActionTypes.TodosData, payload: data))
-        .doOnError((error, stacktrace) => store$.dispatch(
+        .doOnError((error, stacktrace) => store$.dispatcH(
             Action(type: ActionTypes.TodoError, payload: error.toString())));
   }
 

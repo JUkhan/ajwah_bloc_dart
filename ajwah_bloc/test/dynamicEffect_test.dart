@@ -37,7 +37,7 @@ void main() {
         return store.select('counter');
       },
       act: () {
-        store.dispatch(Action(type: ActionTypes.AsyncInc));
+        store.dispatch(ActionTypes.AsyncInc);
       },
       skip: 1,
       wait: const Duration(milliseconds: 5),
@@ -55,7 +55,7 @@ void main() {
       return store.select<CounterModel>('counter');
     },
     act: () {
-      store.dispatch(Action(type: ActionTypes.AsyncInc));
+      store.dispatch(ActionTypes.AsyncInc);
     },
     skip: 1,
     expect: [
@@ -71,7 +71,7 @@ void main() {
         return store.select<CounterModel>('counter');
       },
       act: () {
-        store.dispatch(Action(type: ActionTypes.AsyncInc));
+        store.dispatch(ActionTypes.AsyncInc);
       },
       wait: const Duration(milliseconds: 10),
       skip: 1,
@@ -90,7 +90,7 @@ void main() {
       return store.select<CounterModel>('counter');
     },
     act: () {
-      store.dispatch(Action(type: ActionTypes.AsyncInc));
+      store.dispatch(ActionTypes.AsyncInc);
     },
     skip: 1,
     expect: [

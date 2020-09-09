@@ -27,7 +27,8 @@ class TodoState extends BaseState<TodoModel> {
   TodoState()
       : super(name: 'todo', initialState: TodoModel(message: '', todoList: []));
 
-  Stream<TodoModel> mapActionToState(TodoModel state, Action action) async* {
+  Stream<TodoModel> mapActionToState(
+      TodoModel state, Action action, Store store) async* {
     switch (action.type) {
       case ActionTypes.LoadingTodos:
         yield TodoModel(message: 'Loading todos.', todoList: []);
@@ -48,7 +49,7 @@ class TodoState extends BaseState<TodoModel> {
         yield TodoModel(message: action.payload, todoList: state.todoList);
         break;
       default:
-        yield state;
+        yield getState(store);
     }
   }
 }

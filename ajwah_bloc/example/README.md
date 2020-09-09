@@ -165,7 +165,7 @@ class CounterState extends BaseState<CounterModel> {
   CounterState() : super(name: 'counter', initialState: CounterModel.init());
 
   Stream<CounterModel> mapActionToState(
-      CounterModel state, store.Action action) async* {
+      CounterModel state, store.Action action, Store store) async* {
     switch (action.type) {
       case 'Inc':
         yield state.copyWith(count: state.count + 1, isLoading: false);
@@ -179,7 +179,7 @@ class CounterState extends BaseState<CounterModel> {
         dispatch('Inc');
         break;
       default:
-        yield latestState(this);
+        yield getState(store);
     }
   }
 }

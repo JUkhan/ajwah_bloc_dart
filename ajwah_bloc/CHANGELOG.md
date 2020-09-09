@@ -90,3 +90,14 @@ update api: latestStateValue(BaseState obj)
 ## 1.8.8
 
 update api: crateStore(...) rerurn Store instance
+
+## 1.8.9
+
+update api: crateStore(...) rerurn Store instance
+removed [block] param and added [enableGlobalApi] by default it is `false`. If you pass `true` then global functions like dispatch(), select() etc should be exposed.
+
+## 1.8.10
+
+update api: crateStore(...) rerurn Store instance
+removed [block] param and added [enableGlobalApi] by default it is `false`. If you pass `true` then global functions like dispatch(), select() etc should be exposed.
+also updated doc
