@@ -7,7 +7,7 @@ Rx based state management library. Manage your application's states, effects, an
 ## States
 
 Every state class must derived from `BaseState<T>` class. And it is mandatory to pass the
-state `name` and `initialState`. The `BaseState<T>` class has an abstract method `Stream<T> mapActionToState(T state, Action action, Store store);`. This method should be invoked by sysytem passing current state and action. You should return a new state based on the `action`. Keep in mind that if you mutate the state, it does not notify the widget\s for rerendering.
+state `name` and `initialState`. The `BaseState<T>` class has an abstract method `Stream<T> mapActionToState(T state, Action action, Store store);`. This method should be invoked by sysytem passing current state and action. You should return a new state based on the `action`. Keep in mind that if you mutate the state, it does not notify the widget/s for rerendering.
 
 #### Example CounterState
 
