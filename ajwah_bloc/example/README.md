@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:ajwah_bloc/ajwah_bloc.dart' as store;
 
 void main() {
-  createStore(states: [CounterState()]);
+  createStore(states: [CounterState()], enableGlobalApi:true);
 
   runApp(MyApp());
 }

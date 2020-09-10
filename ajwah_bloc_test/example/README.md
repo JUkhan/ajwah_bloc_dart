@@ -4,12 +4,12 @@
 
 ```dart
 
-class ActionTypes {
-  static const String ChangeTheme = "change_theme";
-  static const String FetchTodo = "FetchTodo";
-  static const String FetchTodos = "FetchTodos";
-  static const String SaveTodo = "SaveTodo";
-  static const String UpdateTodo = "UpdateTodo";
+abstract class ActionTypes {
+  static const ChangeTheme = "change_theme";
+  static const FetchTodo = "FetchTodo";
+  static const FetchTodos = "FetchTodos";
+  static const SaveTodo = "SaveTodo";
+  static const UpdateTodo = "UpdateTodo";
 }
 
 
@@ -18,11 +18,6 @@ class ActionTypes {
 ## AsyncData.dart
 
 ```dart
-import 'package:ajwah_bloc/ajwah_bloc.dart';
-
-Action getAction(String actionType, [dynamic payload]) {
-  return Action(type: actionType, payload: payload);
-}
 
 enum AsyncStatus { Loading, Loaded, Error }
 
@@ -83,8 +78,8 @@ class Todo {
 ## TodoApi.dart
 
 ```dart
-import 'package:flutter_test_myself/models/Todo.dart';
-import 'package:flutter_test_myself/utils/AsyncData.dart';
+import 'package:flutter_test_project/models/Todo.dart';
+import 'package:flutter_test_project/utils/AsyncData.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -144,10 +139,10 @@ class TodoApi {
 
 ```dart
 import 'package:ajwah_bloc/ajwah_bloc.dart';
-import 'package:flutter_test_myself/models/Todo.dart';
-import 'package:flutter_test_myself/services/todoApi.dart';
-import 'package:flutter_test_myself/utils/ActionTypes.dart';
-import 'package:flutter_test_myself/utils/AsyncData.dart';
+import 'package:flutter_test_project/models/Todo.dart';
+import 'package:flutter_test_project/services/todoApi.dart';
+import 'package:flutter_test_project/utils/ActionTypes.dart';
+import 'package:flutter_test_project/utils/AsyncData.dart';
 import 'package:get_it/get_it.dart';
 
 class TodoModel {
@@ -177,7 +172,7 @@ class TodoState extends BaseState<TodoModel> {
   TodoState() : super(name: "todo", initialState: TodoModel.init());
   var api = GetIt.I<TodoApi>();
   @override
-  Stream<TodoModel> mapActionToState(TodoModel state, Action action) async* {
+  Stream<TodoModel> mapActionToState(TodoModel state, Action action, Store store) async* {
     switch (action.type) {
       case ActionTypes.FetchTodo:
         yield state.copyWith(todo: AsyncData.loading());
@@ -189,7 +184,7 @@ class TodoState extends BaseState<TodoModel> {
         }
         break;
       default:
-        yield latestState(this);
+        yield getState(store);
     }
   }
 }
@@ -205,11 +200,11 @@ import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 import 'package:ajwah_bloc_test/ajwah_bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_test_myself/services/todoApi.dart';
-import 'package:flutter_test_myself/store/TodoState.dart';
-import 'package:flutter_test_myself/utils/ActionTypes.dart';
-import 'package:flutter_test_myself/utils/AsyncData.dart';
 import 'package:mockito/mockito.dart';
+import 'package:flutter_test_project/services/todoApi.dart';
+import 'package:flutter_test_project/store/TodoState.dart';
+import 'package:flutter_test_project/utils/ActionTypes.dart';
+import 'package:flutter_test_project/utils/AsyncData.dart';
 
 class MockClient extends Mock implements http.Client {}
 
@@ -238,7 +233,7 @@ void main() {
       log: (arr) {
         print(arr[1].todo.data.title);
       },
-      act: () => store.dispatch(getAction(ActionTypes.FetchTodo)),
+      act: () => store.dispatch(ActionTypes.FetchTodo),
       expect: [isA<TodoModel>(), isA<TodoModel>()],
       verify: (arr) {
         expect(arr[0].todo.asyncStatus, AsyncStatus.Loading);

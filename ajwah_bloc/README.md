@@ -7,7 +7,7 @@ Rx based state management library. Manage your application's states, effects, an
 ## States
 
 Every state class must derived from `BaseState<T>` class. And it is mandatory to pass the
-state `name` and `initialState`. The `BaseState<T>` class has an abstract method `Stream<T> mapActionToState(T state, Action action);`. This method should be invoked by sysytem passing current state and action. You should mutate the state based on action.
+state `name` and `initialState`. The `BaseState<T>` class has an abstract method `Stream<T> mapActionToState(T state, Action action, Store store);`. This method should be invoked by sysytem passing current state and action. You should return a new state based on the `action`. Keep in mind that if you mutate the state, it does not notify the widget\s for rerendering.
 
 #### Example CounterState
 
@@ -57,9 +57,9 @@ class CounterState extends BaseState<CounterModel> {
 
 Ajwah provides a comfortable way to use states in components and dispatching actions.
 
-Just call the `createStore(states:[], /*effects:[] optional*/)` method and there you go.
+Just call the `createStore(states:[], /*effects:[] optional*/, enableGlobalApi:true/*by default it's false*/)` method and there you go.
 
-We can use `select` method to get `state` data (passing state name): `select('counter')`. or `select2(...)`.
+We can use `select` method to get `state` data (passing state name): `select<T>('counter')`. or `selectMany<T>(...)`.
 These methods return `Stream<T>`. Now pass this Stream inside a StreamBuilder to make a reactive widget.
 
 ### Example

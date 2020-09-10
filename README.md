@@ -2,10 +2,12 @@
 
 Rx based state management library. Manage your application's states, effects, and actions easy way.
 
+**Learn more about testing `ajwah_bloc` with [ajwah_bloc_test](https://pub.dev/packages/ajwah_bloc_test)!**
+
 ## States
 
 Every state class must derived from `BaseState<T>` class. And it is mandatory to pass the
-state `name` and `initialState`. The `BaseState<T>` class has an abstract method `Stream<T> mapActionToState(T state, Action action);`. This method should be invoked by sysytem passing current state and action. You should mutate the state based on action.
+state `name` and `initialState`. The `BaseState<T>` class has an abstract method `Stream<T> mapActionToState(T state, Action action, Store store);`. This method should be invoked by sysytem passing current state and action. You should return a new state based on the `action`. Keep in mind that if you mutate the state, it does not notify the widget\s for rerendering.
 
 #### Example CounterState
 
@@ -14,39 +16,32 @@ import 'package:ajwah_bloc/ajwah_bloc.dart';
 import 'package:ajwah_block_examples/actionTypes.dart';
 
 class CounterModel {
-  int count;
-  bool isLoading;
-
+  final int count;
+  final bool isLoading;
   CounterModel({this.count, this.isLoading});
-
-  copyWith({int count, bool isLoading}) {
-    return CounterModel(
-        count: count ?? this.count, isLoading: isLoading ?? this.isLoading);
-  }
-
   CounterModel.init() : this(count: 10, isLoading: false);
+  CounterModel copyWith({int count, bool isLoading}) => CounterModel(
+      count: count ?? this.count, isLoading: isLoading ?? this.isLoading);
 }
 
 class CounterState extends BaseState<CounterModel> {
   CounterState() : super(name: 'counter', initialState: CounterModel.init());
 
   Stream<CounterModel> mapActionToState(
-      CounterModel state, Action action) async* {
+      CounterModel state, Action action, Store store) async* {
     switch (action.type) {
       case ActionTypes.Inc:
-        state.count++;
-        yield state.copyWith(isLoading: false);
+        yield state.copyWith(count: state.count + 1, isLoading: false);
         break;
       case ActionTypes.Dec:
-        state.count--;
-        yield state.copyWith(isLoading: false);
+        yield state.copyWith(count: state.count - 1, isLoading: false);
         break;
       case ActionTypes.AsyncInc:
         yield state.copyWith(isLoading: true);
         yield await getCount(state.count);
         break;
       default:
-        yield state;
+        yield getState(store);
     }
   }
 
@@ -62,9 +57,9 @@ class CounterState extends BaseState<CounterModel> {
 
 Ajwah provides a comfortable way to use states in components and dispatching actions.
 
-Just call the `createStore(states:[], /*effects:[] optional*/)` method and there you go.
+Just call the `createStore(states:[], /*effects:[] optional*/, enableGlobalApi:true/*by default it's false*/)` method and there you go.
 
-We can use `select` method to get `state` data (passing state name): `select('counter')`. or `select2(...)`.
+We can use `select` method to get `state` data (passing state name): `select<T>('counter')`. or `selectMany<T>(...)`.
 These methods return `Stream<T>`. Now pass this Stream inside a StreamBuilder to make a reactive widget.
 
 ### Example
@@ -120,7 +115,7 @@ class CounterEffect extends BaseEffect {
 ```dart
 dispatch(String actionType, [dynamic payload])
 Stream<T> select<T>(String stateName)
-Stream<T> select2<T>(T callback(Map<String, dynamic> state))
+Stream<T> selectMany<T>(T callback(Map<String, dynamic> state))
 addState(BaseState stateInstance)
 removeStateByStateName(String stateName)
 addEffects(BaseEffect effectInstance)
@@ -128,4 +123,5 @@ removeEffectsByKey(String effectKey)
 Stream<List<dynamic>> exportState()
 importState(Map<String, dynamic> state)
 addEffect(EffectCallback callback, {String effectKey})
+
 ```
