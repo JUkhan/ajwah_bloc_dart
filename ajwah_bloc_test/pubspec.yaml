@@ -1,5 +1,5 @@
 name: ajwah_bloc_test
-version: 0.1.1
+version: 0.1.1+1
 homepage: https://github.com/JUkhan/ajwah_bloc_dart
 description: A Dart package that makes testing ajwah_bloc easy.
 

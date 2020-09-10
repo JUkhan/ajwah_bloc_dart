@@ -101,3 +101,7 @@ removed [block] param and added [enableGlobalApi] by default it is `false`. If y
 update api: crateStore(...) rerurn Store instance
 removed [block] param and added [enableGlobalApi] by default it is `false`. If you pass `true` then global functions like dispatch(), select() etc should be exposed.
 also updated doc
+
+## 1.8.10+1
+
+doc updated

@@ -60,7 +60,7 @@
 <p><strong>Learn more about testing <code>ajwah_bloc</code> with <a href="https://pub.dev/packages/ajwah_bloc_test">ajwah_bloc_test</a>!</strong></p>
 <h2 id="states">States</h2>
 <p>Every state class must derived from <code>BaseState&lt;T&gt;</code> class. And it is mandatory to pass the
-state <code>name</code> and <code>initialState</code>. The <code>BaseState&lt;T&gt;</code> class has an abstract method <code>Stream&lt;T&gt; mapActionToState(T state, Action action);</code>. This method should be invoked by sysytem passing current state and action. You should mutate the state based on action.</p>
+state <code>name</code> and <code>initialState</code>. The <code>BaseState&lt;T&gt;</code> class has an abstract method <code>Stream&lt;T&gt; mapActionToState(T state, Action action, Store store);</code>. This method should be invoked by sysytem passing current state and action. You should return a new state based on the <code>action</code>. Keep in mind that if you mutate the state, it does not notify the widget\s for rerendering.</p>
 <h4 id="example-counterstate">Example CounterState</h4>
 <pre class="language-dart"><code class="language-dart">import 'package:ajwah_bloc/ajwah_bloc.dart';
 import 'package:ajwah_block_examples/actionTypes.dart';
@@ -104,8 +104,8 @@ class CounterState extends BaseState&lt;CounterModel&gt; {
 </code></pre>
 <h2 id="using-state-in-components">Using state in components</h2>
 <p>Ajwah provides a comfortable way to use states in components and dispatching actions.</p>
-<p>Just call the <code>createStore(states:[], /*effects:[] optional*/)</code> method and there you go.</p>
-<p>We can use <code>select</code> method to get <code>state</code> data (passing state name): <code>select('counter')</code>. or <code>select2(...)</code>.
+<p>Just call the <code>createStore(states:[], /*effects:[] optional*/, enableGlobalApi:true/*by default it's false*/)</code> method and there you go.</p>
+<p>We can use <code>select</code> method to get <code>state</code> data (passing state name): <code>select&lt;T&gt;('counter')</code>. or <code>selectMany&lt;T&gt;(...)</code>.
 These methods return <code>Stream&lt;T&gt;</code>. Now pass this Stream inside a StreamBuilder to make a reactive widget.</p>
 <h3 id="example">Example</h3>
 <pre class="language-dart"><code class="language-dart">StreamBuilder&lt;CounterModel&gt;(
@@ -183,7 +183,7 @@ addEffect(EffectCallback callback, {String effectKey})
 <footer>
   <span class="no-break">
     ajwah_bloc
-      1.8.10
+      1.8.10+1
   </span>
 
 </footer>

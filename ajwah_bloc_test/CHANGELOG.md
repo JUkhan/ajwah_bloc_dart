@@ -7,3 +7,7 @@ A Dart package that makes testing ajwah_bloc easy.
 improved `ajwahTest(...log:(emitList){})`
 [log] is an optional callback which is invoked before [expect].
 [log] is called with the emited `list of state`.
+
+## 0.1.1+1
+
+doc updated
