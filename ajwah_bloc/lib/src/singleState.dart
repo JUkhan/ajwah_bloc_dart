@@ -1,8 +1,7 @@
-import 'package:ajwah_bloc/ajwah_bloc.dart';
-
 import 'baseState.dart';
 import 'store.dart';
 import 'createStore.dart';
+import 'action.dart';
 
 ///[SingleState] is used for constructing an individual state that is totally seperate from
 ///main `store`. Nither it's action nor effect should propagte to the main stream.

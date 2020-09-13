@@ -9,8 +9,8 @@ import 'singleState_test.dart' as singleState_test;
 
 void main() {
   dynamicEffect_test.main();
+  singleState_test.main();
   dynamicState_test.main();
   dispatcher_test.main();
   effect_test.main();
-  singleState_test.main();
 }
