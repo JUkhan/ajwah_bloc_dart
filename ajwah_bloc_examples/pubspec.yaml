@@ -29,6 +29,8 @@ dependencies:
   cupertino_icons: ^0.1.3
   ajwah_bloc:
     path: ../ajwah_bloc
+  flutter_ajwah_bloc:
+    path: ../flutter_ajwah_bloc
 
 dev_dependencies:
   test: ^1.6.3

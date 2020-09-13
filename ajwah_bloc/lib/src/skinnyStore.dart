@@ -3,12 +3,12 @@ import 'store.dart';
 import 'createStore.dart';
 import 'action.dart';
 
-///[SingleState] is used for constructing an individual state that is totally seperate from
+///[SkinnyStore] is used for constructing an individual state that is totally seperate from
 ///main `store`. Nither it's action nor effect should propagte to the main stream.
 ///
 ///  **Examle**
 /// ```dart
-///class CounterBloc extends SingleState<CounterModel> {
+///class CounterBloc extends SkinnyStore<CounterModel> {
 ///  CounterBloc() : super(CounterModel.init());
 ///
 ///  @override
@@ -39,9 +39,9 @@ import 'action.dart';
 ///counterBloc.dispatcH(ActionType.Dec);
 ///counterBloc.store.listen(print);
 ///```
-class SingleState<T> extends BaseState<T> {
+class SkinnyStore<T> extends BaseState<T> {
   Store _store;
-  SingleState(T initialState)
+  SkinnyStore(T initialState)
       : super(name: 'singleState', initialState: initialState) {
     _store = createStore(states: [this]);
   }
@@ -51,6 +51,7 @@ class SingleState<T> extends BaseState<T> {
   }
 
   Stream<T> get stream => _store.select<T>('singleState');
+  T get state => getState(_store);
 
   void dispatch(Action action) {
     _store.dispatch(action);

@@ -28,14 +28,14 @@ void main() {
   ajwahTest(
     "check increment[11,false]",
     build: () => store.select('counter').map((event) => event.toString()),
-    act: () => store.dispatcH(Action(type: 'Inc')),
+    act: () => store.dispatch(Action(type: 'Inc')),
     skip: 1,
     expect: ['{coun:11, isLoading:false}'],
   );
   ajwahTest(
     "check decrement[10,false]",
     build: () => store.select('counter').map((event) => event.toString()),
-    act: () => store.dispatcH(Action(type: 'Dec')),
+    act: () => store.dispatch(Action(type: 'Dec')),
     skip: 1,
     expect: ['{coun:10, isLoading:false}'],
   );
@@ -43,8 +43,8 @@ void main() {
   ajwahTest(
     "check async increment[11,false]",
     build: () => store.select('counter').map((event) => event.toString()),
-    act: () => store.dispatcH(Action(type: 'AsyncInc')),
-    wait: const Duration(milliseconds: 1000),
+    act: () => store.dispatch(Action(type: 'AsyncInc')),
+    wait: const Duration(milliseconds: 1100),
     skip: 1,
     expect: [
       '{coun:10, isLoading:true}',
@@ -55,7 +55,7 @@ void main() {
   ajwahTest(
     "check decrement[10,false]",
     build: () => store.select('counter').map((event) => event.toString()),
-    act: () => store.dispatcH(Action(type: 'Dec')),
+    act: () => store.dispatch(Action(type: 'Dec')),
     skip: 1,
     expect: ['{coun:10, isLoading:false}'],
   );

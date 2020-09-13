@@ -1,12 +1,12 @@
 import 'package:ajwah_bloc/ajwah_bloc.dart';
-import 'package:ajwah_bloc/src/singleState.dart';
+
 import 'package:ajwah_bloc_test/ajwah_bloc_test.dart';
 import 'package:test/test.dart';
 
 import 'actionTypes.dart';
 import 'counterState.dart';
 
-class CounterBloc extends SingleState<CounterModel> {
+class CounterBloc extends SkinnyStore<CounterModel> {
   CounterBloc() : super(CounterModel.init());
 
   @override
