@@ -49,11 +49,11 @@ class Store {
 
   get value => _store.value;
 
-  void dispatcH(Action action) {
+  void dispatch(Action action) {
     _dispatcher.add(action);
   }
 
-  void dispatch(String actionType, [dynamic payload]) {
+  void dispatcH(String actionType, [dynamic payload]) {
     _dispatcher.add(Action(type: actionType, payload: payload));
   }
 
@@ -95,7 +95,7 @@ class Store {
   ///```
   void addEffect(EffectCallback callback, {String effectKey}) {
     removeEffectsByKey(effectKey);
-    _subs[effectKey] = callback(_actions, this).listen(dispatcH);
+    _subs[effectKey] = callback(_actions, this).listen(dispatch);
   }
 
   ///This method is usefull to remove effects passing **effectKey** on demand.
@@ -110,7 +110,7 @@ class Store {
   void addState(BaseState stateInstance) {
     removeStateByStateName(stateInstance.name, false);
     _states.add(stateInstance);
-    dispatcH(Action(type: 'add_state(${stateInstance.name})'));
+    dispatch(Action(type: 'add_state(${stateInstance.name})'));
   }
 
   ///This method is usefull to remove a state passing **stateName** on demand.
@@ -136,7 +136,7 @@ class Store {
       _effSub.addEffects(effect);
     } else {
       removeEffectsByKey(effectInstance.effectKey);
-      _subs[effectInstance.effectKey] = effect.listen(dispatcH);
+      _subs[effectInstance.effectKey] = effect.listen(dispatch);
     }
   }
 

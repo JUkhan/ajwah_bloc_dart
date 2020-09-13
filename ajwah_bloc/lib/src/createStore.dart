@@ -1,3 +1,5 @@
+import 'package:ajwah_bloc/ajwah_bloc.dart';
+
 import 'store.dart';
 import 'baseEffect.dart';
 import 'baseState.dart';
@@ -35,16 +37,21 @@ Store createStore(
   return store;
 }
 
-///This is a helper function of **store().dispatch(Action action).**
-void dispatch(String actionType, [dynamic payload]) {
+///This is a helper function of **store.dispatch(Action action).**
+void dispatch(Action action) {
   try {
-    _store.dispatch(actionType, payload);
+    _store.dispatch(action);
   } catch (_) {
     throw "dispatch() function should not work until you enableGlobalApi:true inside createStore() function.";
   }
 }
 
-///This is a helper function of **store().select(String stateName).**
+///This is a helper function of **store.dispatcH(String actionType, [dynamic payload]).**
+void dispatcH(String actionType, [dynamic payload]) {
+  _store.dispatcH(actionType, payload);
+}
+
+///This is a helper function of **store.select(String stateName).**
 ///
 ///**Example**
 ///```daty

@@ -27,7 +27,10 @@ class CounterState extends BaseState<CounterModel> {
   CounterState() : super(name: 'counter', initialState: CounterModel.init());
 
   Stream<CounterModel> mapActionToState(
-      CounterModel state, Action action, Store store) async* {
+    CounterModel state,
+    Action action,
+    Store store,
+  ) async* {
     switch (action.type) {
       case ActionTypes.Inc:
         yield CounterModel.countData(state.count + 1);
