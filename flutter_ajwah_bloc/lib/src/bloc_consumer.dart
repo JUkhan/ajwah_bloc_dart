@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:ajwah_bloc/ajwah_bloc.dart';
 import 'package:flutter/widgets.dart';
 
@@ -6,14 +8,9 @@ import '../flutter_ajwah_bloc.dart';
 /// {@template bloc_consumer}
 /// [BlocConsumer] exposes a [builder] and [listener] in order react to new
 /// states.
-/// [BlocConsumer] is analogous to a nested `BlocListener`
-/// and `BlocBuilder` but reduces the amount of boilerplate needed.
-/// [BlocConsumer] should only be used when it is necessary to both rebuild UI
-/// and execute other reactions to state changes in the [skinny].
 ///
-/// [BlocConsumer] takes a required `BlocWidgetBuilder`
-/// and `BlocWidgetListener` and an optional [skinny],
-/// `BlocBuilderCondition`, and `BlocListenerCondition`.
+/// [BlocConsumer] should be used for both rebuild UI
+/// and execute other reactions to state changes in the [skinny].
 ///
 /// If the [skinny] parameter is omitted, [BlocConsumer] will automatically
 /// perform a lookup using `BlocProvider` and the current `BuildContext`.
@@ -60,23 +57,22 @@ import '../flutter_ajwah_bloc.dart';
 /// )
 /// ```
 /// {@endtemplate}
-class BlocConsumer<C extends SkinnyStore<S>, S> extends StatelessWidget {
+class BlocConsumer<SK extends SkinnyStore<S>, S> extends StatefulWidget {
   /// {@macro bloc_consumer}
   const BlocConsumer({
     Key key,
     @required this.builder,
-    @required this.listener,
+    this.listener,
     this.skinny,
     this.buildWhen,
     this.listenWhen,
   })  : assert(builder != null),
-        assert(listener != null),
         super(key: key);
 
   /// The [skinny] that the [BlocConsumer] will interact with.
   /// If omitted, [BlocConsumer] will automatically perform a lookup using
   /// `BlocProvider` and the current `BuildContext`.
-  final C skinny;
+  final SK skinny;
 
   /// The [builder] function which will be invoked on each widget build.
   /// The [builder] takes the `BuildContext` and current `state` and
@@ -99,17 +95,42 @@ class BlocConsumer<C extends SkinnyStore<S>, S> extends StatelessWidget {
   final BlocListenerCondition<S> listenWhen;
 
   @override
-  Widget build(BuildContext context) {
-    final skinny = this.skinny ?? context.bloc<C>();
-    return BlocBuilder<C, S>(
-      skinny: skinny,
-      builder: builder,
-      buildWhen: (previous, current) {
-        if (listenWhen?.call(previous, current) ?? true) {
-          listener(context, current);
+  _BlocConsumerState<SK, S> createState() => _BlocConsumerState<SK, S>();
+}
+
+class _BlocConsumerState<SK extends SkinnyStore<S>, S>
+    extends State<BlocConsumer<SK, S>> {
+  S _previousState;
+  SK _skinny;
+  StreamSubscription _subscription;
+  @override
+  void initState() {
+    _skinny = widget.skinny ?? context.bloc<SK>();
+    if (_skinny != null) {
+      _previousState = _skinny.state;
+      _subscription = _skinny.stream.listen((state) {
+        if (widget.listenWhen?.call(_previousState, state) ?? true) {
+          widget.listener?.call(context, state);
         }
-        return buildWhen?.call(previous, current) ?? true;
-      },
-    );
+        if (widget.buildWhen?.call(_previousState, state) ?? true) {
+          setState(() {});
+        }
+        _previousState = state;
+      });
+    }
+
+    super.initState();
   }
+
+  @override
+  void dispose() {
+    if (_subscription != null) {
+      _subscription.cancel();
+      _subscription = null;
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.builder(context, _previousState);
 }

@@ -5,6 +5,7 @@ import 'package:ajwah_bloc/ajwah_bloc.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_ajwah_bloc/flutter_ajwah_bloc.dart';
+import 'package:rxdart/rxdart.dart';
 
 void main() {
   createStore(states: [CounterState()], enableGlobalApi: true);
@@ -34,7 +35,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => ThemeBloc(),
-      child: BlocBuilder<ThemeBloc, ThemeData>(
+      child: BlocConsumer<ThemeBloc, ThemeData>(
         builder: (_, theme) {
           return MaterialApp(
             theme: theme,
@@ -56,12 +57,12 @@ class CounterPage extends StatelessWidget {
       appBar: AppBar(title: const Text('Counter')),
       body: Column(
         children: [
-          StreamConsumer<CounterModel>(
-              stream: store.select('counter'),
+          StreamConsumer<int>(
+              initialData: 0,
+              stream: store.select('counter').map((event) => event.count),
               listener: (context, state) {
-                print(state.toString());
+                //print(state?.toString());
               },
-              //initialData: CounterModel.init(),
               builder: (context, state) => Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -71,17 +72,21 @@ class CounterPage extends StatelessWidget {
                       IconButton(
                           icon: Icon(Icons.remove),
                           onPressed: () => store.dispatcH('Dec')),
-                      Text(state.count.toString()),
+                      Text(state.toString()),
                     ],
                   )),
           BlocConsumer<CounterBloc, CounterModel>(
+            listenWhen: (previous, current) => current != null,
             listener: (context, state) {
               if (state?.isLoading ?? false) {
                 store.dispatcH('AsyncInc');
               }
               print(state?.count);
             },
+            buildWhen: (previous, current) =>
+                current != null && current.count < 8,
             builder: (_, counter) {
+              print(counter);
               return Center(
                 child: counter.isLoading
                     ? CircularProgressIndicator()
@@ -100,7 +105,8 @@ class CounterPage extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 5.0),
             child: FloatingActionButton(
               child: const Icon(Icons.add),
-              onPressed: () => context.bloc<CounterBloc>().dispatcH('Inc'),
+              onPressed: () => store.dispatcH(
+                  'Inc'), //context.bloc<CounterBloc>().dispatcH('Inc'),
             ),
           ),
           Padding(
@@ -200,7 +206,7 @@ class SkinnyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CounterBloc, CounterModel>(
+    return BlocConsumer<CounterBloc, CounterModel>(
       builder: (context, state) => Text(state.count.toString()),
     );
   }
