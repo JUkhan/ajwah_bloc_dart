@@ -23,7 +23,7 @@ class CounterModel {
   int get hashCode => count.hashCode;
 }
 
-class CounterState extends BaseState<CounterModel> {
+class CounterState extends StateBase<CounterModel> {
   CounterState() : super(name: 'counter', initialState: CounterModel.init());
 
   Stream<CounterModel> mapActionToState(

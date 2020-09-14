@@ -1,13 +1,15 @@
 # ajwah_bloc
 
+# ajwah_bloc
+
 Rx based state management library. Manage your application's states, effects, and actions easy way.
+Make apps more scalable with a unidirectional data-flow.
 
 **Learn more about testing `ajwah_bloc` with [ajwah_bloc_test](https://pub.dev/packages/ajwah_bloc_test)!**
 
-## States
+**States**
 
-Every state class must derived from `BaseState<T>` class. And it is mandatory to pass the
-state `name` and `initialState`. The `BaseState<T>` class has an abstract method `Stream<T> mapActionToState(T state, Action action, Store store);`. This method should be invoked by sysytem passing current state and action. You should return a new state based on the `action`. Keep in mind that if you mutate the state, it does not notify the widget/s for rerendering.
+Every state class must derived from `StateBase<T>` class. The `StateBase<T>` class has an abstract function `mapActionToState(T state, Action action, Store store)`. This method should be invoked whenever any `action` dispatched to the store. You should return a new state based on the `action`. Keep in mind that if you mutate the state, it does not notify (it's listeners) the widget/s for rerendering.
 
 #### Example CounterState
 
@@ -53,16 +55,13 @@ class CounterState extends BaseState<CounterModel> {
 
 ```
 
-## Using state in components
+**Using state in components**
 
-Ajwah provides a comfortable way to use states in components and dispatching actions.
+Declare your store as a global variable or enable `exposeApiGlobally:true`.
 
-Just call the `createStore(states:[], /*effects:[] optional*/, enableGlobalApi:true/*by default it's false*/)` method and there you go.
-
-We can use `select` method to get `state` data (passing state name): `select<T>('counter')`. or `selectMany<T>(...)`.
-These methods return `Stream<T>`. Now pass this Stream inside a StreamBuilder to make a reactive widget.
-
-### Example
+```dart
+var store = createStore(states:[CounterState()]);
+```
 
 ```dart
 StreamBuilder<CounterModel>(
@@ -79,13 +78,17 @@ StreamBuilder<CounterModel>(
 )
 ```
 
-Also for dispatching state's action - we can use `dispatch(...)`
+**Action Dispatching**
 
-## Effects (optional)
+```dart
+dispatch(Action(type:'Inc'));
+```
 
-Every effect class must derived from `BaseEffect` class. And it is optional to pass the
+## Effects
+
+Every effect class must derived from `EffectBase` class. And it is optional to pass the
 `effectKey`. But it's mandatory if you want conditionally remove the effects by using
-`store.removeEffectsByKey('effectKey')`. The `BaseEffect` class has one abstract method `List<Stream<Action>> registerEffects(Actions action$, Store store$);`. This function should be invoked by system passing reference of Actions and Store classes. Please keep in mind that effects should not work until you register them.
+`removeEffectsByKey('effectKey')`. The `EffectBase` class has an abstract method `registerEffects(Actions action$, Store store$)`. Please keep in mind that effects should not work until you register them.
 
 #### Example
 

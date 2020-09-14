@@ -7,10 +7,9 @@
 
 import 'package:ajwah_bloc/ajwah_bloc.dart';
 import 'package:ajwah_bloc_test/ajwah_bloc_test.dart';
+import 'package:ajwahh_block_examples/ajwah_bloc.dart';
 
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:ajwahh_block_examples/main.dart';
 
 void main() {
   Store store;

@@ -1,4 +1,4 @@
-import 'baseState.dart';
+import 'stateBase.dart';
 import 'store.dart';
 import 'createStore.dart';
 import 'action.dart';
@@ -39,7 +39,7 @@ import 'action.dart';
 ///counterBloc.dispatcH(ActionType.Dec);
 ///counterBloc.store.listen(print);
 ///```
-class SkinnyStore<T> extends BaseState<T> {
+class SkinnyStore<T> extends StateBase<T> {
   Store _store;
   SkinnyStore(T initialState)
       : super(name: 'singleState', initialState: initialState) {

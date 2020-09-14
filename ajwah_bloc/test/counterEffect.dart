@@ -3,7 +3,7 @@ import 'package:rxdart/rxdart.dart';
 
 import 'actionTypes.dart';
 
-class CounterEffect extends BaseEffect {
+class CounterEffect extends EffectBase {
   CounterEffect() : super(effectKey: 'counterEffect');
   Stream<Action> effectForAsyncInc(Actions action$, Store store$) {
     return action$

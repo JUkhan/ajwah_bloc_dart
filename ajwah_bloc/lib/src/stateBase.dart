@@ -1,7 +1,7 @@
 import 'action.dart';
 import 'store.dart';
 
-///Every state class must derived from `BaseState<T>` class. And it is mandatory to pass the
+///Every state class must derived from `StateBase<T>` class. And it is mandatory to pass the
 ///state `name` and `initialState`.
 ///
 /// **Example:**
@@ -20,7 +20,7 @@ import 'store.dart';
 ///  CounterModel.init() : this(count: 10, isLoading: false);
 ///}
 ///
-///class CounterState extends BaseState<CounterModel> {
+///class CounterState extends StateBase<CounterModel> {
 ///  CounterState() : super(name: 'counter', initialState: CounterModel.init());
 ///
 ///  Stream<CounterModel> mapActionToState(
@@ -50,11 +50,11 @@ import 'store.dart';
 ///}
 ///
 ///```
-abstract class BaseState<T> {
+abstract class StateBase<T> {
   final String name;
   final T initialState;
 
-  BaseState({this.name, this.initialState})
+  StateBase({this.name, this.initialState})
       : assert(name != null && name.isNotEmpty
             ? true
             : throw 'state name should not be empty or null.'),
@@ -64,18 +64,17 @@ abstract class BaseState<T> {
     return store.value[name] ?? initialState;
   }
 
-  ///This method should be invoked by sysytem passing current state and action.
-  ///You should mutate the state based on action
+  ///This function should be invoked whenever action dispatchd to the store.
   ///
   ///**Example**
   ///```dart
   ///   Stream<CounterModel> mapActionToState(
-  ///     CounterModel state, Action action ) async* {
+  ///     CounterModel state, Action action, Store store) async* {
   ///     switch (action.type) {
   ///       case ActionTypes.Inc:
   ///         yield increment(state, action);
   ///         break;
-  ///       default: yield state;
+  ///       default: yield getState(store);
   ///     }
   ///   }
   /// ```

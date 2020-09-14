@@ -1,9 +1,9 @@
 import 'dart:async';
-import 'baseEffect.dart';
+import 'effectBase.dart';
 import 'effectSubscription.dart';
 import 'package:rxdart/rxdart.dart';
 import 'action.dart';
-import 'baseState.dart';
+import 'stateBase.dart';
 import 'actions.dart';
 
 typedef EffectCallback = Stream<Action> Function(Actions action$, Store store$);
@@ -13,25 +13,31 @@ class Store {
   BehaviorSubject<Action> _dispatcher;
   BehaviorSubject<Map<String, dynamic>> _store;
   Actions _actions;
-  //StoreHelper _storeHelper;
   Map<String, StreamSubscription<Action>> _subs;
   EffectSubscription _effSub;
-  List<BaseState> _states;
+  List<StateBase> _states;
   Action _action = Action(type: '@@INIT');
   StreamSubscription _dispatcherSubscription;
 
-  Store(List<BaseState> states) {
+  Store(List<StateBase> states) {
     _dispatcher = BehaviorSubject<Action>.seeded(_action);
-    _store =
-        BehaviorSubject<Map<String, dynamic>>.seeded(Map<String, dynamic>());
-    _actions = Actions(_dispatcher);
     _states = states;
+    _store = BehaviorSubject<Map<String, dynamic>>.seeded(_initialState());
+    _actions = Actions(_dispatcher);
     _subs = Map<String, StreamSubscription<Action>>();
     _effSub = EffectSubscription(_dispatcher);
     _dispatcherSubscription = _dispatcher.listen((action) {
       _combineStates(_store.value, action);
     });
   }
+  Map<String, dynamic> _initialState() {
+    Map<String, dynamic> state = Map<String, dynamic>();
+    for (var item in _states) {
+      state[item.name] = item.initialState;
+    }
+    return state;
+  }
+
   void _combineStates(Map<String, dynamic> state, Action action) {
     _states.forEach((stateObj) {
       stateObj
@@ -107,7 +113,7 @@ class Store {
   }
 
   ///This method is usefull to add a state passing **stateInstance** on demand.
-  void addState(BaseState stateInstance) {
+  void addState(StateBase stateInstance) {
     removeStateByStateName(stateInstance.name, false);
     _states.add(stateInstance);
     dispatch(Action(type: 'add_state(${stateInstance.name})'));
@@ -129,7 +135,7 @@ class Store {
   }
 
   ///This method is usefull to add effects passing **effectInstance** on demand.
-  void addEffects(BaseEffect effectInstance) {
+  void addEffects(EffectBase effectInstance) {
     var effect = MergeStream(effectInstance.registerEffects(_actions, this))
         .asBroadcastStream();
     if (effectInstance.effectKey == null) {
