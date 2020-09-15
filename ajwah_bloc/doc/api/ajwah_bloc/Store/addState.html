@@ -60,6 +60,8 @@
         <li class="section-title">
             <a href="../../ajwah_bloc/Store-class.html#instance-properties">Properties</a>
         </li>
+        <li><a href="../../ajwah_bloc/Store/actions.html">actions</a></li>
+        <li><a href="../../ajwah_bloc/Store/dispatcher.html">dispatcher</a></li>
         <li class="inherited"><a href="https://api.dart.dev/stable/2.9.2/dart-core/Object/hashCode.html">hashCode</a></li>
         <li class="inherited"><a href="https://api.dart.dev/stable/2.9.2/dart-core/Object/runtimeType.html">runtimeType</a></li>
         <li><a href="../../ajwah_bloc/Store/value.html">value</a></li>
@@ -96,7 +98,7 @@
     <section class="multi-line-signature">
       <span class="returntype">void</span>
             <span class="name ">addState</span>
-(<wbr><ol class="parameter-list"><li><span class="parameter" id="addState-param-stateInstance"><span class="type-annotation"><a href="../../ajwah_bloc/BaseState-class.html">BaseState</a></span> <span class="parameter-name">stateInstance</span></span></li>
+(<wbr><ol class="parameter-list"><li><span class="parameter" id="addState-param-stateInstance"><span class="type-annotation"><a href="../../ajwah_bloc/StateBase-class.html">StateBase</a></span> <span class="parameter-name">stateInstance</span></span></li>
 </ol>)
       
     </section>
@@ -106,10 +108,10 @@
     
     <section class="summary source-code" id="source">
       <h2><span>Implementation</span></h2>
-      <pre class="language-dart"><code class="language-dart">void addState(BaseState stateInstance) {
+      <pre class="language-dart"><code class="language-dart">void addState(StateBase stateInstance) {
   removeStateByStateName(stateInstance.name, false);
   _states.add(stateInstance);
-  dispatcH(Action(type: &#39;add_state(${stateInstance.name})&#39;));
+  dispatch(Action(type: &#39;add_state(${stateInstance.name})&#39;));
 }</code></pre>
     </section>
 
@@ -123,7 +125,7 @@
 <footer>
   <span class="no-break">
     ajwah_bloc
-      1.8.10+1
+      1.9.0
   </span>
 
 </footer>

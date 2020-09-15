@@ -23,7 +23,7 @@ class TodoModel {
   TodoModel({this.message, this.todoList});
 }
 
-class TodoState extends BaseState<TodoModel> {
+class TodoState extends StateBase<TodoModel> {
   TodoState()
       : super(name: 'todo', initialState: TodoModel(message: '', todoList: []));
 

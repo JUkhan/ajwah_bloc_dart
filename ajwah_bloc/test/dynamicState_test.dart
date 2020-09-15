@@ -34,14 +34,14 @@ void main() {
   ajwahTest(
       "after dispatch(actionType: ActionTypes.Dec) counter state should be:{count:-1, isLoading:false}",
       build: () => store.select<CounterModel>('counter'),
-      act: () => store.dispatch(ActionTypes.Dec),
+      act: () => store.dispatcH(ActionTypes.Dec),
       skip: 1,
       expect: [CounterModel(count: -1, isLoading: false)]);
 
   test(
       "after dispatch(actionType: ActionTypes.LoadingTodos) todo state should be:{message:'Loading todos.',todoList:[]}",
       () {
-    store.dispatch(ActionTypes.LoadingTodos);
+    store.dispatcH(ActionTypes.LoadingTodos);
     // await delay(20);
     store.select<TodoModel>('todo').skip(1).take(1).listen((todoModel) {
       expect(todoModel.message, equals('Loading todos.'));

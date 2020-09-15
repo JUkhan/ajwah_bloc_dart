@@ -1,37 +1,50 @@
 import 'dart:async';
-import 'baseEffect.dart';
+import 'effectBase.dart';
 import 'effectSubscription.dart';
 import 'package:rxdart/rxdart.dart';
 import 'action.dart';
-import 'baseState.dart';
+import 'stateBase.dart';
 import 'actions.dart';
 
 typedef EffectCallback = Stream<Action> Function(Actions action$, Store store$);
 
+abstract class AjwahStore {
+  void dispatch(Action action);
+  void dispatcH(String actionType, [dynamic payload]);
+  BehaviorSubject<Action> get dispatcher;
+  void dispose();
+}
+
 ///A comfortable way to develop reactive widgets. You can dynamically add or remove effects and states and many more.
-class Store {
+class Store implements AjwahStore {
   BehaviorSubject<Action> _dispatcher;
   BehaviorSubject<Map<String, dynamic>> _store;
   Actions _actions;
-  //StoreHelper _storeHelper;
   Map<String, StreamSubscription<Action>> _subs;
   EffectSubscription _effSub;
-  List<BaseState> _states;
+  List<StateBase> _states;
   Action _action = Action(type: '@@INIT');
   StreamSubscription _dispatcherSubscription;
 
-  Store(List<BaseState> states) {
+  Store(List<StateBase> states) {
     _dispatcher = BehaviorSubject<Action>.seeded(_action);
-    _store =
-        BehaviorSubject<Map<String, dynamic>>.seeded(Map<String, dynamic>());
-    _actions = Actions(_dispatcher);
     _states = states;
+    _store = BehaviorSubject<Map<String, dynamic>>.seeded(_initialState());
+    _actions = Actions(_dispatcher);
     _subs = Map<String, StreamSubscription<Action>>();
     _effSub = EffectSubscription(_dispatcher);
     _dispatcherSubscription = _dispatcher.listen((action) {
       _combineStates(_store.value, action);
     });
   }
+  Map<String, dynamic> _initialState() {
+    Map<String, dynamic> state = Map<String, dynamic>();
+    for (var item in _states) {
+      state[item.name] = item.initialState;
+    }
+    return state;
+  }
+
   void _combineStates(Map<String, dynamic> state, Action action) {
     _states.forEach((stateObj) {
       stateObj
@@ -49,11 +62,11 @@ class Store {
 
   get value => _store.value;
 
-  void dispatcH(Action action) {
+  void dispatch(Action action) {
     _dispatcher.add(action);
   }
 
-  void dispatch(String actionType, [dynamic payload]) {
+  void dispatcH(String actionType, [dynamic payload]) {
     _dispatcher.add(Action(type: actionType, payload: payload));
   }
 
@@ -95,7 +108,7 @@ class Store {
   ///```
   void addEffect(EffectCallback callback, {String effectKey}) {
     removeEffectsByKey(effectKey);
-    _subs[effectKey] = callback(_actions, this).listen(dispatcH);
+    _subs[effectKey] = callback(_actions, this).listen(dispatch);
   }
 
   ///This method is usefull to remove effects passing **effectKey** on demand.
@@ -107,10 +120,10 @@ class Store {
   }
 
   ///This method is usefull to add a state passing **stateInstance** on demand.
-  void addState(BaseState stateInstance) {
+  void addState(StateBase stateInstance) {
     removeStateByStateName(stateInstance.name, false);
     _states.add(stateInstance);
-    dispatcH(Action(type: 'add_state(${stateInstance.name})'));
+    dispatch(Action(type: 'add_state(${stateInstance.name})'));
   }
 
   ///This method is usefull to remove a state passing **stateName** on demand.
@@ -129,14 +142,14 @@ class Store {
   }
 
   ///This method is usefull to add effects passing **effectInstance** on demand.
-  void addEffects(BaseEffect effectInstance) {
+  void addEffects(EffectBase effectInstance) {
     var effect = MergeStream(effectInstance.registerEffects(_actions, this))
         .asBroadcastStream();
     if (effectInstance.effectKey == null) {
       _effSub.addEffects(effect);
     } else {
       removeEffectsByKey(effectInstance.effectKey);
-      _subs[effectInstance.effectKey] = effect.listen(dispatcH);
+      _subs[effectInstance.effectKey] = effect.listen(dispatch);
     }
   }
 
@@ -170,11 +183,15 @@ class Store {
     _store.add(state);
   }
 
+  BehaviorSubject<Action> get dispatcher => _dispatcher;
+  Actions get actions => _actions;
+
   ///It's a clean up function.
   void dispose() {
     _subs.forEach((key, value) {
       value.cancel();
     });
+    _subs.clear();
     _effSub.dispose();
     _dispatcherSubscription.cancel();
     _dispatcher.close();

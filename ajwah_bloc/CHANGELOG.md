@@ -105,3 +105,8 @@ also updated doc
 ## 1.8.10+1
 
 doc updated
+
+## 1.9.0
+
+expose actions, dispatcher api.
+bug fix: some minor bug fixing.

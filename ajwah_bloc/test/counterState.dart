@@ -23,11 +23,14 @@ class CounterModel {
   int get hashCode => count.hashCode;
 }
 
-class CounterState extends BaseState<CounterModel> {
+class CounterState extends StateBase<CounterModel> {
   CounterState() : super(name: 'counter', initialState: CounterModel.init());
 
   Stream<CounterModel> mapActionToState(
-      CounterModel state, Action action, Store store) async* {
+    CounterModel state,
+    Action action,
+    Store store,
+  ) async* {
     switch (action.type) {
       case ActionTypes.Inc:
         yield CounterModel.countData(state.count + 1);

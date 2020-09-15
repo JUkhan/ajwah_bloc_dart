@@ -54,8 +54,9 @@
       <li class="section-title"><a href="../ajwah_bloc/ajwah_bloc-library.html#classes">Classes</a></li>
       <li><a href="../ajwah_bloc/Action-class.html">Action</a></li>
       <li><a href="../ajwah_bloc/Actions-class.html">Actions</a></li>
-      <li><a href="../ajwah_bloc/BaseEffect-class.html">BaseEffect</a></li>
-      <li><a href="../ajwah_bloc/BaseState-class.html">BaseState</a></li>
+      <li><a href="../ajwah_bloc/AjwahStore-class.html">AjwahStore</a></li>
+      <li><a href="../ajwah_bloc/EffectBase-class.html">EffectBase</a></li>
+      <li><a href="../ajwah_bloc/StateBase-class.html">StateBase</a></li>
       <li><a href="../ajwah_bloc/Store-class.html">Store</a></li>
     
     
@@ -67,6 +68,7 @@
       <li><a href="../ajwah_bloc/addEffects.html">addEffects</a></li>
       <li><a href="../ajwah_bloc/addState.html">addState</a></li>
       <li><a href="../ajwah_bloc/createStore.html">createStore</a></li>
+      <li><a href="../ajwah_bloc/dispatcH.html">dispatcH</a></li>
       <li><a href="../ajwah_bloc/dispatch.html">dispatch</a></li>
       <li><a href="../ajwah_bloc/exportState.html">exportState</a></li>
       <li><a href="../ajwah_bloc/importState.html">importState</a></li>
@@ -74,6 +76,7 @@
       <li><a href="../ajwah_bloc/removeStateByStateName.html">removeStateByStateName</a></li>
       <li><a href="../ajwah_bloc/select.html">select</a></li>
       <li><a href="../ajwah_bloc/selectMany.html">selectMany</a></li>
+      <li><a href="../ajwah_bloc/storeInstance.html">storeInstance</a></li>
     
     
       <li class="section-title"><a href="../ajwah_bloc/ajwah_bloc-library.html#typedefs">Typedefs</a></li>
@@ -89,13 +92,28 @@
       <p>A comfortable way to develop reactive widgets. You can dynamically add or remove effects and states and many more.</p>
     </section>
     
+    <section>
+      <dl class="dl-horizontal">
+
+        <dt>Implemented types</dt>
+        <dd>
+          <ul class="comma-separated clazz-relationships">
+            <li><a href="../ajwah_bloc/AjwahStore-class.html">AjwahStore</a></li>
+          </ul>
+        </dd>
+
+
+
+
+      </dl>
+    </section>
 
     <section class="summary offset-anchor" id="constructors">
       <h2>Constructors</h2>
 
       <dl class="constructor-summary-list">
         <dt id="Store" class="callable">
-          <span class="name"><a href="../ajwah_bloc/Store/Store.html">Store</a></span><span class="signature">(<span class="parameter" id="-param-states"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.9.2/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../ajwah_bloc/BaseState-class.html">BaseState</a></span>&gt;</span></span> <span class="parameter-name">states</span></span><wbr>)</span>
+          <span class="name"><a href="../ajwah_bloc/Store/Store.html">Store</a></span><span class="signature">(<span class="parameter" id="-param-states"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.9.2/dart-core/List-class.html">List</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../ajwah_bloc/StateBase-class.html">StateBase</a></span>&gt;</span></span> <span class="parameter-name">states</span></span><wbr>)</span>
         </dt>
         <dd>
            
@@ -107,6 +125,22 @@
       <h2>Properties</h2>
 
       <dl class="properties">
+        <dt id="actions" class="property">
+          <span class="name"><a href="../ajwah_bloc/Store/actions.html">actions</a></span>
+          <span class="signature">&#8594; <a href="../ajwah_bloc/Actions-class.html">Actions</a></span>         
+        </dt>
+        <dd>
+           
+                  <div class="features">read-only</div>
+</dd>
+        <dt id="dispatcher" class="property">
+          <span class="name"><a href="../ajwah_bloc/Store/dispatcher.html">dispatcher</a></span>
+          <span class="signature">&#8594; <a href="https://pub.dev/documentation/rxdart/0.24.0/rx/BehaviorSubject-class.html">BehaviorSubject</a><span class="signature">&lt;<wbr><span class="type-parameter"><a href="../ajwah_bloc/Action-class.html">Action</a></span>&gt;</span></span>         
+        </dt>
+        <dd>
+           
+                  <div class="features">read-only, override</div>
+</dd>
         <dt id="hashCode" class="property inherited">
           <span class="name"><a href="https://api.dart.dev/stable/2.9.2/dart-core/Object/hashCode.html">hashCode</a></span>
           <span class="signature">&#8594; <a href="https://api.dart.dev/stable/2.9.2/dart-core/int-class.html">int</a></span>         
@@ -148,7 +182,7 @@ Actions action$, Store store$)=&gt;Stream</strong> and <strong>effectKey</strong
                   
 </dd>
         <dt id="addEffects" class="callable">
-          <span class="name"><a href="../ajwah_bloc/Store/addEffects.html">addEffects</a></span><span class="signature">(<wbr><span class="parameter" id="addEffects-param-effectInstance"><span class="type-annotation"><a href="../ajwah_bloc/BaseEffect-class.html">BaseEffect</a></span> <span class="parameter-name">effectInstance</span></span><wbr>)
+          <span class="name"><a href="../ajwah_bloc/Store/addEffects.html">addEffects</a></span><span class="signature">(<wbr><span class="parameter" id="addEffects-param-effectInstance"><span class="type-annotation"><a href="../ajwah_bloc/EffectBase-class.html">EffectBase</a></span> <span class="parameter-name">effectInstance</span></span><wbr>)
             <span class="returntype parameter">&#8594; void</span>
           </span>
                   </dt>
@@ -157,7 +191,7 @@ Actions action$, Store store$)=&gt;Stream</strong> and <strong>effectKey</strong
                   
 </dd>
         <dt id="addState" class="callable">
-          <span class="name"><a href="../ajwah_bloc/Store/addState.html">addState</a></span><span class="signature">(<wbr><span class="parameter" id="addState-param-stateInstance"><span class="type-annotation"><a href="../ajwah_bloc/BaseState-class.html">BaseState</a></span> <span class="parameter-name">stateInstance</span></span><wbr>)
+          <span class="name"><a href="../ajwah_bloc/Store/addState.html">addState</a></span><span class="signature">(<wbr><span class="parameter" id="addState-param-stateInstance"><span class="type-annotation"><a href="../ajwah_bloc/StateBase-class.html">StateBase</a></span> <span class="parameter-name">stateInstance</span></span><wbr>)
             <span class="returntype parameter">&#8594; void</span>
           </span>
                   </dt>
@@ -166,22 +200,22 @@ Actions action$, Store store$)=&gt;Stream</strong> and <strong>effectKey</strong
                   
 </dd>
         <dt id="dispatcH" class="callable">
-          <span class="name"><a href="../ajwah_bloc/Store/dispatcH.html">dispatcH</a></span><span class="signature">(<wbr><span class="parameter" id="dispatcH-param-action"><span class="type-annotation"><a href="../ajwah_bloc/Action-class.html">Action</a></span> <span class="parameter-name">action</span></span><wbr>)
+          <span class="name"><a href="../ajwah_bloc/Store/dispatcH.html">dispatcH</a></span><span class="signature">(<wbr><span class="parameter" id="dispatcH-param-actionType"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.9.2/dart-core/String-class.html">String</a></span> <span class="parameter-name">actionType</span>, </span><wbr><span class="parameter" id="dispatcH-param-payload">[<span class="type-annotation">dynamic</span> <span class="parameter-name">payload</span>]</span><wbr>)
             <span class="returntype parameter">&#8594; void</span>
           </span>
                   </dt>
         <dd>
            
-                  
+                  <div class="features">override</div>
 </dd>
         <dt id="dispatch" class="callable">
-          <span class="name"><a href="../ajwah_bloc/Store/dispatch.html">dispatch</a></span><span class="signature">(<wbr><span class="parameter" id="dispatch-param-actionType"><span class="type-annotation"><a href="https://api.dart.dev/stable/2.9.2/dart-core/String-class.html">String</a></span> <span class="parameter-name">actionType</span>, </span><wbr><span class="parameter" id="dispatch-param-payload">[<span class="type-annotation">dynamic</span> <span class="parameter-name">payload</span>]</span><wbr>)
+          <span class="name"><a href="../ajwah_bloc/Store/dispatch.html">dispatch</a></span><span class="signature">(<wbr><span class="parameter" id="dispatch-param-action"><span class="type-annotation"><a href="../ajwah_bloc/Action-class.html">Action</a></span> <span class="parameter-name">action</span></span><wbr>)
             <span class="returntype parameter">&#8594; void</span>
           </span>
                   </dt>
         <dd>
            
-                  
+                  <div class="features">override</div>
 </dd>
         <dt id="dispose" class="callable">
           <span class="name"><a href="../ajwah_bloc/Store/dispose.html">dispose</a></span><span class="signature">(<wbr>)
@@ -190,7 +224,7 @@ Actions action$, Store store$)=&gt;Stream</strong> and <strong>effectKey</strong
                   </dt>
         <dd>
           It's a clean up function. 
-                  
+                  <div class="features">override</div>
 </dd>
         <dt id="exportState" class="callable">
           <span class="name"><a href="../ajwah_bloc/Store/exportState.html">exportState</a></span><span class="signature">(<wbr>)
@@ -298,6 +332,8 @@ as value. <a href="../ajwah_bloc/Store/selectMany.html">[...]</a>
       <li class="section-title">
         <a href="../ajwah_bloc/Store-class.html#instance-properties">Properties</a>
       </li>
+      <li><a href="../ajwah_bloc/Store/actions.html">actions</a></li>
+      <li><a href="../ajwah_bloc/Store/dispatcher.html">dispatcher</a></li>
       <li class="inherited"><a href="https://api.dart.dev/stable/2.9.2/dart-core/Object/hashCode.html">hashCode</a></li>
       <li class="inherited"><a href="https://api.dart.dev/stable/2.9.2/dart-core/Object/runtimeType.html">runtimeType</a></li>
       <li><a href="../ajwah_bloc/Store/value.html">value</a></li>
@@ -332,7 +368,7 @@ as value. <a href="../ajwah_bloc/Store/selectMany.html">[...]</a>
 <footer>
   <span class="no-break">
     ajwah_bloc
-      1.8.10+1
+      1.9.0
   </span>
 
 </footer>

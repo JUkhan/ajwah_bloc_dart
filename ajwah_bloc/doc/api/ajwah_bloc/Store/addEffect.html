@@ -60,6 +60,8 @@
         <li class="section-title">
             <a href="../../ajwah_bloc/Store-class.html#instance-properties">Properties</a>
         </li>
+        <li><a href="../../ajwah_bloc/Store/actions.html">actions</a></li>
+        <li><a href="../../ajwah_bloc/Store/dispatcher.html">dispatcher</a></li>
         <li class="inherited"><a href="https://api.dart.dev/stable/2.9.2/dart-core/Object/hashCode.html">hashCode</a></li>
         <li class="inherited"><a href="https://api.dart.dev/stable/2.9.2/dart-core/Object/runtimeType.html">runtimeType</a></li>
         <li><a href="../../ajwah_bloc/Store/value.html">value</a></li>
@@ -116,7 +118,7 @@ Actions action$, Store store$)=&gt;Stream</strong> and <strong>effectKey</strong
       <h2><span>Implementation</span></h2>
       <pre class="language-dart"><code class="language-dart">void addEffect(EffectCallback callback, {String effectKey}) {
   removeEffectsByKey(effectKey);
-  _subs[effectKey] = callback(_actions, this).listen(dispatcH);
+  _subs[effectKey] = callback(_actions, this).listen(dispatch);
 }</code></pre>
     </section>
 
@@ -130,7 +132,7 @@ Actions action$, Store store$)=&gt;Stream</strong> and <strong>effectKey</strong
 <footer>
   <span class="no-break">
     ajwah_bloc
-      1.8.10+1
+      1.9.0
   </span>
 
 </footer>

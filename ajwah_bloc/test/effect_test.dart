@@ -27,7 +27,7 @@ void main() {
   ajwahTest(
       "after dispatch(actionType: ActionTypes.AsyncInc) state should be mutated two times: first time:{count:0, isLoading:true} isLoading:true and second time:{count:1, isLoading:false}",
       build: () => store.select('counter'),
-      act: () => store.dispatch(ActionTypes.AsyncInc),
+      act: () => store.dispatcH(ActionTypes.AsyncInc),
       skip: 1,
       wait: const Duration(milliseconds: 2),
       expect: [

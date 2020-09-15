@@ -1,6 +1,7 @@
 import 'store.dart';
-import 'baseEffect.dart';
-import 'baseState.dart';
+import 'effectBase.dart';
+import 'stateBase.dart';
+import 'action.dart';
 
 Store _store;
 
@@ -10,16 +11,16 @@ Store _store;
 ///
 ///[effects] is an optional param.
 ///
-///[enableGlobalApi] by default it is `false`. If you pass `true` then global
+///[exposeApiGlobally] by default it is `false`. If you pass `true` then global
 ///functions like dispatch(), select() etc should be exposed.
 ///
 ///Also you can dynamically **add** or **remove** state and effect
 ///using **addState(BaseState stateInstance)** ,**removeStateByStateName(String stateName)**,
 ///**addEffects(BaseEffect effectInstance)**, **addEffect(EffectCallback callback, {@required String key})**, **removeEffectsByKey(String key)**
 Store createStore(
-    {List<BaseState> states,
-    List<BaseEffect> effects = const [],
-    bool enableGlobalApi = false}) {
+    {List<StateBase> states,
+    List<EffectBase> effects = const [],
+    bool exposeApiGlobally = false}) {
   assert(states != null && states.length > 0
       ? true
       : throw 'states should not be null or empty.');
@@ -29,22 +30,25 @@ Store createStore(
   effects.forEach((effect) {
     store.addEffects(effect);
   });
-  if (enableGlobalApi) {
+  if (exposeApiGlobally) {
     _store = store;
   }
   return store;
 }
 
-///This is a helper function of **store().dispatch(Action action).**
-void dispatch(String actionType, [dynamic payload]) {
-  try {
-    _store.dispatch(actionType, payload);
-  } catch (_) {
-    throw "dispatch() function should not work until you enableGlobalApi:true inside createStore() function.";
-  }
+Store storeInstance() => _store;
+
+///This is a helper function of **store.dispatch(Action action).**
+void dispatch(Action action) {
+  _store.dispatch(action);
 }
 
-///This is a helper function of **store().select(String stateName).**
+///This is a helper function of **store.dispatcH(String actionType, [dynamic payload]).**
+void dispatcH(String actionType, [dynamic payload]) {
+  _store.dispatcH(actionType, payload);
+}
+
+///This is a helper function of **store.select(String stateName).**
 ///
 ///**Example**
 ///```daty
@@ -54,7 +58,7 @@ Stream<T> select<T>(String stateName) {
   try {
     return _store.select<T>(stateName);
   } catch (_) {
-    throw "select() function should not work until you enableGlobalApi:true inside createStore() function.";
+    throw "select() function should not work until you exposeApiGlobally:true inside createStore() function.";
   }
 }
 
@@ -79,7 +83,7 @@ void removeEffectsByKey(String effectKey) {
 }
 
 ///This method is usefull to add a state passing **stateInstance** on demand.
-void addState(BaseState stateInstance) {
+void addState(StateBase stateInstance) {
   _store.addState(stateInstance);
 }
 
@@ -89,7 +93,7 @@ void removeStateByStateName(String stateName) {
 }
 
 ///This method is usefull to add effects passing **effectInstance** on demand.
-void addEffects(BaseEffect effectInstance) {
+void addEffects(EffectBase effectInstance) {
   _store.addEffects(effectInstance);
 }
 
