@@ -111,7 +111,7 @@ createStore(states:[CounterState()], exposeApiGlobally:true);
 </code></pre>
 <pre class="language-dart"><code class="language-dart">StreamBuilder&lt;CounterModel&gt;(
     stream: select&lt;CounterModel&gt;('counter'),
-    builder:(BuildContext context, AsyncSnapshot&lt;CounterModel&gt; snapshot) {
+    builder:(context, snapshot) {
         if (snapshot.data.isLoading) {
           return CircularProgressIndicator();
         }
