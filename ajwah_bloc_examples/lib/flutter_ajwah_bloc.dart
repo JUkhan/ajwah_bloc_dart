@@ -81,8 +81,9 @@ class CounterPage extends StatelessWidget {
                 .mergeWith(store.storeInstance())
                 .onState(store.select('counter'))
                 //.onActions(['AsyncInc'])
-                .mapEmit((action, state1, state2) =>
-                    'sum: ${state1.count + state2.count}'),
+                .mapEmit<CounterModel, CounterModel, String>(
+                    (action, state1, state2) =>
+                        'sum: ${state1.count + state2.count}'),
             builder: (context, state) => Text(state),
           ),
         ],

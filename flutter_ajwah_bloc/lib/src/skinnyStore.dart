@@ -102,7 +102,7 @@ class SkinnyStore<T> extends StateBase<T> implements AjwahStore {
   ///          builder: (context, state) => Text(state),
   ///        )
   ///```
-  MergeHelper mergeWith<K extends AjwahStore>(K store) =>
+  MergeHelper mergeWith<M2, K extends AjwahStore>(K store) =>
       MergeHelper(this, store);
 }
 
@@ -138,7 +138,7 @@ class MergeHelper {
     return this;
   }
 
-  Stream<R> mapEmit<M1, M2, R>(MapCallback<M1, M2, R> callback) {
+  Stream<R> mapEmit<A, B, R>(MapCallback<A, B, R> callback) {
     if (_stream2 == null) {
       throw 'You missed to call onState(stream) method over mergeWith() function.';
     }
@@ -148,6 +148,6 @@ class MergeHelper {
             ? true
             : _types.indexWhere((type) => type == action.type) != -1)
         .delay(Duration(milliseconds: _milliseconds ?? 0))
-        .withLatestFrom2<M1, M2, R>(store1.stream, _stream2, callback);
+        .withLatestFrom2<A, B, R>(store1.stream, _stream2, callback);
   }
 }
