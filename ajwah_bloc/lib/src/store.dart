@@ -8,8 +8,15 @@ import 'actions.dart';
 
 typedef EffectCallback = Stream<Action> Function(Actions action$, Store store$);
 
+abstract class AjwahStore {
+  void dispatch(Action action);
+  void dispatcH(String actionType, [dynamic payload]);
+  BehaviorSubject<Action> get dispatcher;
+  void dispose();
+}
+
 ///A comfortable way to develop reactive widgets. You can dynamically add or remove effects and states and many more.
-class Store {
+class Store implements AjwahStore {
   BehaviorSubject<Action> _dispatcher;
   BehaviorSubject<Map<String, dynamic>> _store;
   Actions _actions;
@@ -176,11 +183,15 @@ class Store {
     _store.add(state);
   }
 
+  BehaviorSubject<Action> get dispatcher => _dispatcher;
+  Actions get actions => _actions;
+
   ///It's a clean up function.
   void dispose() {
     _subs.forEach((key, value) {
       value.cancel();
     });
+    _subs.clear();
     _effSub.dispose();
     _dispatcherSubscription.cancel();
     _dispatcher.close();

@@ -5,11 +5,9 @@ import 'dispatcher_test.dart' as dispatcher_test;
 import 'dynamicEffect_test.dart' as dynamicEffect_test;
 import 'dynamicState_test.dart' as dynamicState_test;
 import 'effect_test.dart' as effect_test;
-import 'singleState_test.dart' as singleState_test;
 
 void main() {
   dynamicEffect_test.main();
-  singleState_test.main();
   dynamicState_test.main();
   dispatcher_test.main();
   effect_test.main();

@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
 
-import 'package:ajwah_bloc/ajwah_bloc.dart';
+import 'skinnyStore.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 

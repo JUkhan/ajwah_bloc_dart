@@ -1,25 +1,22 @@
 [example lib/main.dart](https://github.com/JUkhan/ajwah_bloc_dart/tree/master/ajwah_bloc_examples/lib/main.dart)
 
 ```dart
+import 'dart:async';
+import 'package:ajwah_bloc/ajwah_bloc.dart' as store;
 import 'package:ajwah_bloc/ajwah_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:ajwah_bloc/ajwah_bloc.dart' as store;
+import 'package:rxdart/rxdart.dart';
 
 void main() {
-  createStore(states: [CounterState()], enableGlobalApi:true);
-
-  runApp(MyApp());
+  createStore(states: [CounterState()], exposeApiGlobally: true);
+  runApp(App());
 }
 
-class MyApp extends StatelessWidget {
+class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
       home: MyHomePage(),
     );
   }
@@ -40,8 +37,98 @@ class MyHomePage extends StatelessWidget {
           StateOnDemand(),
           Counter(),
           ExportState(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              RaisedButton(
+                onPressed: () => store.dispatcH('show-widget'),
+                child: Text("Show Widget"),
+              ),
+              RaisedButton(
+                onPressed: () => store.dispatcH('hide-widget'),
+                child: Text("Hide Widget"),
+              ),
+            ],
+          ),
+          StreamBuilder<String>(
+            stream: store.storeInstance().actions.whereTypes(
+                ['show-widget', 'hide-widget']).map((action) => action.type),
+            initialData: 'hide-widget',
+            builder: (context, snapshot) {
+              return snapshot.data == 'show-widget'
+                  ? DynamicWidget()
+                  : Container();
+            },
+          ),
         ],
       )),
+    );
+  }
+}
+
+class DynamicWidget extends StatefulWidget {
+  DynamicWidget({Key key}) : super(key: key);
+
+  @override
+  _DynamicWidgetState createState() => _DynamicWidgetState();
+}
+
+class _DynamicWidgetState extends State<DynamicWidget> {
+  final _effectKey = "keyForAsyncIncEffect";
+  var msg = '';
+  _addEffectForAsyncInc() {
+    store.addEffect(
+      (action$, store$) => action$
+          .whereType('AsyncInc')
+          .debounceTime(Duration(milliseconds: 500))
+          .map((event) => store.Action(type: 'Dec')),
+      effectKey: _effectKey,
+    );
+    setState(() {
+      msg =
+          "Effect added successfully.\nNow click on the [Async +] button and see it's not working as expected.";
+    });
+    store.dispatcH('effect-added');
+  }
+
+  _removeEffect([bool isDisposing = false]) {
+    store.removeEffectsByKey(_effectKey);
+    if (!isDisposing)
+      setState(() {
+        msg = 'Effect removed';
+      });
+    store.dispatcH('effect-removed');
+  }
+
+  @override
+  void dispose() {
+    _removeEffect(true);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.black26,
+      padding: EdgeInsets.all(20),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              RaisedButton(
+                onPressed: _addEffectForAsyncInc,
+                child: Text("Add Effect on AsyncInc action"),
+              ),
+              RaisedButton(
+                onPressed: _removeEffect,
+                child: Text("Remove effect"),
+              )
+            ],
+          ),
+          Text(msg, style: TextStyle(fontSize: 20, color: Colors.white70)),
+        ],
+      ),
     );
   }
 }
@@ -57,16 +144,25 @@ class Counter extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         RaisedButton(
-          onPressed: () => dispatch('Inc'),
+          onPressed: () => dispatcH('Inc'),
           child: Text('+'),
         ),
         RaisedButton(
-          onPressed: () => dispatch('Dec'),
+          onPressed: () => dispatcH('Dec'),
           child: Text('-'),
         ),
-        RaisedButton(
-          onPressed: () => dispatch('AsyncInc'),
-          child: Text('Async +'),
+        StreamBuilder<String>(
+          stream: store.storeInstance().actions.whereTypes(
+              ['effect-added', 'effect-removed']).map((action) => action.type),
+          initialData: 'effect-removed',
+          builder: (context, snapshot) => RaisedButton(
+            onPressed: () => dispatcH('AsyncInc'),
+            child: Text(
+              'Async +',
+              style: TextStyle(
+                  color: snapshot.data == 'effect-added' ? Colors.red : null),
+            ),
+          ),
         ),
         StreamBuilder<CounterModel>(
           stream: select('counter'),
@@ -125,7 +221,7 @@ class ExportState extends StatelessWidget {
   Widget build(BuildContext context) {
     return StreamBuilder(
       stream: exportState(),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
+      builder: (context, snapshot) {
         if (snapshot.hasData) {
           var state = snapshot.data[1].length > 0
               ? snapshot.data[1]['counter']?.toString() ?? ''
@@ -161,7 +257,7 @@ class CounterModel {
   }
 }
 
-class CounterState extends BaseState<CounterModel> {
+class CounterState extends StateBase<CounterModel> {
   CounterState() : super(name: 'counter', initialState: CounterModel.init());
 
   Stream<CounterModel> mapActionToState(
@@ -176,13 +272,12 @@ class CounterState extends BaseState<CounterModel> {
       case 'AsyncInc':
         yield state.copyWith(isLoading: true);
         await Future.delayed(Duration(seconds: 1));
-        dispatch('Inc');
+        store.dispatcH('Inc');
         break;
       default:
         yield getState(store);
     }
   }
 }
-
 
 ```

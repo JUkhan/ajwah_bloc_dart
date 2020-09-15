@@ -6,6 +6,7 @@ import 'package:rxdart/rxdart.dart';
 import 'todoApi.dart';
 
 class TodoEffects extends EffectBase {
+  TodoEffects() : super(effectKey: "todo-effects");
   effectForLoadTodos(Actions action$, Store store$) {
     return action$
         .whereType(ActionTypes.LoadingTodos)

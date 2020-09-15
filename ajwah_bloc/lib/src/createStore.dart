@@ -36,13 +36,11 @@ Store createStore(
   return store;
 }
 
+Store storeInstance() => _store;
+
 ///This is a helper function of **store.dispatch(Action action).**
 void dispatch(Action action) {
-  try {
-    _store.dispatch(action);
-  } catch (_) {
-    throw "dispatch() function should not work until you enableGlobalApi:true inside createStore() function.";
-  }
+  _store.dispatch(action);
 }
 
 ///This is a helper function of **store.dispatcH(String actionType, [dynamic payload]).**
@@ -60,7 +58,7 @@ Stream<T> select<T>(String stateName) {
   try {
     return _store.select<T>(stateName);
   } catch (_) {
-    throw "select() function should not work until you enableGlobalApi:true inside createStore() function.";
+    throw "select() function should not work until you exposeApiGlobally:true inside createStore() function.";
   }
 }
 

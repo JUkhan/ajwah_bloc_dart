@@ -76,8 +76,13 @@ class CounterPage extends StatelessWidget {
           ),
           StreamConsumer<String>(
             initialData: "",
-            stream: store.selectMany((states) =>
-                '${states['theme'].brightness} - ${states['counter']}'),
+            stream: context
+                .bloc<CounterBloc>()
+                .mergeWith(store.storeInstance())
+                .onState(store.select('counter'))
+                //.onActions(['AsyncInc'])
+                .mapEmit((action, state1, state2) =>
+                    'sum: ${state1.count + state2.count}'),
             builder: (context, state) => Text(state),
           ),
         ],

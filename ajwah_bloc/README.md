@@ -3,13 +3,12 @@
 Rx based state management library. Manage your application's states, effects, and actions easy way.
 Make apps more scalable with a unidirectional data-flow.
 
-**Learn more about testing `ajwah_bloc` with [ajwah_bloc_test](https://pub.dev/packages/ajwah_bloc_test)!**
+- **[ajwah_bloc_test](https://pub.dev/packages/ajwah_bloc_test)**
+- **[flutter_ajwah_bloc](https://pub.dev/packages/flutter_ajwah_bloc)**
 
 **States**
 
-Every state class must derived from `StateBase<T>` class. The `StateBase<T>` class has an abstract function `mapActionToState(T state, Action action, Store store)`. This method should be invoked whenever any `action` dispatched to the store. You should return a new state based on the `action`. Keep in mind that if you mutate the state, it does not notify (it's listeners) the widget/s for rerendering.
-
-#### Example CounterState
+Every state class must derived from `StateBase<T>` class. The `StateBase<T>` class has an abstract function `mapActionToState(T state, Action action, Store store)`. This method should be invoked whenever any `action` dispatched to the store. You should return a new state based on the `action`.
 
 ```dart
 import 'package:ajwah_bloc/ajwah_bloc.dart';
@@ -24,7 +23,7 @@ class CounterModel {
       count: count ?? this.count, isLoading: isLoading ?? this.isLoading);
 }
 
-class CounterState extends BaseState<CounterModel> {
+class CounterState extends StateBase<CounterModel> {
   CounterState() : super(name: 'counter', initialState: CounterModel.init());
 
   Stream<CounterModel> mapActionToState(
@@ -59,6 +58,8 @@ Declare your store as a global variable or enable `exposeApiGlobally:true`.
 
 ```dart
 var store = createStore(states:[CounterState()]);
+//or
+createStore(states:[CounterState()], exposeApiGlobally:true);
 ```
 
 ```dart
@@ -86,17 +87,19 @@ dispatch(Action(type:'Inc'));
 
 Every effect class must derived from `EffectBase` class. And it is optional to pass the
 `effectKey`. But it's mandatory if you want conditionally remove the effects by using
-`removeEffectsByKey('effectKey')`. The `EffectBase` class has an abstract method `registerEffects(Actions action$, Store store$)`. Please keep in mind that effects should not work until you register them.
+`removeEffectsByKey('effectKey')`. The `EffectBase` class has an abstract method `registerEffects(Actions action$, Store store$)`.
 
 #### Example
 
 ```dart
 import 'package:ajwah_bloc/ajwah_bloc.dart';
 import 'package:rxdart/rxdart.dart';
-
 import '../../actionTypes.dart';
 
-class CounterEffect extends BaseEffect {
+class CounterEffect extends EffectBase {
+
+  CounterEffect() : super(effectKey: "counter-effects");
+
   Stream<Action> effectForAsyncInc(Actions action$, Store store$) {
     return action$
         .whereType(ActionTypes.AsyncInc)
