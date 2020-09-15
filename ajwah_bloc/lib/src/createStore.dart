@@ -21,7 +21,7 @@ Store createStore(
     {List<StateBase> states,
     List<EffectBase> effects = const [],
     bool exposeApiGlobally = false}) {
-  assert(states != null && states.length > 0
+  assert(states != null && states.isNotEmpty
       ? true
       : throw 'states should not be null or empty.');
 
