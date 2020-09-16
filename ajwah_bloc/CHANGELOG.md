@@ -110,3 +110,7 @@ doc updated
 
 expose actions, dispatcher api.
 bug fix: some minor bug fixing.
+
+## 1.9.1
+
+refactor createStore() function - all params are optional

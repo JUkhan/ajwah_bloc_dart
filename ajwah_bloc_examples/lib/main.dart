@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
 
 void main() {
-  createStore(states: [CounterState()], exposeApiGlobally: true);
+  createStore(exposeApiGlobally: true);
   runApp(App());
 }
 

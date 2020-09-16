@@ -17,17 +17,13 @@ Store _store;
 ///Also you can dynamically **add** or **remove** state and effect
 ///using **addState(BaseState stateInstance)** ,**removeStateByStateName(String stateName)**,
 ///**addEffects(BaseEffect effectInstance)**, **addEffect(EffectCallback callback, {@required String key})**, **removeEffectsByKey(String key)**
-Store createStore(
-    {List<StateBase> states,
-    List<EffectBase> effects = const [],
-    bool exposeApiGlobally = false}) {
-  assert(states != null && states.isNotEmpty
-      ? true
-      : throw 'states should not be null or empty.');
-
-  var store = Store(states);
-
-  effects.forEach((effect) {
+Store createStore({
+  List<StateBase> states,
+  List<EffectBase> effects,
+  bool exposeApiGlobally = false,
+}) {
+  var store = Store(states ?? []);
+  (effects ?? []).forEach((effect) {
     store.addEffects(effect);
   });
   if (exposeApiGlobally) {
