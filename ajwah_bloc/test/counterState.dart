@@ -23,27 +23,21 @@ class CounterModel {
   int get hashCode => count.hashCode;
 }
 
-class CounterState extends StateBase<CounterModel> {
-  CounterState() : super(name: 'counter', initialState: CounterModel.init());
-
-  Stream<CounterModel> mapActionToState(
-    CounterModel state,
-    Action action,
-    Store store,
-  ) async* {
-    switch (action.type) {
-      case ActionTypes.Inc:
-        yield CounterModel.countData(state.count + 1);
-        break;
-      case ActionTypes.Dec:
-        yield CounterModel.countData(state.count - 1);
-        break;
-      case ActionTypes.AsyncInc:
-        yield CounterModel.loading(state.count);
-        break;
-
-      default:
-        yield getState(store);
-    }
-  }
+void registerCounterState(AjwahStore store) {
+  store.registerState<CounterModel>(
+      stateName: 'counter',
+      initialState: CounterModel.init(),
+      mapActionToState: (state, action, emit) {
+        switch (action.type) {
+          case ActionTypes.Inc:
+            emit(CounterModel.countData(state.count + 1));
+            break;
+          case ActionTypes.Dec:
+            emit(CounterModel.countData(state.count - 1));
+            break;
+          case ActionTypes.AsyncInc:
+            emit(CounterModel.loading(state.count));
+            break;
+        }
+      });
 }

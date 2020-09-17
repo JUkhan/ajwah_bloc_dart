@@ -1,16 +1,16 @@
-class ActionTypes {
-  static const String Inc = 'inc';
-  static const String Dec = 'dec';
-  static const String AsyncInc = 'AsyncInc';
-  static const String SearchInput = 'SearchInput';
-  static const String SearchData = 'SearchData';
+abstract class ActionTypes {
+  static const Dec = 'dec';
+  static const Inc = 'inc';
+  static const AsyncInc = 'AsyncInc';
+  static const SearchInput = 'SearchInput';
+  static const SearchData = 'SearchData';
 
-  static const String LoadingTodos = 'LoadingTodos';
-  static const String AddTodo = 'AddTodo';
-  static const String UpdateTodo = 'UpdateTodo';
-  static const String RemoveTodo = 'RemoveTodo';
-  static const String TodosData = 'TodosData';
-  static const String TodoError = 'TodoError';
+  static const LoadingTodos = 'LoadingTodos';
+  static const AddTodo = 'AddTodo';
+  static const UpdateTodo = 'UpdateTodo';
+  static const RemoveTodo = 'RemoveTodo';
+  static const TodosData = 'TodosData';
+  static const TodoError = 'TodoError';
 }
 
 //pub run test_coverage

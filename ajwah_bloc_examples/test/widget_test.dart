@@ -12,9 +12,10 @@ import 'package:ajwahh_block_examples/main.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  Store store;
+  AjwahStore store;
   setUpAll(() {
-    store = createStore(states: [CounterState()]);
+    store = createStore(exposeApiGlobally: true);
+    registerCounterState();
   });
   tearDownAll(() {
     store.dispose();
