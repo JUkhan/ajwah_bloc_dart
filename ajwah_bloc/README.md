@@ -47,7 +47,37 @@ StreamBuilder<CounterModel>(
 )
 ```
 
-## Effects
+You can make your app more declaretive simply dispatching the action. Here you see an example of conditionaly rendering a widged having taps on two buttons [Show Widget] and [Hide Widget]. And consuming those actions as you needed. `storeInstance().actions.whereTypes(['show-widget', 'hide-widget']).map((action) => action.type)`
+
+```dart
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              RaisedButton(
+                onPressed: () =>
+                    store.dispatch(store.Action(type: 'show-widget')),
+                child: Text("Show Widget"),
+              ),
+              RaisedButton(
+                onPressed: () =>
+                    store.dispatch(store.Action(type: 'hide-widget')),
+                child: Text("Hide Widget"),
+              ),
+            ],
+          ),
+          StreamBuilder<String>(
+            stream: storeInstance().actions.whereTypes(
+                ['show-widget', 'hide-widget']).map((action) => action.type),
+            initialData: 'hide-widget',
+            builder: (context, snapshot) {
+              return snapshot.data == 'show-widget'
+                  ? DynamicWidget()
+                  : Container();
+            },
+          ),
+```
+
+Effects are optional. You can do everything of it's into `mapActionToState` callback function. As per your application is growing caught on difficult cases - it might be handy.
 
 ```dart
  store.registerEffect(
