@@ -114,3 +114,11 @@ bug fix: some minor bug fixing.
 ## 1.9.1
 
 refactor createStore() function - all params are optional
+
+## 2.0.0
+
+from 2.0.0 it is totally new style of ajwah_bloc.
+
+## 2.0.0+1
+
+removed: shadowing type parameters.

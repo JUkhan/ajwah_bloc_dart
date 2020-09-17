@@ -287,7 +287,7 @@ registerCounterState() {
 
 ```
 
-### We can use this `StreamConsumer` as an alternative of `StreamBuilder`. It has additional listener callback for making effect. **(This file is not required for above example)**
+### You can use this `StreamConsumer` as an alternative of `StreamBuilder`. It has additional listener callback for making effect. **(This file is not required for above example)**
 
 **StreamConsumer.dart**
 

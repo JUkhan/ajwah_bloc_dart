@@ -47,7 +47,14 @@ StreamBuilder<CounterModel>(
 )
 ```
 
-You can make your app more declaretive simply dispatching the action, here you see an example of conditionaly rendering a widged having taps on two buttons [Show Widget] and [Hide Widget], and consuming those actions as you needed. `storeInstance().actions.whereTypes(['show-widget', 'hide-widget']).map((action) => action.type)`
+You can make your app more declaretive simply dispatching the action, here you see an example of conditionaly rendering a widged having taps on two buttons [Show Widget] and [Hide Widget], and consuming those actions as you needed.
+
+```dart
+storeInstance()
+  .actions
+  .whereTypes(['show-widget', 'hide-widget'])
+  .map((action) => action.type)
+```
 
 ```dart
           Row(
@@ -66,8 +73,10 @@ You can make your app more declaretive simply dispatching the action, here you s
             ],
           ),
           StreamBuilder<String>(
-            stream: storeInstance().actions.whereTypes(
-                ['show-widget', 'hide-widget']).map((action) => action.type),
+            stream: storeInstance()
+                .actions
+                .whereTypes(['show-widget', 'hide-widget'])
+                .map((action) => action.type),
             initialData: 'hide-widget',
             builder: (context, snapshot) {
               return snapshot.data == 'show-widget'

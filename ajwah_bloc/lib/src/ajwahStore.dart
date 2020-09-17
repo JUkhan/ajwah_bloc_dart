@@ -34,7 +34,7 @@ class AjwahStore {
     _store.value[stateName] = initialState;
     _store.add(_store.value);
     dispatch(Action(type: 'registerState($stateName)'));
-    void emitState<S>(S state) {
+    void emitState(S state) {
       if (_store.value[stateName] != state) {
         _store.value[stateName] = state;
         _store.add(_store.value);
