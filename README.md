@@ -30,7 +30,7 @@ store.select('counter').listen((state) => print(state)); // 0, 1
 store.dispatch(Action(type: 'inc'));
 ```
 
-**Using state in wigets**
+**Consuming state in wigets**
 
 ```dart
 StreamBuilder<CounterModel>(
@@ -47,7 +47,7 @@ StreamBuilder<CounterModel>(
 )
 ```
 
-You can make your app more declaretive simply dispatching the action. Here you see an example of conditionaly rendering a widged having taps on two buttons [Show Widget] and [Hide Widget]. And consuming those actions as you needed. `storeInstance().actions.whereTypes(['show-widget', 'hide-widget']).map((action) => action.type)`
+You can make your app more declaretive simply dispatching the action, here you see an example of conditionaly rendering a widged having taps on two buttons [Show Widget] and [Hide Widget], and consuming those actions as you needed. `storeInstance().actions.whereTypes(['show-widget', 'hide-widget']).map((action) => action.type)`
 
 ```dart
           Row(
