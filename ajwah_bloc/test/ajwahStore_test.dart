@@ -4,7 +4,7 @@ import 'package:ajwah_bloc/ajwah_bloc.dart';
 import 'counterState.dart';
 import 'actionTypes.dart';
 
-main() {
+void main() {
   createStore_fn_test();
   register_and_unregister_state_fn_test();
   effect_register_unregister();
@@ -38,7 +38,7 @@ void register_and_unregister_state_fn_test() {
     });
 
     ajwahTest(
-        "after register counter state - initial store should be:{count:0, isLoading:false}",
+        'after register counter state - initial store should be:{count:0, isLoading:false}',
         build: () => store.select<CounterModel>('counter'),
         log: (models) {
           print(models);
@@ -46,14 +46,14 @@ void register_and_unregister_state_fn_test() {
         expect: [CounterModel.init()]);
 
     ajwahTest(
-        "after dispatch(actionType: ActionTypes.Inc) state should be:{count:1, isLoading:false}",
+        'after dispatch(actionType: ActionTypes.Inc) state should be:{count:1, isLoading:false}',
         build: () => store.select('counter'),
         act: () => store.dispatch(Action(type: ActionTypes.Inc)),
         skip: 1,
         expect: [CounterModel(count: 1, isLoading: false)]);
 
     ajwahTest(
-      "after dispatch(actionType: ActionTypes.Dec) state should be:{count:0, isLoading:false}",
+      'after dispatch(actionType: ActionTypes.Dec) state should be:{count:0, isLoading:false}',
       act: () => store.dispatch(Action(type: ActionTypes.Dec)),
       build: () => store.select<CounterModel>('counter'),
       skip: 1,
@@ -61,7 +61,7 @@ void register_and_unregister_state_fn_test() {
     );
 
     ajwahTest(
-      "after unregistering counter model we will have null state value",
+      'after unregistering counter model we will have null state value',
       build: () {
         store.unregisterState(stateName: 'counter');
         return store.select<CounterModel>('counter');
@@ -82,7 +82,7 @@ void effect_register_unregister() {
   });
   group('register effect for AsyncInc action and unregister', () {
     ajwahTest<CounterModel>(
-      "after registering effect - we will get 2 models",
+      'after registering effect - we will get 2 models',
       build: () {
         store.registerEffect(
             (action$, store) => action$
@@ -101,7 +101,7 @@ void effect_register_unregister() {
       },
     );
     ajwahTest(
-      "after unregistering effect we will have single model with loading true value only",
+      'after unregistering effect we will have single model with loading true value only',
       build: () {
         store.unregisterEffect(effectKey: 'test');
         return store.select<CounterModel>('counter');
@@ -128,7 +128,7 @@ void import_export_test() {
   });
   group('import and export test', () {
     ajwahTest<List<dynamic>>(
-      "exporting state",
+      'exporting state',
       build: () => store.exportState().take(2),
       act: () {
         store.dispatch(Action(type: ActionTypes.Inc));
@@ -140,8 +140,8 @@ void import_export_test() {
       },
     );
     ajwahTest<CounterModel>(
-      "importing state",
-      build: () => store.select("counter"),
+      'importing state',
+      build: () => store.select('counter'),
       act: () {
         store.importState({'counter': CounterModel.loading(2)});
       },
@@ -182,7 +182,7 @@ void withTypes_selectMany_fn_test() {
     store.dispose();
   });
   group('withTypes', () {
-    ajwahTest<Action>("withTypes",
+    ajwahTest<Action>('withTypes',
         build: () => store.actions.whereTypes([ActionTypes.Inc]),
         act: () {
           store.dispatch(Action(type: ActionTypes.Dec));
@@ -192,7 +192,7 @@ void withTypes_selectMany_fn_test() {
           prints(models);
         },
         expect: []);
-    ajwahTest<CounterModel>("selectMany",
+    ajwahTest<CounterModel>('selectMany',
         build: () => store.selectMany((state) => state['counter']),
         log: (models) {
           prints(models);
