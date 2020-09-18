@@ -4,6 +4,7 @@ import 'package:rxdart/rxdart.dart';
 import 'action.dart';
 import 'actions.dart';
 
+typedef FilterActionCallback = bool Function(Action state);
 typedef EmitStateCallback<S> = void Function(S state);
 typedef MapActionToStateCallback<S> = void Function(
   S state,
@@ -23,12 +24,13 @@ class AjwahStore {
     _dispatcher = BehaviorSubject<Action>.seeded(Action(type: '@@INIT'));
     _store = BehaviorSubject<Map<String, dynamic>>.seeded({});
     _actions = Actions(_dispatcher);
-    _stateSubscriptions = Map<String, StreamSubscription<Action>>();
-    _effectSubscriptions = Map<String, StreamSubscription<Action>>();
+    _stateSubscriptions = <String, StreamSubscription<Action>>{};
+    _effectSubscriptions = <String, StreamSubscription<Action>>{};
   }
   void registerState<S>(
       {@required String stateName,
       @required S initialState,
+      FilterActionCallback filterAction,
       @required MapActionToStateCallback<S> mapActionToState}) {
     unregisterState(stateName: stateName);
     _store.value[stateName] = initialState;
@@ -41,16 +43,23 @@ class AjwahStore {
       }
     }
 
-    _stateSubscriptions[stateName] = _dispatcher.listen((action) {
-      mapActionToState(_store.value[stateName], action, emitState);
-    });
+    if (filterAction is FilterActionCallback) {
+      _stateSubscriptions[stateName] =
+          _dispatcher.where(filterAction).listen((action) {
+        mapActionToState(_store.value[stateName], action, emitState);
+      });
+    } else {
+      _stateSubscriptions[stateName] = _dispatcher.listen((action) {
+        mapActionToState(_store.value[stateName], action, emitState);
+      });
+    }
   }
 
   Stream<T> select<T>(String stateName) {
     return _store.map<T>((dic) => dic[stateName]).distinct();
   }
 
-  Stream<T> selectMany<T>(T callback(Map<String, dynamic> state)) {
+  Stream<T> selectMany<T>(T Function(Map<String, dynamic> state) callback) {
     return _store.map<T>(callback).distinct();
   }
 
@@ -134,7 +143,5 @@ class AjwahStore {
 
     _dispatcher?.close();
     _store?.close();
-    _dispatcher = null;
-    _store = null;
   }
 }

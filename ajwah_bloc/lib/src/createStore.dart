@@ -37,7 +37,7 @@ Stream<T> select<T>(String stateName) {
   try {
     return _store.select<T>(stateName);
   } catch (_) {
-    throw "select() function should not work until you exposeApiGlobally:true inside createStore() function.";
+    throw 'select() function should not work until you exposeApiGlobally:true inside createStore() function.';
   }
 }
 
@@ -52,6 +52,6 @@ void registerState<S>(
         initialState: initialState,
         mapActionToState: mapActionToState);
   } catch (_) {
-    throw "registerState() function should not work until you exposeApiGlobally:true inside createStore() function.";
+    throw 'registerState() function should not work until you exposeApiGlobally:true inside createStore() function.';
   }
 }

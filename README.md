@@ -34,7 +34,7 @@ store.dispatch(Action(type: 'inc'));
 
 ```dart
 StreamBuilder<CounterModel>(
-    stream: select<CounterModel>('counter'),
+    stream: store.select<CounterModel>('counter'),
     builder:(context, snapshot) {
         if (snapshot.data.isLoading) {
           return CircularProgressIndicator();
@@ -50,7 +50,7 @@ StreamBuilder<CounterModel>(
 You can make your app more declaretive simply dispatching the action, here you see an example of conditionaly rendering a widged having taps on two buttons [Show Widget] and [Hide Widget], and consuming those actions as you needed.
 
 ```dart
-storeInstance()
+store
   .actions
   .whereTypes(['show-widget', 'hide-widget'])
   .map((action) => action.type)
@@ -73,7 +73,7 @@ storeInstance()
             ],
           ),
           StreamBuilder<String>(
-            stream: storeInstance()
+            stream: store
                 .actions
                 .whereTypes(['show-widget', 'hide-widget'])
                 .map((action) => action.type),
@@ -85,6 +85,8 @@ storeInstance()
             },
           ),
 ```
+
+**Effects**
 
 Effects are optional. You can do everything of it's into `mapActionToState` callback function. As per your application is growing caught on difficult cases - it might be handy.
 

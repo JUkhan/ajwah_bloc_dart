@@ -122,3 +122,7 @@ from 2.0.0 it is totally new style of ajwah_bloc.
 ## 2.0.0+1
 
 removed: shadowing type parameters.
+
+## 2.0.0+2
+
+fixed: meta version issue
