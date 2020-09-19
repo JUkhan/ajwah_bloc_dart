@@ -147,7 +147,7 @@ class AjwahStore {
     _stateSubscriptions.clear();
     _effectSubscriptions.clear();
 
-    _dispatcher?.close();
-    _store?.close();
+    _dispatcher.close();
+    _store.close();
   }
 }
