@@ -101,6 +101,10 @@ class AjwahStore {
       _store.value.remove(stateName);
       _store.add(_store.value);
       dispatch(Action(type: 'unregisterState($stateName)'));
+    } else if (_store.value.containsKey(stateName)) {
+      _store.value.remove(stateName);
+      _store.add(_store.value);
+      dispatch(Action(type: 'unregisterState($stateName)'));
     }
   }
 
