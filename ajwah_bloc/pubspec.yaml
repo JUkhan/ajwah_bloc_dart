@@ -1,6 +1,6 @@
 name: ajwah_bloc
 version: 2.0.0+3
-homepage: https://github.com/JUkhan/ajwah_bloc_dart
+homepage: https://github.com/JUkhan/ajwah_bloc_dart/tree/new-style
 description: Rx based state management library. Manage your application's states, effects, and actions easy way. Make apps more scalable with a unidirectional data-flow.
 
 environment:

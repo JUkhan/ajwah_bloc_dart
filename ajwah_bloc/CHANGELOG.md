@@ -126,3 +126,8 @@ removed: shadowing type parameters.
 ## 2.0.0+2
 
 fixed: meta version issue
+
+## 2.0.0+3
+
+now you can filter actions when you register state.
+store.registerState(filterActions:(action)=>action is TodoAction)

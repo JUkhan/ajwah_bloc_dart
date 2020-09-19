@@ -11,7 +11,7 @@ void setState(AjwahStore store) {
   store.registerState<int>(
     stateName: 'test',
     initialState: 0,
-    filterAction: (action) => action.type != 'dec',
+    filterActions: (action) => action.type != 'dec',
     mapActionToState: (state, action, emit) {
       print(action.type);
       if (action.type == 'inc') {

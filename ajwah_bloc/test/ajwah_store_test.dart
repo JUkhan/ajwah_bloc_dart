@@ -11,6 +11,7 @@ void main() {
   import_export_test();
   dispatcher_actions_getState_fn();
   withTypes_selectMany_fn_test();
+  //dispose_fn();
 }
 
 void createStore_fn_test() {
@@ -198,5 +199,33 @@ void withTypes_selectMany_fn_test() {
           prints(models);
         },
         expect: [isA<CounterModel>()]);
+  });
+}
+
+void dispose_fn() {
+  AjwahStore store;
+  setUpAll(() {
+    store = createStore();
+    registerCounterState(store);
+  });
+  tearDownAll(() {
+    store.dispose();
+  });
+  group('dispose', () {
+    ajwahTest<CounterModel>(
+      'after calling dispose function no events should be brodcasted',
+      build: () {
+        store.dispose();
+        return store.select('counter');
+      },
+      act: () {
+        store.dispatch(Action(type: ActionTypes.Inc));
+        store.importState({'counter': CounterModel.loading(2)});
+      },
+      expect: [],
+      log: (models) {
+        print(models);
+      },
+    );
   });
 }

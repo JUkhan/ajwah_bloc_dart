@@ -30,9 +30,11 @@ class AjwahStore {
   void registerState<S>(
       {@required String stateName,
       @required S initialState,
-      FilterActionCallback filterAction,
+      FilterActionCallback filterActions,
       @required MapActionToStateCallback<S> mapActionToState}) {
-    unregisterState(stateName: stateName);
+    if (_store.value.containsKey(stateName)) {
+      return;
+    }
     _store.value[stateName] = initialState;
     _store.add(_store.value);
     dispatch(Action(type: 'registerState($stateName)'));
@@ -43,9 +45,9 @@ class AjwahStore {
       }
     }
 
-    if (filterAction is FilterActionCallback) {
+    if (filterActions is FilterActionCallback) {
       _stateSubscriptions[stateName] =
-          _dispatcher.where(filterAction).listen((action) {
+          _dispatcher.where(filterActions).listen((action) {
         mapActionToState(_store.value[stateName], action, emitState);
       });
     } else {
