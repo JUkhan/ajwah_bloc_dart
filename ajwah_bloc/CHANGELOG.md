@@ -131,3 +131,8 @@ fixed: meta version issue
 
 now you can filter actions when you register state.
 store.registerState(filterActions:(action)=>action is TodoAction)
+
+## 2.0.0+4
+
+[filterActions] was missing in global api
+registerState(filterActions:(action)=>action is TodoAction)

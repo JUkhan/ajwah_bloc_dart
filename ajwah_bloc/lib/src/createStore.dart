@@ -45,11 +45,13 @@ Stream<T> select<T>(String stateName) {
 void registerState<S>(
     {@required String stateName,
     @required S initialState,
+    FilterActionCallback filterActions,
     @required MapActionToStateCallback<S> mapActionToState}) {
   try {
     _store.registerState(
         stateName: stateName,
         initialState: initialState,
+        filterActions: filterActions,
         mapActionToState: mapActionToState);
   } catch (_) {
     throw 'registerState() function should not work until you exposeApiGlobally:true inside createStore() function.';

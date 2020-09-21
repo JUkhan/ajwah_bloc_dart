@@ -16,7 +16,6 @@ createStore( exposeApiGlobally:true);
 Now register states as much as you want and consume them where ever you want in your app.
 
 ```dart
-final store = createStore();
 
 store.registerState<int>(
   stateName: 'counter',
@@ -34,7 +33,7 @@ store.dispatch(Action(type: 'inc'));
 
 ```dart
 StreamBuilder<CounterModel>(
-    stream: store.select<CounterModel>('counter'),
+    stream: store.select('counter'),
     builder:(context, snapshot) {
         if (snapshot.data.isLoading) {
           return CircularProgressIndicator();

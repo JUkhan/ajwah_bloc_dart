@@ -6,17 +6,40 @@ import 'package:rxdart/rxdart.dart';
 
 void main() {
   createStore(exposeApiGlobally: true);
-  registerCounterState();
+  registerStates();
   runApp(App());
+}
+
+class ThemeToggleAction extends store.Action {}
+
+void registerStates() {
+  registerCounterState();
+  registerThemeState();
+}
+
+void registerThemeState() {
+  store.registerState<Brightness>(
+    stateName: 'theme',
+    filterActions: (action) => action is ThemeToggleAction,
+    initialState: Brightness.light,
+    mapActionToState: (state, action, emit) {
+      emit(state == Brightness.light ? Brightness.dark : Brightness.light);
+    },
+  );
 }
 
 class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      home: MyHomePage(),
-    );
+    return StreamBuilder<Brightness>(
+        stream: store.select('theme'),
+        builder: (context, snapshot) {
+          return MaterialApp(
+            title: 'Flutter Demo',
+            theme: ThemeData(brightness: snapshot.data),
+            home: MyHomePage(),
+          );
+        });
   }
 }
 
@@ -41,12 +64,12 @@ class MyHomePage extends StatelessWidget {
               RaisedButton(
                 onPressed: () =>
                     store.dispatch(store.Action(type: 'show-widget')),
-                child: Text("Show Widget"),
+                child: Text('Show Widget'),
               ),
               RaisedButton(
                 onPressed: () =>
                     store.dispatch(store.Action(type: 'hide-widget')),
-                child: Text("Hide Widget"),
+                child: Text('Hide Widget'),
               ),
             ],
           ),
@@ -59,6 +82,10 @@ class MyHomePage extends StatelessWidget {
                   ? DynamicWidget()
                   : Container();
             },
+          ),
+          RaisedButton(
+            onPressed: () => store.dispatch(ThemeToggleAction()),
+            child: Text('Toggle Theme'),
           ),
         ],
       )),
@@ -76,7 +103,7 @@ class DynamicWidget extends StatefulWidget {
 class _DynamicWidgetState extends State<DynamicWidget> {
   final _effectKey = "effectKey";
   var msg = '';
-  _addEffectForAsyncInc() {
+  void _addEffectForAsyncInc() {
     storeInstance().registerEffect(
       (action$, store$) => action$
           .whereType('AsyncInc')
@@ -90,7 +117,7 @@ class _DynamicWidgetState extends State<DynamicWidget> {
     });
   }
 
-  _removeEffect([bool isDisposing = false]) {
+  void _removeEffect([bool isDisposing = false]) {
     storeInstance().unregisterEffect(effectKey: _effectKey);
     if (!isDisposing)
       setState(() {
@@ -116,11 +143,11 @@ class _DynamicWidgetState extends State<DynamicWidget> {
             children: [
               RaisedButton(
                 onPressed: _addEffectForAsyncInc,
-                child: Text("Add Effect on AsyncInc action"),
+                child: Text('Add Effect on AsyncInc action'),
               ),
               RaisedButton(
                 onPressed: _removeEffect,
-                child: Text("Remove effect"),
+                child: Text('Remove effect'),
               )
             ],
           ),
@@ -226,14 +253,12 @@ class ExportState extends StatelessWidget {
       stream: store.storeInstance().exportState(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          var state = snapshot.data[1].length > 0
-              ? snapshot.data[1]['counter']?.toString() ?? ''
-              : 'empty';
           return Container(
             child: Text.rich(
               TextSpan(text: 'Export State\n', children: [
                 TextSpan(
-                    text: 'actionType:${snapshot.data[0].type} \nstate:$state',
+                    text:
+                        'actionType:${snapshot.data[0].type} \nstates:${snapshot.data[1]}',
                     style: TextStyle(color: Colors.purple, fontSize: 24))
               ]),
               textAlign: TextAlign.center,
@@ -260,7 +285,7 @@ class CounterModel {
   }
 }
 
-registerCounterState() {
+void registerCounterState() {
   store.registerState<CounterModel>(
       stateName: 'counter',
       initialState: CounterModel.init(),
