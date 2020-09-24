@@ -4,7 +4,7 @@ import 'package:rxdart/rxdart.dart';
 import 'action.dart';
 import 'actions.dart';
 
-typedef FilterActionCallback = bool Function(Action state);
+typedef FilterActionCallback = bool Function(Action action);
 typedef EmitStateCallback<S> = void Function(S state);
 typedef MapActionToStateCallback<S> = void Function(
   S state,
@@ -80,7 +80,9 @@ class AjwahStore {
   ///           .mapTo(Action(type: ActionTypes.Inc)), effectKey:'any-effectKey');
   ///```
   void registerEffect(EffectCallback callback, {@required String effectKey}) {
-    unregisterEffect(effectKey: effectKey);
+    if (_effectSubscriptions.containsKey(effectKey)) {
+      return;
+    }
     _effectSubscriptions[effectKey] = callback(_actions, this).listen(dispatch);
     dispatch(Action(type: 'registerEffect($effectKey)'));
   }

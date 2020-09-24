@@ -25,7 +25,6 @@ class Actions {
   ///This function takes **List<String> actionTypes** param
   ///and apply filter on actionTypes and return Stream<Action>
   Stream<Action> whereTypes(List<String> actionTypes) {
-    return _dispatcher.where((action) =>
-        actionTypes.indexWhere((type) => type == action.type) != -1);
+    return _dispatcher.where((action) => actionTypes.contains(action.type));
   }
 }

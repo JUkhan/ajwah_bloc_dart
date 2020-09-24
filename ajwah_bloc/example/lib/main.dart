@@ -1,24 +1,18 @@
 import 'dart:async';
-import 'package:ajwah_bloc/ajwah_bloc.dart' as store;
 import 'package:ajwah_bloc/ajwah_bloc.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Action;
 import 'package:rxdart/rxdart.dart';
 
 void main() {
   createStore(exposeApiGlobally: true);
-  registerStates();
+  registerThemeState();
   runApp(App());
 }
 
-class ThemeToggleAction extends store.Action {}
-
-void registerStates() {
-  registerCounterState();
-  registerThemeState();
-}
+class ThemeToggleAction extends Action {}
 
 void registerThemeState() {
-  store.registerState<Brightness>(
+  registerState<Brightness>(
     stateName: 'theme',
     filterActions: (action) => action is ThemeToggleAction,
     initialState: Brightness.light,
@@ -32,25 +26,25 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<Brightness>(
-        stream: store.select('theme'),
+        stream: select('theme'),
         builder: (context, snapshot) {
           return MaterialApp(
             title: 'Flutter Demo',
             theme: ThemeData(brightness: snapshot.data),
-            home: MyHomePage(),
+            home: HomePage(),
           );
         });
   }
 }
 
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({Key key}) : super(key: key);
+class HomePage extends StatelessWidget {
+  const HomePage({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Ajwah Store'),
+        title: Text('Reactive'),
       ),
       body: Container(
           child: Column(
@@ -62,19 +56,17 @@ class MyHomePage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               RaisedButton(
-                onPressed: () =>
-                    store.dispatch(store.Action(type: 'show-widget')),
+                onPressed: () => dispatch(Action(type: 'show-widget')),
                 child: Text('Show Widget'),
               ),
               RaisedButton(
-                onPressed: () =>
-                    store.dispatch(store.Action(type: 'hide-widget')),
+                onPressed: () => dispatch(Action(type: 'hide-widget')),
                 child: Text('Hide Widget'),
               ),
             ],
           ),
           StreamBuilder<String>(
-            stream: store.storeInstance().actions.whereTypes(
+            stream: storeInstance().actions.whereTypes(
                 ['show-widget', 'hide-widget']).map((action) => action.type),
             initialData: 'hide-widget',
             builder: (context, snapshot) {
@@ -84,7 +76,7 @@ class MyHomePage extends StatelessWidget {
             },
           ),
           RaisedButton(
-            onPressed: () => store.dispatch(ThemeToggleAction()),
+            onPressed: () => dispatch(ThemeToggleAction()),
             child: Text('Toggle Theme'),
           ),
         ],
@@ -93,42 +85,27 @@ class MyHomePage extends StatelessWidget {
   }
 }
 
-class DynamicWidget extends StatefulWidget {
-  DynamicWidget({Key key}) : super(key: key);
+class DynamicWidget extends StatelessWidget {
+  final _effectKey = 'effectKey';
 
-  @override
-  _DynamicWidgetState createState() => _DynamicWidgetState();
-}
-
-class _DynamicWidgetState extends State<DynamicWidget> {
-  final _effectKey = "effectKey";
-  var msg = '';
   void _addEffectForAsyncInc() {
     storeInstance().registerEffect(
       (action$, store$) => action$
           .whereType('AsyncInc')
           .debounceTime(Duration(milliseconds: 500))
-          .map((event) => store.Action(type: 'Dec')),
+          .map((event) => Action(type: 'Dec')),
       effectKey: _effectKey,
     );
-    setState(() {
-      msg =
-          "Effect added successfully.\nNow click on the [Async +] button and see it's not working as expected.";
-    });
   }
 
   void _removeEffect([bool isDisposing = false]) {
     storeInstance().unregisterEffect(effectKey: _effectKey);
-    if (!isDisposing)
-      setState(() {
-        msg = 'Effect removed';
-      });
   }
 
-  @override
-  void dispose() {
-    _removeEffect(true);
-    super.dispose();
+  String getMessage(bool hasEffect) {
+    return hasEffect
+        ? "Effect added successfully.\nNow click on the [Async +] button and see it's not working as expected."
+        : 'No special effect';
   }
 
   @override
@@ -151,7 +128,14 @@ class _DynamicWidgetState extends State<DynamicWidget> {
               )
             ],
           ),
-          Text(msg, style: TextStyle(fontSize: 20, color: Colors.white70)),
+          StreamBuilder<bool>(
+              stream: select<SpecialEffectModel>('special-effect')
+                  .map((model) => model.hasEffect),
+              initialData: false,
+              builder: (context, snapshot) {
+                return Text(getMessage(snapshot.data),
+                    style: TextStyle(fontSize: 20, color: Colors.white70));
+              }),
         ],
       ),
     );
@@ -159,57 +143,64 @@ class _DynamicWidgetState extends State<DynamicWidget> {
 }
 
 class Counter extends StatelessWidget {
-  const Counter({
+  Counter({
     Key key,
-  }) : super(key: key);
+  }) : super(key: key) {
+    registerSpecialEffectState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        RaisedButton(
-          onPressed: () => store.dispatch(store.Action(type: 'Inc')),
-          child: Text('+'),
-        ),
-        RaisedButton(
-          onPressed: () => store.dispatch(store.Action(type: 'Dec')),
-          child: Text('-'),
-        ),
-        StreamBuilder<String>(
-          stream: store.storeInstance().actions.whereTypes([
-            'registerEffect(effectKey)',
-            'unregisterEffect(effectKey)'
-          ]).map((action) => action.type),
-          initialData: 'effect-removed',
-          builder: (context, snapshot) => RaisedButton(
-            onPressed: () => store.dispatch(store.Action(type: 'AsyncInc')),
-            child: Text(
-              'Async +',
-              style: TextStyle(
-                  color: snapshot.data == 'registerEffect(effectKey)'
-                      ? Colors.red
-                      : null),
-            ),
-          ),
-        ),
-        StreamBuilder<CounterModel>(
-          stream: select('counter'),
-          builder:
-              (BuildContext context, AsyncSnapshot<CounterModel> snapshot) {
-            if (snapshot.hasData) {
-              return snapshot.data.isLoading
-                  ? CircularProgressIndicator()
-                  : Text(
-                      '  ${snapshot.data.count}',
-                      style: TextStyle(fontSize: 24, color: Colors.blue),
-                    );
-            }
-            return Container();
-          },
-        ),
-      ],
-    );
+    return StreamBuilder<bool>(
+        stream: select<SpecialEffectModel>('special-effect')
+            .map((model) => model.hasState),
+        initialData: false,
+        builder: (context, snapshot) {
+          return !snapshot.data
+              ? Text('Please add counter state by clicking [Add State] button')
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    RaisedButton(
+                      onPressed: () => dispatch(Action(type: 'Inc')),
+                      child: Text('+'),
+                    ),
+                    RaisedButton(
+                      onPressed: () => dispatch(Action(type: 'Dec')),
+                      child: Text('-'),
+                    ),
+                    StreamBuilder<bool>(
+                      stream: select<SpecialEffectModel>('special-effect')
+                          .map((model) => model.hasEffect),
+                      initialData: false,
+                      builder: (context, snapshot) => RaisedButton(
+                        onPressed: () => dispatch(Action(type: 'AsyncInc')),
+                        child: Text(
+                          'Async +',
+                          style: TextStyle(
+                              color: snapshot.data ? Colors.red : null),
+                        ),
+                      ),
+                    ),
+                    StreamBuilder<AsyncData<int>>(
+                      stream: select('counter'),
+                      builder: (BuildContext context, snapshot) {
+                        if (snapshot.hasData) {
+                          return snapshot.data.asyncStatus ==
+                                  AsyncStatus.Loading
+                              ? CircularProgressIndicator()
+                              : Text(
+                                  '  ${snapshot.data.data}',
+                                  style: TextStyle(
+                                      fontSize: 24, color: Colors.blue),
+                                );
+                        }
+                        return Container();
+                      },
+                    ),
+                  ],
+                );
+        });
   }
 }
 
@@ -224,17 +215,26 @@ class StateOnDemand extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
         RaisedButton(
-          onPressed: () =>
-              store.storeInstance().unregisterState(stateName: 'counter'),
-          child: Text('Remove State'),
-        ),
-        RaisedButton(
           onPressed: registerCounterState,
           child: Text('Add State'),
         ),
         RaisedButton(
-          onPressed: () => storeInstance().importState(
-              {'counter': CounterModel(count: 999, isLoading: false)}),
+          onPressed: () =>
+              storeInstance().unregisterState(stateName: 'counter'),
+          child: Text('Remove State'),
+        ),
+        RaisedButton(
+          onPressed: () {
+            registerCounterState();
+            storeInstance()
+              ..unregisterEffect(effectKey: 'effectKey')
+              ..importState({
+                'counter': AsyncData.loaded(10),
+                'theme': Brightness.dark,
+                'special-effect':
+                    SpecialEffectModel(hasEffect: false, hasState: true)
+              });
+          },
           child: Text('Import State'),
         ),
       ],
@@ -250,7 +250,7 @@ class ExportState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: store.storeInstance().exportState(),
+      stream: storeInstance().exportState(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return Container(
@@ -258,7 +258,7 @@ class ExportState extends StatelessWidget {
               TextSpan(text: 'Export State\n', children: [
                 TextSpan(
                     text:
-                        'actionType:${snapshot.data[0].type} \nstates:${snapshot.data[1]}',
+                        'action:${snapshot.data[0]} \nstates:${snapshot.data[1]}',
                     style: TextStyle(color: Colors.purple, fontSize: 24))
               ]),
               textAlign: TextAlign.center,
@@ -272,37 +272,105 @@ class ExportState extends StatelessWidget {
   }
 }
 
-class CounterModel {
-  final int count;
-  final bool isLoading;
-  CounterModel({this.count, this.isLoading});
-  CounterModel.init() : this(count: 10, isLoading: false);
-  CounterModel copyWith({int count, bool isLoading}) => CounterModel(
-      count: count ?? this.count, isLoading: isLoading ?? this.isLoading);
-  @override
-  String toString() {
-    return '{coun:$count, isLoading:$isLoading}';
+class SpecialEffectModel {
+  final bool hasEffect;
+  final bool hasState;
+  SpecialEffectModel({
+    this.hasEffect,
+    this.hasState,
+  });
+
+  SpecialEffectModel copyWith({
+    bool hasEffect,
+    bool hasState,
+  }) {
+    return SpecialEffectModel(
+      hasEffect: hasEffect ?? this.hasEffect,
+      hasState: hasState ?? this.hasState,
+    );
   }
+
+  @override
+  String toString() =>
+      'SpecialEffectModel(hasEffect: $hasEffect, hasState: $hasState)';
+}
+
+void registerSpecialEffectState() {
+  registerState<SpecialEffectModel>(
+    stateName: 'special-effect',
+    initialState: SpecialEffectModel(hasEffect: false, hasState: false),
+    mapActionToState: (state, action, emit) {
+      switch (action.type) {
+        case 'registerEffect(effectKey)':
+          emit(state.copyWith(hasEffect: true));
+          break;
+        case 'unregisterEffect(effectKey)':
+          emit(state.copyWith(hasEffect: false));
+          break;
+        case 'registerState(counter)':
+          emit(state.copyWith(hasState: true));
+          break;
+        case 'unregisterState(counter)':
+          emit(state.copyWith(hasState: false));
+          break;
+        default:
+      }
+    },
+  );
 }
 
 void registerCounterState() {
-  store.registerState<CounterModel>(
+  registerState<AsyncData<int>>(
       stateName: 'counter',
-      initialState: CounterModel.init(),
+      initialState: AsyncData.loaded(10),
       mapActionToState: (state, action, emit) async {
         switch (action.type) {
           case 'Inc':
-            emit(state.copyWith(count: state.count + 1, isLoading: false));
+            emit(AsyncData.loaded(state.data + 1));
             break;
           case 'Dec':
-            emit(state.copyWith(count: state.count - 1, isLoading: false));
+            emit(AsyncData.loaded(state.data - 1));
             break;
           case 'AsyncInc':
-            emit(state.copyWith(isLoading: true));
+            emit(AsyncData.loading(state.data));
             await Future.delayed(Duration(seconds: 1));
-            store.dispatch(store.Action(type: 'Inc'));
+            dispatch(Action(type: 'Inc'));
             break;
           default:
         }
       });
+}
+
+enum AsyncStatus { Loading, Loaded, Error }
+
+class AsyncData<T> {
+  final T data;
+  final AsyncStatus asyncStatus;
+  final String error;
+  AsyncData({this.data, this.asyncStatus, this.error});
+
+  AsyncData.loaded(T data)
+      : this(
+          data: data,
+          asyncStatus: AsyncStatus.Loaded,
+          error: null,
+        );
+
+  AsyncData.error(String errorMessage, T data)
+      : this(
+          data: data,
+          asyncStatus: AsyncStatus.Error,
+          error: errorMessage,
+        );
+  AsyncData.loading(T data)
+      : this(
+          data: data,
+          asyncStatus: AsyncStatus.Loading,
+          error: null,
+        );
+
+  @override
+  String toString() {
+    return 'AsyncData(data: $data, asyncStatus: $asyncStatus, error: $error)';
+  }
 }
