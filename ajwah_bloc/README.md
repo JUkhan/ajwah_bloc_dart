@@ -1,7 +1,7 @@
 # ajwah_bloc
 
-Rx based state management library. Manage your application's states, effects, and actions easy way.
-Make apps more scalable with a unidirectional data-flow.
+A reactive state management library. Manage your application's states, effects, and actions easy way.
+Make apps more scalable with a unidirectional data-flow. **[flutter demo](https://api.flutlab.io/res/projects/31087/itbjnv5f4wrwwd0uahuc/index.html#/) | [src](https://github.com/JUkhan/ajwahapp.git)**
 
 - **[ajwah_bloc_test](https://pub.dev/packages/ajwah_bloc_test)**
 

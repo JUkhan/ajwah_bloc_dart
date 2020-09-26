@@ -1,376 +1,416 @@
 import 'dart:async';
 import 'package:ajwah_bloc/ajwah_bloc.dart';
 import 'package:flutter/material.dart' hide Action;
-import 'package:rxdart/rxdart.dart';
+import 'package:uuid/uuid.dart';
 
 void main() {
   createStore(exposeApiGlobally: true);
-  registerThemeState();
+  registerTodoState();
   runApp(App());
-}
-
-class ThemeToggleAction extends Action {}
-
-void registerThemeState() {
-  registerState<Brightness>(
-    stateName: 'theme',
-    filterActions: (action) => action is ThemeToggleAction,
-    initialState: Brightness.light,
-    mapActionToState: (state, action, emit) {
-      emit(state == Brightness.light ? Brightness.dark : Brightness.light);
-    },
-  );
 }
 
 class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<Brightness>(
-        stream: select('theme'),
-        builder: (context, snapshot) {
-          return MaterialApp(
-            title: 'Flutter Demo',
-            theme: ThemeData(brightness: snapshot.data),
-            home: HomePage(),
-          );
-        });
-  }
-}
-
-class HomePage extends StatelessWidget {
-  const HomePage({Key key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Reactive'),
-      ),
-      body: Container(
-          child: Column(
-        children: <Widget>[
-          StateOnDemand(),
-          Counter(),
-          ExportState(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              RaisedButton(
-                onPressed: () => dispatch(Action(type: 'show-widget')),
-                child: Text('Show Widget'),
-              ),
-              RaisedButton(
-                onPressed: () => dispatch(Action(type: 'hide-widget')),
-                child: Text('Hide Widget'),
-              ),
-            ],
-          ),
-          StreamBuilder<String>(
-            stream: storeInstance().actions.whereTypes(
-                ['show-widget', 'hide-widget']).map((action) => action.type),
-            initialData: 'hide-widget',
-            builder: (context, snapshot) {
-              return snapshot.data == 'show-widget'
-                  ? DynamicWidget()
-                  : Container();
-            },
-          ),
-          RaisedButton(
-            onPressed: () => dispatch(ThemeToggleAction()),
-            child: Text('Toggle Theme'),
-          ),
-        ],
-      )),
+    return MaterialApp(
+      title: 'Flutter Demo',
+      home: TodoPage(),
     );
   }
 }
 
-class DynamicWidget extends StatelessWidget {
-  final _effectKey = 'effectKey';
+class TodoPage extends StatefulWidget {
+  const TodoPage({Key key}) : super(key: key);
 
-  void _addEffectForAsyncInc() {
-    storeInstance().registerEffect(
-      (action$, store$) => action$
-          .whereType('AsyncInc')
-          .debounceTime(Duration(milliseconds: 500))
-          .map((event) => Action(type: 'Dec')),
-      effectKey: _effectKey,
-    );
+  @override
+  _TodoPageState createState() => _TodoPageState();
+}
+
+class _TodoPageState extends State<TodoPage> {
+  TextEditingController newTodoController;
+
+  @override
+  void initState() {
+    newTodoController = TextEditingController();
+
+    super.initState();
   }
 
-  void _removeEffect([bool isDisposing = false]) {
-    storeInstance().unregisterEffect(effectKey: _effectKey);
-  }
+  @override
+  void dispose() {
+    newTodoController.dispose();
 
-  String getMessage(bool hasEffect) {
-    return hasEffect
-        ? "Effect added successfully.\nNow click on the [Async +] button and see it's not working as expected."
-        : 'No special effect';
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.black26,
-      padding: EdgeInsets.all(20),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              RaisedButton(
-                onPressed: _addEffectForAsyncInc,
-                child: Text('Add Effect on AsyncInc action'),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        body: ListView(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+          children: [
+            const TitleWidget(),
+            TextField(
+              key: addTodoKey,
+              controller: newTodoController,
+              decoration: const InputDecoration(
+                labelText: 'What needs to be done?',
               ),
-              RaisedButton(
-                onPressed: _removeEffect,
-                child: Text('Remove effect'),
-              )
-            ],
-          ),
-          StreamBuilder<bool>(
-              stream: select<SpecialEffectModel>('special-effect')
-                  .map((model) => model.hasEffect),
-              initialData: false,
+              onSubmitted: (value) {
+                dispatch(
+                    TodoAction(type: TodoActionTypes.add, description: value));
+                newTodoController.clear();
+              },
+            ),
+            const SizedBox(height: 42),
+            const Toolbar(),
+            StreamBuilder<List<Todo>>(
+              stream: getFilteredTodos(),
+              initialData: [],
               builder: (context, snapshot) {
-                return Text(getMessage(snapshot.data),
-                    style: TextStyle(fontSize: 20, color: Colors.white70));
-              }),
-        ],
-      ),
-    );
-  }
-}
-
-class Counter extends StatelessWidget {
-  Counter({
-    Key key,
-  }) : super(key: key) {
-    registerSpecialEffectState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<bool>(
-        stream: select<SpecialEffectModel>('special-effect')
-            .map((model) => model.hasState),
-        initialData: false,
-        builder: (context, snapshot) {
-          return !snapshot.data
-              ? Text('Please add counter state by clicking [Add State] button')
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    RaisedButton(
-                      onPressed: () => dispatch(Action(type: 'Inc')),
-                      child: Text('+'),
-                    ),
-                    RaisedButton(
-                      onPressed: () => dispatch(Action(type: 'Dec')),
-                      child: Text('-'),
-                    ),
-                    StreamBuilder<bool>(
-                      stream: select<SpecialEffectModel>('special-effect')
-                          .map((model) => model.hasEffect),
-                      initialData: false,
-                      builder: (context, snapshot) => RaisedButton(
-                        onPressed: () => dispatch(Action(type: 'AsyncInc')),
-                        child: Text(
-                          'Async +',
-                          style: TextStyle(
-                              color: snapshot.data ? Colors.red : null),
+                final todos = snapshot.data;
+                return Column(
+                  children: [
+                    for (var i = 0; i < todos.length; i++) ...[
+                      if (i > 0) const Divider(height: 0),
+                      Dismissible(
+                        key: ValueKey(todos[i].id),
+                        onDismissed: (_) {
+                          dispatch(TodoAction(
+                              type: TodoActionTypes.remove, id: todos[i].id));
+                        },
+                        child: TodoItem(
+                          //key: Key(todos[i].id),
+                          todo: todos[i],
                         ),
-                      ),
-                    ),
-                    StreamBuilder<AsyncData<int>>(
-                      stream: select('counter'),
-                      builder: (BuildContext context, snapshot) {
-                        if (snapshot.hasData) {
-                          return snapshot.data.asyncStatus ==
-                                  AsyncStatus.Loading
-                              ? CircularProgressIndicator()
-                              : Text(
-                                  '  ${snapshot.data.data}',
-                                  style: TextStyle(
-                                      fontSize: 24, color: Colors.blue),
-                                );
-                        }
-                        return Container();
-                      },
-                    ),
+                      )
+                    ]
                   ],
                 );
-        });
-  }
-}
-
-class StateOnDemand extends StatelessWidget {
-  const StateOnDemand({
-    Key key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: <Widget>[
-        RaisedButton(
-          onPressed: registerCounterState,
-          child: Text('Add State'),
-        ),
-        RaisedButton(
-          onPressed: () =>
-              storeInstance().unregisterState(stateName: 'counter'),
-          child: Text('Remove State'),
-        ),
-        RaisedButton(
-          onPressed: () {
-            registerCounterState();
-            storeInstance()
-              ..unregisterEffect(effectKey: 'effectKey')
-              ..importState({
-                'counter': AsyncData.loaded(10),
-                'theme': Brightness.dark,
-                'special-effect':
-                    SpecialEffectModel(hasEffect: false, hasState: true)
-              });
-          },
-          child: Text('Import State'),
-        ),
-      ],
-    );
-  }
-}
-
-class ExportState extends StatelessWidget {
-  const ExportState({
-    Key key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: storeInstance().exportState(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return Container(
-            child: Text.rich(
-              TextSpan(text: 'Export State\n', children: [
-                TextSpan(
-                    text:
-                        'action:${snapshot.data[0]} \nstates:${snapshot.data[1]}',
-                    style: TextStyle(color: Colors.purple, fontSize: 24))
-              ]),
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.indigo, fontSize: 20),
+              },
             ),
-          );
-        }
-        return Container();
-      },
+          ],
+        ),
+      ),
     );
   }
 }
 
-class SpecialEffectModel {
-  final bool hasEffect;
-  final bool hasState;
-  SpecialEffectModel({
-    this.hasEffect,
-    this.hasState,
+class TitleWidget extends StatelessWidget {
+  const TitleWidget({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Text(
+      'todos',
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        color: Color.fromARGB(38, 47, 47, 247),
+        fontSize: 100,
+        fontWeight: FontWeight.w100,
+        fontFamily: 'Helvetica Neue',
+      ),
+    );
+  }
+}
+
+class Toolbar extends StatelessWidget {
+  const Toolbar({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    Color textColorFor(String category, String value) {
+      return category == value ? Colors.blue : null;
+    }
+
+    final searchCategory$ = select<TodoState>('todo')
+        .map((state) => state.searchCategory)
+        .distinct();
+
+    return Material(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          StreamBuilder<int>(
+              stream: select<TodoState>('todo').map((state) =>
+                  state.todos.where((todo) => !todo.completed).length),
+              initialData: 0,
+              builder: (context, snapshot) {
+                return Expanded(
+                  child: Text(
+                    '${snapshot.data} items left',
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                );
+              }),
+          Tooltip(
+            key: allFilterKey,
+            message: 'All todos',
+            child: StreamBuilder<String>(
+                stream: searchCategory$,
+                initialData: '',
+                builder: (context, snapshot) {
+                  return FlatButton(
+                    onPressed: () =>
+                        dispatch(TodoFilterAction(type: TodoActionTypes.all)),
+                    visualDensity: VisualDensity.compact,
+                    textColor: textColorFor(TodoActionTypes.all, snapshot.data),
+                    child: const Text('All'),
+                  );
+                }),
+          ),
+          Tooltip(
+            key: activeFilterKey,
+            message: 'Only uncompleted todos',
+            child: StreamBuilder<Object>(
+                stream: searchCategory$,
+                initialData: '',
+                builder: (context, snapshot) {
+                  return FlatButton(
+                    onPressed: () => dispatch(
+                        TodoFilterAction(type: TodoActionTypes.active)),
+                    visualDensity: VisualDensity.compact,
+                    textColor:
+                        textColorFor(TodoActionTypes.active, snapshot.data),
+                    child: const Text('Active'),
+                  );
+                }),
+          ),
+          Tooltip(
+            key: completedFilterKey,
+            message: 'Only completed todos',
+            child: StreamBuilder<Object>(
+                stream: searchCategory$,
+                initialData: '',
+                builder: (context, snapshot) {
+                  return FlatButton(
+                    onPressed: () => dispatch(
+                        TodoFilterAction(type: TodoActionTypes.completed)),
+                    visualDensity: VisualDensity.compact,
+                    textColor:
+                        textColorFor(TodoActionTypes.completed, snapshot.data),
+                    child: const Text('Completed'),
+                  );
+                }),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class TodoItem extends StatefulWidget {
+  final Todo todo;
+  TodoItem({Key key, @required this.todo}) : super(key: key);
+
+  @override
+  _TodoItemState createState() => _TodoItemState();
+}
+
+class _TodoItemState extends State<TodoItem> {
+  FocusNode textFieldFocusNode;
+  FocusNode itemFocusNode;
+  TextEditingController textEditingController;
+
+  @override
+  void initState() {
+    textFieldFocusNode = FocusNode();
+    itemFocusNode = FocusNode();
+    textEditingController = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    textFieldFocusNode.dispose();
+    itemFocusNode.dispose();
+    textEditingController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.white,
+      elevation: 6,
+      child: Focus(
+        focusNode: itemFocusNode,
+        onFocusChange: (focused) {
+          if (focused) {
+            textEditingController.text = widget.todo.description;
+          } else {
+            dispatch(TodoAction(
+                type: TodoActionTypes.update,
+                id: widget.todo.id,
+                description: textEditingController.text));
+          }
+        },
+        child: ListTile(
+          onTap: () {
+            itemFocusNode.requestFocus();
+            textFieldFocusNode.requestFocus();
+          },
+          leading: Checkbox(
+              value: widget.todo.completed,
+              onChanged: (value) => dispatch(TodoAction(
+                  type: TodoActionTypes.toggle, id: widget.todo.id))),
+          title: itemFocusNode.hasFocus
+              ? TextField(
+                  autofocus: true,
+                  focusNode: textFieldFocusNode,
+                  controller: textEditingController,
+                )
+              : Text(widget.todo.description),
+        ),
+      ),
+    );
+  }
+}
+
+// model and state
+
+var _uuid = Uuid();
+
+/// A read-only description of a todo-item
+class Todo {
+  Todo({
+    this.description,
+    this.completed = false,
+    String id,
+  }) : id = id ?? _uuid.v4();
+
+  final String id;
+  final String description;
+  final bool completed;
+
+  @override
+  String toString() {
+    return 'Todo(description: $description, completed: $completed)';
+  }
+}
+
+class TodoState {
+  final String searchCategory;
+  final List<Todo> todos;
+  TodoState({
+    this.searchCategory,
+    this.todos,
   });
 
-  SpecialEffectModel copyWith({
-    bool hasEffect,
-    bool hasState,
+  TodoState copyWith({
+    String searchCategory,
+    List<Todo> todos,
   }) {
-    return SpecialEffectModel(
-      hasEffect: hasEffect ?? this.hasEffect,
-      hasState: hasState ?? this.hasState,
+    return TodoState(
+      searchCategory: searchCategory ?? this.searchCategory,
+      todos: todos ?? this.todos,
     );
   }
-
-  @override
-  String toString() =>
-      'SpecialEffectModel(hasEffect: $hasEffect, hasState: $hasState)';
 }
 
-void registerSpecialEffectState() {
-  registerState<SpecialEffectModel>(
-    stateName: 'special-effect',
-    initialState: SpecialEffectModel(hasEffect: false, hasState: false),
+/// Some keys used for testing
+final addTodoKey = UniqueKey();
+final activeFilterKey = UniqueKey();
+final completedFilterKey = UniqueKey();
+final allFilterKey = UniqueKey();
+
+class TodoAction extends Action {
+  String description;
+  String id;
+  TodoAction({
+    @required String type,
+    this.id,
+    this.description,
+  }) : super(type: type);
+}
+
+class TodoFilterAction extends Action {
+  TodoFilterAction({@required String type}) : super(type: type);
+}
+
+abstract class TodoActionTypes {
+  static const all = 'todo-all';
+  static const active = 'todo-active';
+  static const completed = 'todo-completed';
+  static const add = 'todo-add';
+  static const update = 'todo-update';
+  static const toggle = 'todo-toggle';
+  static const remove = 'todo-remove';
+}
+
+void registerTodoState() {
+  registerState<TodoState>(
+    stateName: 'todo',
+    filterActions: (action) =>
+        action is TodoAction || action is TodoFilterAction,
+    initialState: TodoState(
+      todos: [
+        Todo(id: 'todo-0', description: 'hi'),
+        Todo(id: 'todo-1', description: 'hello'),
+        Todo(id: 'todo-2', description: 'learn reactive programming'),
+      ],
+      searchCategory: TodoActionTypes.all,
+    ),
     mapActionToState: (state, action, emit) {
-      switch (action.type) {
-        case 'registerEffect(effectKey)':
-          emit(state.copyWith(hasEffect: true));
-          break;
-        case 'unregisterEffect(effectKey)':
-          emit(state.copyWith(hasEffect: false));
-          break;
-        case 'registerState(counter)':
-          emit(state.copyWith(hasState: true));
-          break;
-        case 'unregisterState(counter)':
-          emit(state.copyWith(hasState: false));
-          break;
-        default:
+      if (action is TodoAction) {
+        switch (action.type) {
+          case TodoActionTypes.add:
+            emit(state.copyWith(todos: [
+              ...state.todos,
+              Todo(description: action.description)
+            ]));
+            break;
+          case TodoActionTypes.update:
+            emit(state.copyWith(todos: [
+              for (var item in state.todos)
+                if (item.id == action.id)
+                  Todo(
+                      id: item.id,
+                      completed: item.completed,
+                      description: action.description)
+                else
+                  item,
+            ]));
+            break;
+          case TodoActionTypes.toggle:
+            emit(state.copyWith(todos: [
+              for (var item in state.todos)
+                if (item.id == action.id)
+                  Todo(
+                      id: item.id,
+                      completed: !item.completed,
+                      description: item.description)
+                else
+                  item,
+            ]));
+            break;
+          case TodoActionTypes.remove:
+            emit(state.copyWith(
+                todos: state.todos
+                    .where((item) => item.id != action.id)
+                    .toList()));
+            break;
+        }
+      } else {
+        if (action is TodoFilterAction) {
+          emit(state.copyWith(searchCategory: action.type));
+        }
       }
     },
   );
 }
 
-void registerCounterState() {
-  registerState<AsyncData<int>>(
-      stateName: 'counter',
-      initialState: AsyncData.loaded(10),
-      mapActionToState: (state, action, emit) async {
-        switch (action.type) {
-          case 'Inc':
-            emit(AsyncData.loaded(state.data + 1));
-            break;
-          case 'Dec':
-            emit(AsyncData.loaded(state.data - 1));
-            break;
-          case 'AsyncInc':
-            emit(AsyncData.loading(state.data));
-            await Future.delayed(Duration(seconds: 1));
-            dispatch(Action(type: 'Inc'));
-            break;
-          default:
-        }
-      });
-}
-
-enum AsyncStatus { Loading, Loaded, Error }
-
-class AsyncData<T> {
-  final T data;
-  final AsyncStatus asyncStatus;
-  final String error;
-  AsyncData({this.data, this.asyncStatus, this.error});
-
-  AsyncData.loaded(T data)
-      : this(
-          data: data,
-          asyncStatus: AsyncStatus.Loaded,
-          error: null,
-        );
-
-  AsyncData.error(String errorMessage, T data)
-      : this(
-          data: data,
-          asyncStatus: AsyncStatus.Error,
-          error: errorMessage,
-        );
-  AsyncData.loading(T data)
-      : this(
-          data: data,
-          asyncStatus: AsyncStatus.Loading,
-          error: null,
-        );
-
-  @override
-  String toString() {
-    return 'AsyncData(data: $data, asyncStatus: $asyncStatus, error: $error)';
-  }
-}
+Stream<List<Todo>> getFilteredTodos() => select<TodoState>('todo').map((state) {
+      switch (state.searchCategory) {
+        case TodoActionTypes.active:
+          return state.todos.where((todo) => !todo.completed).toList();
+        case TodoActionTypes.completed:
+          return state.todos.where((todo) => todo.completed).toList();
+        default:
+          return state.todos;
+      }
+    });

@@ -1,7 +1,7 @@
 # ajwah_bloc
 
-Rx based state management library. Manage your application's states, effects, and actions easy way.
-Make apps more scalable with a unidirectional data-flow.
+A reactive state management library. Manage your application's states, effects, and actions easy way.
+Make apps more scalable with a unidirectional data-flow. **[flutter demo](https://api.flutlab.io/res/projects/31087/itbjnv5f4wrwwd0uahuc/index.html#/) | [src](https://github.com/JUkhan/ajwahapp.git)**
 
 - **[ajwah_bloc_test](https://pub.dev/packages/ajwah_bloc_test)**
 
@@ -16,7 +16,6 @@ createStore( exposeApiGlobally:true);
 Now register states as much as you want and consume them where ever you want in your app.
 
 ```dart
-final store = createStore();
 
 store.registerState<int>(
   stateName: 'counter',
@@ -34,7 +33,7 @@ store.dispatch(Action(type: 'inc'));
 
 ```dart
 StreamBuilder<CounterModel>(
-    stream: store.select<CounterModel>('counter'),
+    stream: store.select('counter'),
     builder:(context, snapshot) {
         if (snapshot.data.isLoading) {
           return CircularProgressIndicator();

@@ -1,6 +1,8 @@
 import 'package:rxdart/subjects.dart';
 import 'action.dart';
 
+typedef ActionsFilterCallback = bool Function(Action action);
+
 ///used for making effects applying filters on action type(s).
 ///
 ///**Example**
@@ -18,13 +20,14 @@ class Actions {
 
   ///This function takes **String actionType** param
   ///and apply filter on actionType and return Stream<Action>
-  Stream<Action> whereType(String actionType) {
-    return _dispatcher.where((action) => action.type == actionType);
-  }
+  Stream<Action> whereType(String actionType) =>
+      _dispatcher.where((action) => action.type == actionType);
 
   ///This function takes **List<String> actionTypes** param
   ///and apply filter on actionTypes and return Stream<Action>
-  Stream<Action> whereTypes(List<String> actionTypes) {
-    return _dispatcher.where((action) => actionTypes.contains(action.type));
-  }
+  Stream<Action> whereTypes(List<String> actionTypes) =>
+      _dispatcher.where((action) => actionTypes.contains(action.type));
+
+  Stream<Action> where(ActionsFilterCallback callback) =>
+      _dispatcher.where(callback);
 }

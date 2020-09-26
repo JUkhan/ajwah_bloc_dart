@@ -136,3 +136,7 @@ store.registerState(filterActions:(action)=>action is TodoAction)
 
 [filterActions] was missing in global api
 registerState(filterActions:(action)=>action is TodoAction)
+
+## 2.0.0+5
+
+type and added actions api - where
