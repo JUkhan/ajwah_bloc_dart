@@ -2,10 +2,11 @@ import 'dart:async';
 import 'package:ajwah_bloc/ajwah_bloc.dart';
 import 'package:flutter/material.dart' hide Action;
 import 'package:uuid/uuid.dart';
+import 'package:rxdart/rxdart.dart';
 
 void main() {
   createStore(exposeApiGlobally: true);
-  registerTodoState();
+  registerTodoStates();
   runApp(App());
 }
 
@@ -127,17 +128,16 @@ class Toolbar extends StatelessWidget {
       return category == value ? Colors.blue : null;
     }
 
-    final searchCategory$ = select<TodoState>('todo')
-        .map((state) => state.searchCategory)
-        .distinct();
+    final searchCategory$ = select<String>('search-category');
+    final activeTodo$ = select<List<Todo>>('todo')
+        .map((todos) => todos.where((todo) => !todo.completed).length);
 
     return Material(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           StreamBuilder<int>(
-              stream: select<TodoState>('todo').map((state) =>
-                  state.todos.where((todo) => !todo.completed).length),
+              stream: activeTodo$,
               initialData: 0,
               builder: (context, snapshot) {
                 return Expanded(
@@ -271,7 +271,7 @@ class _TodoItemState extends State<TodoItem> {
   }
 }
 
-// model and state
+// model and states
 
 var _uuid = Uuid();
 
@@ -293,26 +293,7 @@ class Todo {
   }
 }
 
-class TodoState {
-  final String searchCategory;
-  final List<Todo> todos;
-  TodoState({
-    this.searchCategory,
-    this.todos,
-  });
-
-  TodoState copyWith({
-    String searchCategory,
-    List<Todo> todos,
-  }) {
-    return TodoState(
-      searchCategory: searchCategory ?? this.searchCategory,
-      todos: todos ?? this.todos,
-    );
-  }
-}
-
-/// Some keys used for testing
+/// Some keys used for widget testing
 final addTodoKey = UniqueKey();
 final activeFilterKey = UniqueKey();
 final completedFilterKey = UniqueKey();
@@ -342,31 +323,24 @@ abstract class TodoActionTypes {
   static const remove = 'todo-remove';
 }
 
-void registerTodoState() {
-  registerState<TodoState>(
+void registerTodoStates() {
+  //register [todo] state
+  registerState<List<Todo>>(
     stateName: 'todo',
-    filterActions: (action) =>
-        action is TodoAction || action is TodoFilterAction,
-    initialState: TodoState(
-      todos: [
-        Todo(id: 'todo-0', description: 'hi'),
-        Todo(id: 'todo-1', description: 'hello'),
-        Todo(id: 'todo-2', description: 'learn reactive programming'),
-      ],
-      searchCategory: TodoActionTypes.all,
-    ),
+    initialState: [
+      Todo(id: 'todo-0', description: 'hi'),
+      Todo(id: 'todo-1', description: 'hello'),
+      Todo(id: 'todo-2', description: 'learn reactive programming'),
+    ],
     mapActionToState: (state, action, emit) {
       if (action is TodoAction) {
         switch (action.type) {
           case TodoActionTypes.add:
-            emit(state.copyWith(todos: [
-              ...state.todos,
-              Todo(description: action.description)
-            ]));
+            emit([...state, Todo(description: action.description)]);
             break;
           case TodoActionTypes.update:
-            emit(state.copyWith(todos: [
-              for (var item in state.todos)
+            emit([
+              for (var item in state)
                 if (item.id == action.id)
                   Todo(
                       id: item.id,
@@ -374,11 +348,11 @@ void registerTodoState() {
                       description: action.description)
                 else
                   item,
-            ]));
+            ]);
             break;
           case TodoActionTypes.toggle:
-            emit(state.copyWith(todos: [
-              for (var item in state.todos)
+            emit([
+              for (var item in state)
                 if (item.id == action.id)
                   Todo(
                       id: item.id,
@@ -386,31 +360,39 @@ void registerTodoState() {
                       description: item.description)
                 else
                   item,
-            ]));
+            ]);
             break;
           case TodoActionTypes.remove:
-            emit(state.copyWith(
-                todos: state.todos
-                    .where((item) => item.id != action.id)
-                    .toList()));
+            emit(state.where((item) => item.id != action.id).toList());
             break;
         }
-      } else {
-        if (action is TodoFilterAction) {
-          emit(state.copyWith(searchCategory: action.type));
-        }
+      }
+    },
+  );
+
+//register [search-category] state
+  registerState<String>(
+    stateName: 'search-category',
+    initialState: TodoActionTypes.all,
+    mapActionToState: (state, action, emit) {
+      if (action is TodoFilterAction) {
+        emit(action.type);
       }
     },
   );
 }
 
-Stream<List<Todo>> getFilteredTodos() => select<TodoState>('todo').map((state) {
-      switch (state.searchCategory) {
+Stream<List<Todo>> getFilteredTodos() => CombineLatestStream([
+      select('search-category'),
+      select('todo'),
+    ], (values) {
+      final todos = values[1] as List<Todo>;
+      switch (values[0]) {
         case TodoActionTypes.active:
-          return state.todos.where((todo) => !todo.completed).toList();
+          return todos.where((todo) => !todo.completed).toList();
         case TodoActionTypes.completed:
-          return state.todos.where((todo) => todo.completed).toList();
+          return todos.where((todo) => todo.completed).toList();
         default:
-          return state.todos;
+          return todos;
       }
     });

@@ -16,87 +16,399 @@ createStore( exposeApiGlobally:true);
 Now register states as much as you want and consume them where ever you want in your app.
 
 ```dart
-
+//register [counter] state
 store.registerState<int>(
-  stateName: 'counter',
-  initialState: 0,
-  mapActionToState: (state, action, emit) {
-    if (action.type == 'inc') emit(state + 1);
-  },
-);
-
-store.select('counter').listen((state) => print(state)); // 0, 1
-store.dispatch(Action(type: 'inc'));
-```
-
-**Consuming state in wigets**
-
-```dart
-StreamBuilder<CounterModel>(
-    stream: store.select('counter'),
-    builder:(context, snapshot) {
-        if (snapshot.data.isLoading) {
-          return CircularProgressIndicator();
-        }
-        return Text(
-            snapshot.data.count.toString(),
-            style: Theme.of(context).textTheme.title,
-          );
+    stateName: 'counter',
+    initialState: 0,
+    mapActionToState: (state, action, emit) {
+      switch (action.type) {
+        case 'inc':
+          emit(state + 1);
+          break;
+        case 'dec':
+          emit(state - 1);
+          break;
+        default:
+      }
     },
-)
+  );
+
+  //consuming
+  store.select('counter').listen(print); // 0,1,0,1
+
+  //dispatching actions
+  store.dispatch(Action(type: 'inc'));
+  store.dispatch(Action(type: 'dec'));
+  store.dispatch(Action(type: 'inc'));
 ```
 
-You can make your app more declaretive simply dispatching the action, here you see an example of conditionaly rendering a widged having taps on two buttons [Show Widget] and [Hide Widget], and consuming those actions as you needed.
+You can easily filter out actions using the optional `filterActions:(action)=>bool` param of `registerState` method.
+
+For filtering out the `dec` action from the `counter` state:
 
 ```dart
-store
-  .actions
-  .whereTypes(['show-widget', 'hide-widget'])
-  .map((action) => action.type)
+//register [counter] state
+store.registerState<int>(
+    stateName: 'counter',
+    initialState: 0,
+    filterActions: (action) => action.type != 'dec',
+    mapActionToState: (state, action, emit) {
+      switch (action.type) {
+        case 'inc':
+          emit(state + 1);
+          break;
+        case 'dec':
+          emit(state - 1);
+          break;
+        default:
+      }
+    },
+  );
+
+  //consuming
+  store.select('counter').listen(print); // 0,1,2
+
+  //dispatching actions
+  store.dispatch(Action(type: 'inc'));
+  store.dispatch(Action(type: 'dec'));
+  store.dispatch(Action(type: 'inc'));
+
 ```
 
+Now `dec` action is useless. Let's add an `effect` on `dec` action:
+
 ```dart
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              RaisedButton(
-                onPressed: () =>
-                    store.dispatch(store.Action(type: 'show-widget')),
-                child: Text("Show Widget"),
-              ),
-              RaisedButton(
-                onPressed: () =>
-                    store.dispatch(store.Action(type: 'hide-widget')),
-                child: Text("Hide Widget"),
-              ),
-            ],
-          ),
-          StreamBuilder<String>(
-            stream: store
-                .actions
-                .whereTypes(['show-widget', 'hide-widget'])
-                .map((action) => action.type),
-            initialData: 'hide-widget',
-            builder: (context, snapshot) {
-              return snapshot.data == 'show-widget'
-                  ? DynamicWidget()
-                  : Container();
-            },
-          ),
+store.registerEffect(
+      (action$, store) =>
+          action$.whereType('dec')
+          .map((event) => Action(type: 'inc')),
+      effectKey: 'test');
+
 ```
 
-**Effects**
-
-Effects are optional. You can do everything of it's into `mapActionToState` callback function. As per your application is growing caught on difficult cases - it might be handy.
+Here we are capturing the `dec` action using `whereType` and then map the action as `inc` action
 
 ```dart
- store.registerEffect(
-      (action$, store$) => action$
-          .whereType('asyncInc')
-          .debounceTime(Duration(milliseconds: 500))
-          .map((event) => store.Action(type: 'inc')),
-      effectKey: 'effect-key',
-    );
+//register [counter] state
+store.registerState<int>(
+    stateName: 'counter',
+    initialState: 0,
+    filterActions: (action) => action.type != 'dec',
+    mapActionToState: (state, action, emit) {
+      switch (action.type) {
+        case 'inc':
+          emit(state + 1);
+          break;
+        case 'dec':
+          emit(state - 1);
+          break;
+        default:
+      }
+    },
+  );
+
+  //consuming
+  store.select('counter').listen(print); // 0,1,2,3
+
+  //effect on dec action - so that it works as inc
+  store.registerEffect(
+      (action$, store) =>
+          action$.whereType('dec').map((event) => Action(type: 'inc')),
+      effectKey: 'test');
+
+  //dispatching actions
+  store.dispatch(Action(type: 'inc'));
+  store.dispatch(Action(type: 'dec'));
+  store.dispatch(Action(type: 'inc'));
+
+```
+
+If you want to log all the action and state changed - just use the `exportState()` function. Call this function just after your `createStore()` function.
+
+```dart
+var store = createStore();
+store.exportState().listen(print);
+```
+
+output looks like:
+
+```sh
+[Action(type: @@INIT), {counter: 0}]
+[Action(type: registerState(counter)), {counter: 0}]
+0
+[Action(type: registerEffect(test)), {counter: 0}]
+[Action(type: inc), {counter: 1}]
+1
+[Action(type: dec), {counter: 1}]
+[Action(type: inc), {counter: 2}]
+2
+[Action(type: inc), {counter: 3}]
+3
+```
+
+You can import state also:
+
+```dart
+store.importState({'counter': 100});
+```
+
+We have covered the basic of ajwah_bloc. Now we see:
+
+- how to consume states in the flutter widget.
+- how to make your app a way more declaratives.
+- how to combine multiple states and make a single stream.
+- testing ajwah_bloc
+
+**Consuming `counter` state through `StreamBuilder` widget:**
+
+```dart
+StreamBuilder<int>(
+    stream: store.select('counter'),
+    initialData: 0,
+    builder:(context, snapshot) => Text(snapshot.data.count.toString()),
+),
+Row(
+    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    children: [
+        RaisedButton(
+            onPressed: () => store.dispatch(store.Action(type: 'inc')),
+            child: Text("Inc"),
+        ),
+        RaisedButton(
+            onPressed: () => sstore.dispatch(store.Action(type: 'dec')),
+            child: Text("Dec"),
+        ),
+    ],
+),
+```
+
+Make your app a way more declaretives simply dispatching the action, here you see an example of conditionaly rendering a widged having taps on two buttons [Show] and [Hide], and consuming those actions as you needed.
+
+```dart
+Row(
+    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    children: [
+        RaisedButton(
+            onPressed: () => store.dispatch(store.Action(type: 'show-widget')),
+            child: Text("Show"),
+        ),
+        RaisedButton(
+            onPressed: () => sstore.dispatch(store.Action(type: 'hide-whiget')),
+            child: Text("Hide"),
+        ),
+    ],
+),
+StreamBuilder<int>(
+    stream: store.actions
+            .whereTypes(['show-widget', 'hide-widget'])
+            .map((action) => action.type),
+    initialData: '',
+    builder:(context, snapshot) => snapshot.data == 'show-widget' ? DynamicWidget() : Container(),
+),
+```
+
+Now we declare two states:
+
+- `todo`
+- `search-category`
+
+And then consume them combining as a single stream. So that we get the latest filtered result on `todo` as well as `search-category` states.
+
+```dart
+class Todo {
+  Todo({
+    this.description,
+    this.completed = false,
+    this.id,
+  });
+
+  final String id;
+  final String description;
+  final bool completed;
+
+}
+class TodoAction extends Action {
+  String description;
+  String id;
+  TodoAction({
+    @required String type,
+    this.id,
+    this.description,
+  }) : super(type: type);
+}
+
+class TodoFilterAction extends Action {
+  TodoFilterAction({@required String type}) : super(type: type);
+}
+
+abstract class TodoActionTypes {
+  static const all = 'todo-all';
+  static const active = 'todo-active';
+  static const completed = 'todo-completed';
+  static const add = 'todo-add';
+  static const update = 'todo-update';
+  static const toggle = 'todo-toggle';
+  static const remove = 'todo-remove';
+}
+//register [todo] state
+store.registerState<List<Todo>>(
+    stateName: 'todo',
+    initialState: [
+        Todo(id: 'todo-0', description: 'hi'),
+      ],
+    mapActionToState: (state, action, emit) {
+        if (action is TodoAction) {
+            switch (action.type) {
+            case TodoActionTypes.add:
+                emit([
+                ...state,
+                Todo(description: action.description)
+                ]);
+                break;
+            case TodoActionTypes.update:
+                emit([
+                for (var item in state)
+                    if (item.id == action.id)
+                    Todo(
+                        id: item.id,
+                        completed: item.completed,
+                        description: action.description)
+                    else
+                    item,
+                ]);
+                break;
+            case TodoActionTypes.toggle:
+                emit([
+                for (var item in state)
+                    if (item.id == action.id)
+                    Todo(
+                        id: item.id,
+                        completed: !item.completed,
+                        description: item.description)
+                    else
+                    item,
+                ]);
+                break;
+            case TodoActionTypes.remove:
+                emit(state
+                        .where((item) => item.id != action.id)
+                        .toList());
+                break;
+            }
+        }
+    },
+  );
+
+//register [search-category] state
+store.registerState<String>(
+    stateName: 'search-category',
+    initialState: TodoActionTypes.all,
+    mapActionToState: (state, action, emit) {
+        if (action is TodoFilterAction) {
+          emit(action.type);
+        }
+    },
+  );
+
+```
+
+**Combining two states**
+
+- do not forget - `import 'package:rxdart/rxdart.dart';`
+
+```dart
+Stream<List<Todo>> getFilteredTodos() => CombineLatestStream([
+      select('search-category'),
+      select('todo'),
+    ], (values) {
+      final todos = values[1] as List<Todo>;
+      switch (values[0]) {
+        case TodoActionTypes.active:
+          return todos.where((todo) => !todo.completed).toList();
+        case TodoActionTypes.completed:
+          return todos.where((todo) => todo.completed).toList();
+        default:
+          return todos;
+      }
+    });
+```
+
+**Testing:** We need to add the testing dependency `ajwah_bloc_test` then here you go:
+
+**todo_test.dart**
+
+```dart
+import 'package:ajwah_bloc/ajwah_bloc.dart';
+import 'package:ajwah_bloc_test/ajwah_bloc_test.dart';
+
+import 'package:flutter_test/flutter_test.dart';
+import 'package:example/main.dart';
+
+void main() {
+  AjwahStore store;
+  setUp(() {
+    store = createStore(exposeApiGlobally: true);
+    registerTodoStates();
+  });
+  tearDown(() {
+    store.dispose();
+  });
+  ajwahTest<List<Todo>>(
+    'Render the default todos',
+    build: () => getFilteredTodos(),
+    expect: [isA<List<Todo>>()],
+    verify: (models) {
+      expect(3, models[0].length);
+    },
+  );
+  ajwahTest<List<Todo>>(
+    'Editing the todo on done',
+    build: () => getFilteredTodos(),
+    act: () =>
+        store.dispatch(TodoAction(type: TodoActionTypes.toggle, id: 'todo-0')),
+    skip: 1,
+    expect: [isA<List<Todo>>()],
+    verify: (models) {
+      expect(true, models[0][0].completed);
+    },
+  );
+  ajwahTest<List<Todo>>(
+    'Add new todo',
+    build: () => getFilteredTodos(),
+    act: () => store.dispatch(
+        TodoAction(type: TodoActionTypes.add, description: 'new todo')),
+    skip: 1,
+    expect: [isA<List<Todo>>()],
+    verify: (models) {
+      expect('new todo', models[0][3].description);
+    },
+  );
+  ajwahTest<List<Todo>>(
+    'removing the first todo',
+    build: () => getFilteredTodos(),
+    act: () =>
+        store.dispatch(TodoAction(type: TodoActionTypes.remove, id: 'todo-0')),
+    skip: 1,
+    expect: [isA<List<Todo>>()],
+    verify: (models) {
+      expect('todo-1,todo-2', models[0].map((e) => e.id).join(','));
+    },
+  );
+
+  ajwahTest<List<Todo>>(
+    'show only uncomplete todos',
+    build: () => getFilteredTodos(),
+    act: () {
+      store.dispatch(TodoAction(type: TodoActionTypes.toggle, id: 'todo-0'));
+      store.dispatch(TodoFilterAction(type: TodoActionTypes.active));
+    },
+    skip: 2,
+    expect: [isA<List<Todo>>()],
+    verify: (models) {
+      expect(2, models[0].length);
+    },
+  );
+}
 
 ```
 

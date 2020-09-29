@@ -70,14 +70,15 @@ class AjwahStore {
   }
 
   ///This method is usefull to add a single effect passing a callback **(
-  ///Actions action$, Store store$)=>Stream** and **effectKey** on demand.
+  ///Actions action$, Store store$)=>Stream** and **effectKey**.
   ///
   ///**Example**
   ///```dart
   ///registerEffect((action$, store$)=>action$
   ///           .whereType(ActionTypes.AsyncInc)
   ///           .debounceTime(Duration(milliseconds: 1000))
-  ///           .mapTo(Action(type: ActionTypes.Inc)), effectKey:'any-effectKey');
+  ///           .mapTo(Action(type: ActionTypes.Inc)),
+  ///           effectKey:'effect-key');
   ///```
   void registerEffect(EffectCallback callback, {@required String effectKey}) {
     if (_effectSubscriptions.containsKey(effectKey)) {
