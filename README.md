@@ -159,7 +159,7 @@ We have covered the basic of ajwah_bloc. Now we see:
 - how to combine multiple states and make a single stream.
 - testing ajwah_bloc
 
-**Consuming `counter` state through `StreamBuilder` widget:**
+Consuming `counter` state through `StreamBuilder` widget:
 
 ```dart
 StreamBuilder<int>(
@@ -172,11 +172,11 @@ Row(
     children: [
         RaisedButton(
             onPressed: () => store.dispatch(store.Action(type: 'inc')),
-            child: Text("Inc"),
+            child: Text('Inc'),
         ),
         RaisedButton(
             onPressed: () => sstore.dispatch(store.Action(type: 'dec')),
-            child: Text("Dec"),
+            child: Text('Dec'),
         ),
     ],
 ),
@@ -190,20 +190,21 @@ Row(
     children: [
         RaisedButton(
             onPressed: () => store.dispatch(store.Action(type: 'show-widget')),
-            child: Text("Show"),
+            child: Text('Show'),
         ),
         RaisedButton(
             onPressed: () => sstore.dispatch(store.Action(type: 'hide-whiget')),
-            child: Text("Hide"),
+            child: Text('Hide'),
         ),
     ],
 ),
-StreamBuilder<int>(
+StreamBuilder<String>(
     stream: store.actions
             .whereTypes(['show-widget', 'hide-widget'])
             .map((action) => action.type),
     initialData: '',
-    builder:(context, snapshot) => snapshot.data == 'show-widget' ? DynamicWidget() : Container(),
+    builder:(context, snapshot) =>
+      snapshot.data == 'show-widget' ? DynamicWidget() : Container(),
 ),
 ```
 
@@ -255,6 +256,8 @@ store.registerState<List<Todo>>(
     stateName: 'todo',
     initialState: [
         Todo(id: 'todo-0', description: 'hi'),
+        Todo(id: 'todo-1', description: 'hello'),
+        Todo(id: 'todo-2', description: 'learn reactive programming'),
       ],
     mapActionToState: (state, action, emit) {
         if (action is TodoAction) {
