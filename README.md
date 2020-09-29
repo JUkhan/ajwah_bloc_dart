@@ -86,7 +86,7 @@ store.registerEffect(
 
 ```
 
-Here we are capturing the `dec` action using `whereType` and then map the action as `inc` action
+Here we are capturing the `dec` action using `whereType` and then map the action as an `inc` action
 
 ```dart
 //register [counter] state
@@ -349,13 +349,16 @@ import 'package:example/main.dart';
 
 void main() {
   AjwahStore store;
+
   setUp(() {
     store = createStore(exposeApiGlobally: true);
     registerTodoStates();
   });
+
   tearDown(() {
     store.dispose();
   });
+
   ajwahTest<List<Todo>>(
     'Render the default todos',
     build: () => getFilteredTodos(),
@@ -364,6 +367,7 @@ void main() {
       expect(3, models[0].length);
     },
   );
+
   ajwahTest<List<Todo>>(
     'Editing the todo on done',
     build: () => getFilteredTodos(),
@@ -375,6 +379,7 @@ void main() {
       expect(true, models[0][0].completed);
     },
   );
+
   ajwahTest<List<Todo>>(
     'Add new todo',
     build: () => getFilteredTodos(),
@@ -386,6 +391,7 @@ void main() {
       expect('new todo', models[0][3].description);
     },
   );
+
   ajwahTest<List<Todo>>(
     'removing the first todo',
     build: () => getFilteredTodos(),
