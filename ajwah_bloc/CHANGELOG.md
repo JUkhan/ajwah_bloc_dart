@@ -139,4 +139,8 @@ registerState(filterActions:(action)=>action is TodoAction)
 
 ## 2.0.0+5
 
-type and added actions api - where
+- typo and added actions api - where
+
+## 2.0.1
+
+- readme updated
