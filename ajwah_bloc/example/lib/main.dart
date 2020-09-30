@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:ajwah_bloc/ajwah_bloc.dart';
 import 'package:flutter/material.dart' hide Action;
 import 'package:uuid/uuid.dart';
-import 'package:rxdart/rxdart.dart';
 
 void main() {
   createStore(exposeApiGlobally: true);
@@ -382,12 +381,9 @@ void registerTodoStates() {
   );
 }
 
-Stream<List<Todo>> getFilteredTodos() => CombineLatestStream([
-      select('search-category'),
-      select('todo'),
-    ], (values) {
-      final todos = values[1] as List<Todo>;
-      switch (values[0]) {
+Stream<List<Todo>> getFilteredTodos() => storeInstance().selectMany((state) {
+      final todos = ['todo'] as List<Todo>;
+      switch (state['search-category']) {
         case TodoActionTypes.active:
           return todos.where((todo) => !todo.completed).toList();
         case TodoActionTypes.completed:

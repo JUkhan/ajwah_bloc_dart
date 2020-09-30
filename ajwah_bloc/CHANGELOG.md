@@ -144,3 +144,7 @@ registerState(filterActions:(action)=>action is TodoAction)
 ## 2.0.1
 
 - readme updated
+
+## 2.0.1+1
+
+- readme updated

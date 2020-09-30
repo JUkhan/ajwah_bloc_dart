@@ -154,9 +154,9 @@ store.importState({'counter': 100});
 
 We have covered the basic of ajwah_bloc. Now we see:
 
-- how to consume states in the flutter widget.
-- how to make your app a way more declaratives.
-- how to combine multiple states and make a single stream.
+- how to consume states in the flutter widget?
+- how to make your app a way more declaratives?
+- how to combine multiple states and make a single stream?
 - testing ajwah_bloc
 
 Consuming `counter` state through `StreamBuilder` widget:
@@ -208,124 +208,19 @@ StreamBuilder<String>(
 ),
 ```
 
-Now we declare two states:
+Using `selectMany(callback)` function we can easily combine multiple states and retuen single stream data.
+
+Suppose we have two states:
 
 - `todo`
 - `search-category`
 
-And then consume them combining as a single stream. So that we get the latest filtered result on `todo` as well as `search-category` states.
+Now we want to consume these two states together. So that we get the latest filtered result on `todo` as well as `search-category` states.
 
 ```dart
-class Todo {
-  Todo({
-    this.description,
-    this.completed = false,
-    this.id,
-  });
-
-  final String id;
-  final String description;
-  final bool completed;
-
-}
-class TodoAction extends Action {
-  String description;
-  String id;
-  TodoAction({
-    @required String type,
-    this.id,
-    this.description,
-  }) : super(type: type);
-}
-
-class TodoFilterAction extends Action {
-  TodoFilterAction({@required String type}) : super(type: type);
-}
-
-abstract class TodoActionTypes {
-  static const all = 'todo-all';
-  static const active = 'todo-active';
-  static const completed = 'todo-completed';
-  static const add = 'todo-add';
-  static const update = 'todo-update';
-  static const toggle = 'todo-toggle';
-  static const remove = 'todo-remove';
-}
-//register [todo] state
-store.registerState<List<Todo>>(
-    stateName: 'todo',
-    initialState: [
-        Todo(id: 'todo-0', description: 'hi'),
-        Todo(id: 'todo-1', description: 'hello'),
-        Todo(id: 'todo-2', description: 'learn reactive programming'),
-      ],
-    mapActionToState: (state, action, emit) {
-        if (action is TodoAction) {
-            switch (action.type) {
-            case TodoActionTypes.add:
-                emit([
-                ...state,
-                Todo(description: action.description)
-                ]);
-                break;
-            case TodoActionTypes.update:
-                emit([
-                for (var item in state)
-                    if (item.id == action.id)
-                    Todo(
-                        id: item.id,
-                        completed: item.completed,
-                        description: action.description)
-                    else
-                    item,
-                ]);
-                break;
-            case TodoActionTypes.toggle:
-                emit([
-                for (var item in state)
-                    if (item.id == action.id)
-                    Todo(
-                        id: item.id,
-                        completed: !item.completed,
-                        description: item.description)
-                    else
-                    item,
-                ]);
-                break;
-            case TodoActionTypes.remove:
-                emit(state
-                        .where((item) => item.id != action.id)
-                        .toList());
-                break;
-            }
-        }
-    },
-  );
-
-//register [search-category] state
-store.registerState<String>(
-    stateName: 'search-category',
-    initialState: TodoActionTypes.all,
-    mapActionToState: (state, action, emit) {
-        if (action is TodoFilterAction) {
-          emit(action.type);
-        }
-    },
-  );
-
-```
-
-**Combining two states**
-
-- do not forget - `import 'package:rxdart/rxdart.dart';`
-
-```dart
-Stream<List<Todo>> getFilteredTodos() => CombineLatestStream([
-      select('search-category'),
-      select('todo'),
-    ], (values) {
-      final todos = values[1] as List<Todo>;
-      switch (values[0]) {
+Stream<List<Todo>> getFilteredTodos() => store.selectMany((state) {
+      final todos = ['todo'] as List<Todo>;
+      switch (state['search-category']) {
         case TodoActionTypes.active:
           return todos.where((todo) => !todo.completed).toList();
         case TodoActionTypes.completed:
