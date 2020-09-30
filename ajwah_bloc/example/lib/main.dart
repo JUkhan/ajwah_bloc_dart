@@ -382,7 +382,7 @@ void registerTodoStates() {
 }
 
 Stream<List<Todo>> getFilteredTodos() => storeInstance().selectMany((state) {
-      final todos = ['todo'] as List<Todo>;
+      final todos = state['todo'] as List<Todo>;
       switch (state['search-category']) {
         case TodoActionTypes.active:
           return todos.where((todo) => !todo.completed).toList();

@@ -219,7 +219,7 @@ Now we want to consume these two states together. So that we get the latest filt
 
 ```dart
 Stream<List<Todo>> getFilteredTodos() => store.selectMany((state) {
-      final todos = ['todo'] as List<Todo>;
+      final todos = state['todo'] as List<Todo>;
       switch (state['search-category']) {
         case TodoActionTypes.active:
           return todos.where((todo) => !todo.completed).toList();
