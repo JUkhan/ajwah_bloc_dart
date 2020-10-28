@@ -152,3 +152,7 @@ registerState(filterActions:(action)=>action is TodoAction)
 ## 2.0.2
 
 - readme updated
+
+## 2.0.3
+
+- removed global api

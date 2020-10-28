@@ -15,4 +15,4 @@ dev_dependencies:
   build_test: ^0.10.7+3
   dartdoc: ^0.28.3+2
   test_coverage: ^0.2.3
-  ajwah_bloc:
+  ajwah_bloc: ^1.9.1

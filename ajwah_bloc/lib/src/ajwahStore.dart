@@ -27,11 +27,12 @@ class AjwahStore {
     _stateSubscriptions = <String, StreamSubscription<Action>>{};
     _effectSubscriptions = <String, StreamSubscription<Action>>{};
   }
-  void registerState<S>(
-      {@required String stateName,
-      @required S initialState,
-      FilterActionCallback filterActions,
-      @required MapActionToStateCallback<S> mapActionToState}) {
+  void registerState<S>({
+    @required String stateName,
+    @required S initialState,
+    FilterActionCallback filterActions,
+    @required MapActionToStateCallback<S> mapActionToState,
+  }) {
     if (_store.value.containsKey(stateName)) {
       return;
     }
@@ -111,7 +112,6 @@ class AjwahStore {
     }
   }
 
-  BehaviorSubject<Action> get dispatcher => _dispatcher;
   Actions get actions => _actions;
   T getState<T>({@required String stateName}) => _store.value[stateName];
 

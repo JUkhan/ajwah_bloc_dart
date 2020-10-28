@@ -17,7 +17,7 @@ void main() {
 void createStore_fn_test() {
   AjwahStore store;
   setUp(() {
-    store = createStore();
+    store = AjwahStore();
   });
   tearDown(() {
     store.dispose();
@@ -31,7 +31,7 @@ void register_and_unregister_state_fn_test() {
   group('register and unregister counter state', () {
     AjwahStore store;
     setUpAll(() {
-      store = createStore();
+      store = AjwahStore();
       registerCounterState(store);
     });
     tearDownAll(() {
@@ -75,7 +75,7 @@ void register_and_unregister_state_fn_test() {
 void effect_register_unregister() {
   AjwahStore store;
   setUpAll(() {
-    store = createStore();
+    store = AjwahStore();
     registerCounterState(store);
   });
   tearDownAll(() {
@@ -121,7 +121,7 @@ void effect_register_unregister() {
 void import_export_test() {
   AjwahStore store;
   setUpAll(() {
-    store = createStore();
+    store = AjwahStore();
     registerCounterState(store);
   });
   tearDownAll(() {
@@ -158,14 +158,13 @@ void import_export_test() {
 void dispatcher_actions_getState_fn() {
   AjwahStore store;
   setUpAll(() {
-    store = createStore();
+    store = AjwahStore();
     registerCounterState(store);
   });
   tearDownAll(() {
     store.dispose();
   });
   test('dispatcher actions getState fn', () {
-    expect(store.dispatcher, isA<Stream>());
     expect(store.actions, isA<Actions>());
 
     expect(store.getState<CounterModel>(stateName: 'counter'),
@@ -176,7 +175,7 @@ void dispatcher_actions_getState_fn() {
 void withTypes_selectMany_fn_test() {
   AjwahStore store;
   setUpAll(() {
-    store = createStore();
+    store = AjwahStore();
     registerCounterState(store);
   });
   tearDownAll(() {
@@ -205,7 +204,7 @@ void withTypes_selectMany_fn_test() {
 void dispose_fn() {
   AjwahStore store;
   setUpAll(() {
-    store = createStore();
+    store = AjwahStore();
     registerCounterState(store);
   });
   tearDownAll(() {

@@ -5,12 +5,11 @@ Make apps more scalable with a unidirectional data-flow. **[flutter demo](https:
 
 - **[ajwah_bloc_test](https://pub.dev/packages/ajwah_bloc_test)**
 
-Declare your store as a global variable or enable `exposeApiGlobally:true`.
+Declare your store as a global variable.
 
 ```dart
-final store = createStore();
-//or
-createStore( exposeApiGlobally:true);
+final store = AjwahStore();
+
 ```
 
 Now register states as much as you want and consume them where ever you want in your app.
@@ -126,7 +125,6 @@ store.registerState<int>(
 If you want to log all the action and state changed - just use the `exportState()` function. Call this function just after your `createStore()` function.
 
 ```dart
-var store = createStore();
 store.exportState().listen(print);
 ```
 
@@ -246,7 +244,7 @@ void main() {
   AjwahStore store;
 
   setUp(() {
-    store = createStore(exposeApiGlobally: true);
+    store = AjwahStore();
     registerTodoStates();
   });
 
@@ -329,7 +327,6 @@ void registerState<S>(
 void unregisterState({@required String stateName})
 void registerEffect(EffectCallback callback, {@required String effectKey})
 void unregisterEffect({@required String effectKey})
-BehaviorSubject<Action> get dispatcher
 Actions get actions
 T getState<T>({@required String stateName})
 Stream<List<dynamic>> exportState()
