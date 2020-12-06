@@ -113,6 +113,16 @@ void registerCounterState() {
       }
     },
   );
+  /*store.registerEffects('effectKey', [
+    (action$, store$) => action$
+        .whereType('async-inc')
+        .debounceTime(Duration(milliseconds: 1000))
+        .mapTo(Action(type: 'dec')),
+    (action$, store$) => action$
+        .whereType('dec')
+        .debounceTime(Duration(milliseconds: 1000))
+        .mapTo(Action(type: 'inc')),
+  ]);*/
 }
 
 final counter$ = store.select<int>('counter');
@@ -120,6 +130,6 @@ final asyncInc$ = store.actions.whereType('async-inc');
 final loading$ = Rx.merge([
   asyncInc$.map((event) => true),
   asyncInc$.delay(const Duration(seconds: 1)).doOnData((event) {
-    store.dispatch(Action(type: 'inc'));
+    //store.dispatch(Action(type: 'inc'));
   }).map((event) => false)
 ]).asBroadcastStream();

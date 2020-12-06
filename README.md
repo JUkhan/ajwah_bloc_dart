@@ -1,7 +1,7 @@
 # ajwah_bloc
 
 A reactive state management library. Manage your application's states, effects, and actions easy way.
-Make apps more scalable with a unidirectional data-flow. **[flutter demo](https://api.flutlab.io/res/projects/31087/itbjnv5f4wrwwd0uahuc/index.html#/) | [src](https://github.com/JUkhan/ajwahapp.git)**
+Make apps more scalable with a unidirectional data-flow. **[flutter demo](https://api.flutlab.io/res/projects/67131/rr2ma95pubmjmokpmlmi/index.html#/) | [src](https://github.com/JUkhan/ajwahapp.git)**
 
 - **[ajwah_bloc_test](https://pub.dev/packages/ajwah_bloc_test)**
 
@@ -78,11 +78,11 @@ store.registerState<int>(
 Now `dec` action is useless. Let's add an `effect` on `dec` action:
 
 ```dart
-store.registerEffect(
-      (action$, store) =>
-          action$.whereType('dec')
-          .map((event) => Action(type: 'inc')),
-      effectKey: 'test');
+store.registerEffects(
+    'test',
+    [(action$, store) =>
+          action$.whereType('dec').map((event) => Action(type: 'inc'))
+    ]);
 
 ```
 

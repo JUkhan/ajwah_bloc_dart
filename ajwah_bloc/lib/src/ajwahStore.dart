@@ -75,26 +75,30 @@ class AjwahStore {
   ///
   ///**Example**
   ///```dart
-  ///registerEffect((action$, store$)=>action$
+  ///registerEffect('effect-key',[(action$, store$)=>action$
   ///           .whereType(ActionTypes.AsyncInc)
   ///           .debounceTime(Duration(milliseconds: 1000))
-  ///           .mapTo(Action(type: ActionTypes.Inc)),
-  ///           effectKey:'effect-key');
+  ///           .mapTo(Action(type: ActionTypes.Inc))
+  ///           ]);
   ///```
-  void registerEffect(EffectCallback callback, {@required String effectKey}) {
+  void registerEffects(
+      String effectKey, Iterable<EffectCallback> callbackList) {
     if (_effectSubscriptions.containsKey(effectKey)) {
       return;
     }
-    _effectSubscriptions[effectKey] = callback(_actions, this).listen(dispatch);
-    dispatch(Action(type: 'registerEffect($effectKey)'));
+    _effectSubscriptions[effectKey] =
+        Rx.merge(callbackList.map((e) => e(_actions, this)))
+            .asBroadcastStream()
+            .listen(dispatch);
+    dispatch(Action(type: 'registerEffects($effectKey)'));
   }
 
   ///This method is usefull to remove effects passing **effectKey** on demand.
-  void unregisterEffect({@required String effectKey}) {
+  void unregisterEffects({@required String effectKey}) {
     if (_effectSubscriptions.containsKey(effectKey)) {
       _effectSubscriptions[effectKey].cancel();
       _effectSubscriptions.remove(effectKey);
-      dispatch(Action(type: 'unregisterEffect($effectKey)'));
+      dispatch(Action(type: 'unregisterEffects($effectKey)'));
     }
   }
 

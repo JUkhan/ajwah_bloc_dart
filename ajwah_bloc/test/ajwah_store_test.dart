@@ -11,7 +11,6 @@ void main() {
   import_export_test();
   dispatcher_actions_getState_fn();
   withTypes_selectMany_fn_test();
-  //dispose_fn();
 }
 
 void createStore_fn_test() {
@@ -85,11 +84,11 @@ void effect_register_unregister() {
     ajwahTest<CounterModel>(
       'after registering effect - we will get 2 models',
       build: () {
-        store.registerEffect(
-            (action$, store) => action$
-                .whereType('AsyncInc')
-                .map((event) => Action(type: ActionTypes.Inc)),
-            effectKey: 'test');
+        store.registerEffects('test', [
+          (action$, store) => action$
+              .whereType('AsyncInc')
+              .map((event) => Action(type: ActionTypes.Inc)),
+        ]);
         return store.select<CounterModel>('counter');
       },
       skip: 1,
@@ -104,7 +103,7 @@ void effect_register_unregister() {
     ajwahTest(
       'after unregistering effect we will have single model with loading true value only',
       build: () {
-        store.unregisterEffect(effectKey: 'test');
+        store.unregisterEffects(effectKey: 'test');
         return store.select<CounterModel>('counter');
       },
       skip: 1,

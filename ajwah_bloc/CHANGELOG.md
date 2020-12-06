@@ -156,3 +156,7 @@ registerState(filterActions:(action)=>action is TodoAction)
 ## 2.0.3
 
 - removed global api
+
+## 2.0.4
+
+- registerEffect function renamed as registerEffects and also canged function signature
