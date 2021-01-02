@@ -5,7 +5,7 @@ Make apps more scalable with a unidirectional data-flow. **[flutter demo](https:
 
 - **[ajwah_bloc_test](https://pub.dev/packages/ajwah_bloc_test)**
 
-## Declare a state controller.
+Define a state controller class
 
 ```dart
 class CounterStateController extends StateController<int> {
@@ -22,7 +22,7 @@ class CounterStateController extends StateController<int> {
 
 ```
 
-## consuming state
+Consuming state
 
 ```dart
 
@@ -48,7 +48,7 @@ class CounterWidget extends StatelessWidget {
           ),
           StreamBuilder(
             stream: controller.stream$,
-            initialData: 0,
+            initialData: controller.currentState,
             builder: (context, snapshot) {
               return Container(
                 padding: EdgeInsets.only(left: 20.0),
@@ -66,9 +66,12 @@ class CounterWidget extends StatelessWidget {
 
 **Testing:** We need to add the testing dependency `ajwah_bloc_test`
 
-**Testing counter state**
+**Testing counter controller**
 
 ```dart
+import 'package:ajwah_bloc_test/ajwah_bloc_test.dart';
+import 'package:example/main.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   CounterStateController controller;
@@ -76,7 +79,9 @@ void main() {
     controller = CounterStateController();
   });
 
-  tearDown(() {});
+  tearDown(() {
+     controller.dispose();
+  });
 
   ajwahTest<int>(
     'Initial state value should be 2',

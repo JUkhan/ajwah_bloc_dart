@@ -83,7 +83,7 @@ class CounterWidget extends StatelessWidget {
           ),
           StreamBuilder(
             stream: controller.stream$,
-            initialData: 0,
+            initialData: controller.currentState,
             builder: (context, snapshot) {
               return Container(
                 padding: EdgeInsets.only(left: 20.0),

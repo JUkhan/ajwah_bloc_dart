@@ -8,7 +8,9 @@ void main() {
     controller = CounterStateController();
   });
 
-  tearDown(() {});
+  tearDown(() {
+    controller.dispose();
+  });
 
   ajwahTest<int>(
     'Initial state value should be 2',

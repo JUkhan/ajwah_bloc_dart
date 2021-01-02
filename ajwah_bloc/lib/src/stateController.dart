@@ -36,6 +36,11 @@ abstract class StateController<S> {
     _store.dispatch(action);
   }
 
+  void dispose() {
+    _store.dispose();
+  }
+
+  S get currentState => _currentState;
   Actions get actions => _store.actions;
   Stream<S> get stream$ => _store.select(_stateName);
 }

@@ -164,3 +164,7 @@ registerState(filterActions:(action)=>action is TodoAction)
 ## 2.1.0
 
 - added StateController
+
+## 2.2.0
+
+- added currentState, dispose into StateController class
