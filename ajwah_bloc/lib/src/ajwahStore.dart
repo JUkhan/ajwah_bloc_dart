@@ -3,14 +3,8 @@ import 'package:meta/meta.dart';
 import 'package:rxdart/rxdart.dart';
 import 'action.dart';
 import 'actions.dart';
+import 'types.dart';
 
-typedef FilterActionCallback = bool Function(Action action);
-typedef EmitStateCallback<S> = void Function(S state);
-typedef MapActionToStateCallback<S> = void Function(
-  S state,
-  Action action,
-  EmitStateCallback<S> emit,
-);
 typedef EffectCallback = Stream<Action> Function(
     Actions action$, AjwahStore store);
 

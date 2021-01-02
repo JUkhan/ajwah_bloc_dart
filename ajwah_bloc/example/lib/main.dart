@@ -1,13 +1,13 @@
 import 'package:ajwah_bloc/ajwah_bloc.dart';
+
 import 'package:flutter/material.dart' hide Action;
 import 'package:rxdart/rxdart.dart';
 
 void main() {
-  registerCounterState();
   runApp(App());
 }
 
-final store = AjwahStore();
+final controller = CounterStateController();
 
 class App extends StatelessWidget {
   @override
@@ -49,7 +49,7 @@ class Loading extends StatelessWidget {
       height: 50,
       alignment: Alignment.center,
       child: StreamBuilder<bool>(
-        stream: loading$,
+        stream: controller.loading$,
         initialData: false,
         builder: (context, snapshot) {
           return snapshot.data ? CircularProgressIndicator() : Container();
@@ -71,18 +71,18 @@ class CounterWidget extends StatelessWidget {
         children: [
           RaisedButton(
             child: Text('inc'),
-            onPressed: () => store.dispatch(Action(type: 'inc')),
+            onPressed: controller.increment,
           ),
           RaisedButton(
             child: Text('async-inc'),
-            onPressed: () => store.dispatch(Action(type: 'async-inc')),
+            onPressed: controller.asyncInc,
           ),
           RaisedButton(
             child: Text('dec'),
-            onPressed: () => store.dispatch(Action(type: 'dec')),
+            onPressed: controller.decrement,
           ),
           StreamBuilder(
-            stream: counter$,
+            stream: controller.stream$,
             initialData: 0,
             builder: (context, snapshot) {
               return Container(
@@ -97,39 +97,31 @@ class CounterWidget extends StatelessWidget {
   }
 }
 
-void registerCounterState() {
-  store.registerState<int>(
-    stateName: 'counter',
-    initialState: 0,
-    mapActionToState: (state, action, emit) {
-      switch (action.type) {
-        case 'inc':
-          emit(state + 1);
-          break;
-        case 'dec':
-          emit(state - 1);
-          break;
-        default:
-      }
-    },
-  );
-  /*store.registerEffects('effectKey', [
-    (action$, store$) => action$
-        .whereType('async-inc')
-        .debounceTime(Duration(milliseconds: 1000))
-        .mapTo(Action(type: 'dec')),
-    (action$, store$) => action$
-        .whereType('dec')
-        .debounceTime(Duration(milliseconds: 1000))
-        .mapTo(Action(type: 'inc')),
-  ]);*/
-}
+class CounterStateController extends StateController<int> {
+  CounterStateController()
+      : super(stateName: 'counter', initialState: 2, store: null);
 
-final counter$ = store.select<int>('counter');
-final asyncInc$ = store.actions.whereType('async-inc');
-final loading$ = Rx.merge([
-  asyncInc$.map((event) => true),
-  asyncInc$.delay(const Duration(seconds: 1)).doOnData((event) {
-    //store.dispatch(Action(type: 'inc'));
-  }).map((event) => false)
-]).asBroadcastStream();
+  void increment() {
+    update((state) => state + 1);
+  }
+
+  void decrement() {
+    update((state) => state - 1);
+  }
+
+  void asyncInc() async {
+    dispatch(Action(type: 'async-inc'));
+    await Future.delayed(const Duration(milliseconds: 1000));
+    dispatch(Action(type: 'async-inc-done'));
+    increment();
+  }
+
+  Stream<bool> get loading$ {
+    final asyncInc$ = actions.whereType('async-inc');
+    final asyncIncDone$ = actions.whereType('async-inc-done');
+    return Rx.merge([
+      asyncInc$.map((event) => true),
+      asyncIncDone$.map((event) => false)
+    ]).asBroadcastStream();
+  }
+}

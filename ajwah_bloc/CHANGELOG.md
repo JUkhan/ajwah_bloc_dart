@@ -160,3 +160,7 @@ registerState(filterActions:(action)=>action is TodoAction)
 ## 2.0.4
 
 - registerEffect function renamed as registerEffects and also canged function signature
+
+## 2.1.0
+
+- added StateController
