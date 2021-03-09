@@ -83,7 +83,7 @@ class CounterWidget extends StatelessWidget {
           ),
           StreamBuilder(
             stream: controller.stream$,
-            initialData: controller.currentState,
+            initialData: controller.state,
             builder: (context, snapshot) {
               return Container(
                 padding: EdgeInsets.only(left: 20.0),
@@ -98,15 +98,14 @@ class CounterWidget extends StatelessWidget {
 }
 
 class CounterStateController extends StateController<int> {
-  CounterStateController()
-      : super(stateName: 'counter', initialState: 2, store: null);
+  CounterStateController() : super(stateName: 'counter', initialState: 2);
 
   void increment() {
-    update((state) => state + 1);
+    emit(state + 1);
   }
 
   void decrement() {
-    update((state) => state - 1);
+    emit(state - 1);
   }
 
   void asyncInc() async {
@@ -117,8 +116,8 @@ class CounterStateController extends StateController<int> {
   }
 
   Stream<bool> get loading$ {
-    final asyncInc$ = actions.whereType('async-inc');
-    final asyncIncDone$ = actions.whereType('async-inc-done');
+    final asyncInc$ = action$.whereType('async-inc');
+    final asyncIncDone$ = action$.whereType('async-inc-done');
     return Rx.merge([
       asyncInc$.map((event) => true),
       asyncIncDone$.map((event) => false)
