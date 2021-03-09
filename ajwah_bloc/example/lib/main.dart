@@ -71,7 +71,7 @@ class CounterWidget extends StatelessWidget {
         children: [
           RaisedButton(
             child: Text('inc'),
-            onPressed: controller.increment,
+            onPressed: () => dispatch(Action(type: 'inc')),
           ),
           RaisedButton(
             child: Text('async-inc'),
@@ -82,7 +82,7 @@ class CounterWidget extends StatelessWidget {
             onPressed: controller.decrement,
           ),
           StreamBuilder(
-            stream: controller.stream$,
+            stream: controller.select((state) => state),
             initialData: controller.state,
             builder: (context, snapshot) {
               return Container(
@@ -99,6 +99,22 @@ class CounterWidget extends StatelessWidget {
 
 class CounterStateController extends StateController<int> {
   CounterStateController() : super(stateName: 'counter', initialState: 2);
+  @override
+  void onAction(int state, Action action) async {
+    print(action);
+    switch (action.type) {
+      case 'inc':
+        emit(state + 1);
+        var rs = await remoteState<int>('counter');
+        print('remote state: $rs');
+        break;
+      case 'dec':
+        emit(state - 1);
+        break;
+
+      default:
+    }
+  }
 
   void increment() {
     emit(state + 1);
@@ -122,5 +138,20 @@ class CounterStateController extends StateController<int> {
       asyncInc$.map((event) => true),
       asyncIncDone$.map((event) => false)
     ]).asBroadcastStream();
+  }
+
+  @override
+  void onInit() {
+    print('init' + state.toString());
+    registerEffects([
+      action$
+          .whereType('async-inc')
+          .debounceTime(const Duration(seconds: 2))
+          .mapTo(Action(type: 'dec')),
+      action$
+          .whereType('async-inc-done')
+          .debounceTime(const Duration(seconds: 2))
+          .mapTo(Action(type: 'inc'))
+    ]);
   }
 }
