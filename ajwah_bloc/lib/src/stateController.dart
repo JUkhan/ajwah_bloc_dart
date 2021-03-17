@@ -3,7 +3,7 @@ import 'dart:async';
 import 'actions.dart';
 import 'action.dart';
 
-var _dispatcher = BehaviorSubject<Action>.seeded(Action(type: '@@Init'));
+var _dispatcher = BehaviorSubject<Action>.seeded(Action(type: '@Init'));
 
 void dispatch(Action action) {
   _dispatcher.add(action);
@@ -34,14 +34,16 @@ abstract class StateController<S> {
       }
     });
     dispatch(Action(type: '@newBornState($stateName)'));
-    Future.delayed(Duration(milliseconds: 0)).then((value) => onInit());
+    Future.delayed(Duration(milliseconds: 0)).then((_) => onInit());
   }
 
   void onAction(S state, Action action) {}
   void onInit() {}
 
   S get state => _store.value ?? initialState;
+
   Stream<S> get stream$ => _store.distinct();
+
   Stream<T> select<T>(T Function(S state) mapCallback) {
     return _store.map<T>(mapCallback).distinct();
   }

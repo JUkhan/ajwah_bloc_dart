@@ -29,17 +29,15 @@ typedef StreamWidgetListener<S> = void Function(BuildContext context, S state);
 class StreamConsumer<S> extends StatefulWidget {
   /// {@macro stream_consumer}
   StreamConsumer({
-    Key key,
-    @required this.stream,
-    @required this.builder,
-    this.initialData,
+    Key? key,
+    required this.stream,
+    required this.builder,
+    //this.initialData,
     this.listener,
-  })  : assert(builder != null),
-        assert(stream != null),
-        super(key: key);
+  }) : super(key: key);
 
   final Stream<S> stream;
-  final S initialData;
+  //final S? initialData;
 
   /// The [builder] function which will be invoked on each widget build.
   /// The [builder] takes the `BuildContext` and current `state` and
@@ -49,18 +47,18 @@ class StreamConsumer<S> extends StatefulWidget {
 
   /// Takes the `BuildContext` along with the `state`
   /// and is responsible for executing in response to `state` changes.
-  final StreamWidgetListener<S> listener;
+  final StreamWidgetListener<S>? listener;
 
   @override
   _StreamConsumerState<S> createState() => _StreamConsumerState<S>();
 }
 
 class _StreamConsumerState<S> extends State<StreamConsumer<S>> {
-  S _data;
-  StreamSubscription _subscription;
+  S? _data;
+  StreamSubscription? _subscription;
   @override
   void initState() {
-    _data = widget.initialData;
+    //_data = widget.initialData;
     _subscription = widget.stream.listen((event) {
       setState(() {
         _data = event;
@@ -73,12 +71,14 @@ class _StreamConsumerState<S> extends State<StreamConsumer<S>> {
   @override
   void dispose() {
     if (_subscription != null) {
-      _subscription.cancel();
+      _subscription?.cancel();
       _subscription = null;
     }
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) => widget.builder(context, _data);
+  Widget build(BuildContext context) => _data != null
+      ? widget.builder(context, _data ?? false as S)
+      : Container();
 }

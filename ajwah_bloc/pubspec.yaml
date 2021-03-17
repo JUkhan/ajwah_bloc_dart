@@ -4,7 +4,7 @@ homepage: https://github.com/JUkhan/ajwah_bloc_dart/tree/new-style
 description: A reactive state management library. Manage your application's states, effects, and actions easy way. Make apps more scalable with a unidirectional data-flow.
 
 environment:
-  sdk: ">=2.12.0-0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
 
 dependencies:
   rxdart: ">=0.25.0 <3.0.0"

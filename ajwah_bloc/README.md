@@ -1,7 +1,7 @@
 # ajwah_bloc
 
 A reactive state management library. Manage your application's states, effects, and actions easy way.
-Make apps more scalable with a unidirectional data-flow. **[flutter demo](https://api.flutlab.io/res/projects/67131/rr2ma95pubmjmokpmlmi/index.html#/) | [src](https://github.com/JUkhan/ajwahapp.git)**
+Make apps more scalable with a unidirectional data-flow.
 
 - **[ajwah_bloc_test](https://pub.dev/packages/ajwah_bloc_test)**
 
@@ -12,11 +12,11 @@ class CounterStateController extends StateController<int> {
   CounterStateController() : super(stateName: 'counter', initialState: 2);
 
   void increment() {
-    update((state) => state + 1);
+    emit(state + 1);
   }
 
   void decrement() {
-    update((state) => state - 1);
+    emit(state - 1);
   }
 }
 
@@ -118,19 +118,19 @@ void main() {
 ### Api
 
 ```dart
-dispatch(Action action)
-Stream<T> select<T>(String stateName)
-Stream<T> selectMany<T>(T callback(Map<String, dynamic> state))
-void registerState<S>(
-      {@required String stateName,
-      @required S initialState,
-      @required MapActionToStateCallback<S> mapActionToState})
-void unregisterState({@required String stateName})
-void registerEffects(String effectKey, Iterable<EffectCallback> callbackList)
-void unregisterEffects({@required String effectKey})
-Actions get actions
-T getState<T>({@required String stateName})
-Stream<List<dynamic>> exportState()
-void importState(Map<String, dynamic> state)
-void dispose()
+  //global api
+  Actions get action$
+  void dispatch(Action action)
+  //StateController api
+  void onAction(S state, Action action)
+  void onInit()
+  S get state
+  Stream<S> get stream$
+  Stream<T> select<T>(T Function(S state) mapCallback)
+  void emit(S newState)
+  void registerEffects(Iterable<Stream<Action>> callbackList)
+  Stream<List<dynamic>> exportState()
+  void importState(S state)
+  Future<State> remoteState<State>(String stateName)
+  void dispose()
 ```

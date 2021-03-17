@@ -2,6 +2,7 @@ import 'package:ajwah_bloc/ajwah_bloc.dart';
 
 import 'package:flutter/material.dart' hide Action;
 import 'package:rxdart/rxdart.dart';
+import 'StreamConsumer.dart';
 
 void main() {
   runApp(App());
@@ -20,7 +21,7 @@ class App extends StatelessWidget {
 }
 
 class CounterPage extends StatelessWidget {
-  const CounterPage({Key key}) : super(key: key);
+  const CounterPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -41,18 +42,17 @@ class CounterPage extends StatelessWidget {
 }
 
 class Loading extends StatelessWidget {
-  const Loading({Key key}) : super(key: key);
+  const Loading({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 50,
       alignment: Alignment.center,
-      child: StreamBuilder<bool>(
+      child: StreamConsumer<bool>(
         stream: controller.loading$,
-        initialData: false,
-        builder: (context, snapshot) {
-          return snapshot.data ? CircularProgressIndicator() : Container();
+        builder: (context, isLoadding) {
+          return isLoadding ? CircularProgressIndicator() : Container();
         },
       ),
     );
@@ -60,7 +60,7 @@ class Loading extends StatelessWidget {
 }
 
 class CounterWidget extends StatelessWidget {
-  const CounterWidget({Key key}) : super(key: key);
+  const CounterWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -69,25 +69,24 @@ class CounterWidget extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          RaisedButton(
-            child: Text('inc'),
+          ElevatedButton(
+            child: const Text('inc'),
             onPressed: () => dispatch(Action(type: 'inc')),
           ),
-          RaisedButton(
-            child: Text('async-inc'),
+          ElevatedButton(
+            child: const Text('async-inc'),
             onPressed: controller.asyncInc,
           ),
-          RaisedButton(
-            child: Text('dec'),
+          ElevatedButton(
+            child: const Text('dec'),
             onPressed: controller.decrement,
           ),
-          StreamBuilder(
+          StreamConsumer<int>(
             stream: controller.select((state) => state),
-            initialData: controller.state,
-            builder: (context, snapshot) {
+            builder: (context, count) {
               return Container(
                 padding: EdgeInsets.only(left: 20.0),
-                child: Text(snapshot.data.toString()),
+                child: Text(count.toString()),
               );
             },
           ),
