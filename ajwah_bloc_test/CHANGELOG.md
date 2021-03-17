@@ -11,3 +11,7 @@ improved `ajwahTest(...log:(emitList){})`
 ## 0.1.1+1
 
 doc updated
+
+## 0.1.1+2
+
+enable null-safety

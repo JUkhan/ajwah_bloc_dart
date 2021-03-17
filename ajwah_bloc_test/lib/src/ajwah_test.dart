@@ -1,6 +1,6 @@
 import 'dart:async';
 
-//import 'package:meta/meta.dart';
+import 'package:meta/meta.dart';
 import 'package:test/test.dart' as test;
 
 /// [ajwahStore] must notify it's subscriber with it's current state when subscription
@@ -114,15 +114,15 @@ import 'package:test/test.dart' as test;
 @isTest
 void ajwahTest<State>(
   String description, {
-  @required Stream<State> Function() build,
-  Function act,
-  Duration wait,
+  required Stream<State> Function() build,
+  Function()? act,
+  Duration? wait,
   int skip = 0,
-  Iterable expect,
-  Function(List<State> models) verify,
-  Iterable errors,
-  Function tearDown,
-  Function(List<State> models) log,
+  Iterable? expect,
+  Function(List<State> models)? verify,
+  Iterable? errors,
+  Function? tearDown,
+  Function(List<State> models)? log,
 }) {
   test.test(description, () async {
     await runAjwahTest<State>(
@@ -140,23 +140,31 @@ void ajwahTest<State>(
   });
 }
 
+// required B Function() build,
+//   State Function()? seed,
+//   Function(B bloc)? act,
+//   Duration? wait,
+//   int skip = 0,
+//   dynamic Function()? expect,
+//   Function(B bloc)? verify,
+//   dynamic Function()? errors,
 /// Internal [ajwahTest] runner which is only visible for testing.
 /// This should never be used directly -- please use [ajwahTest] instead.
 @visibleForTesting
 Future<void> runAjwahTest<State>(
   String description, {
-  @required Stream<State> Function() build,
-  Function act,
-  Duration wait,
+  required Stream<State> Function() build,
+  Function()? act,
+  Duration? wait,
   int skip = 0,
-  Iterable expect,
-  Function(List<State> models) verify,
-  Iterable errors,
-  Function tearDown,
-  Function(List<State> models) log,
+  Iterable? expect,
+  Function(List<State> models)? verify,
+  Iterable? errors,
+  Function? tearDown,
+  Function(List<State> models)? log,
 }) async {
   final unhandledErrors = <Object>[];
-  await runZoned(
+  await runZonedGuarded(
     () async {
       final states = <State>[];
       final stream = build();
@@ -170,7 +178,7 @@ Future<void> runAjwahTest<State>(
       await verify?.call(states);
       await tearDown?.call();
     },
-    onError: (Object error) {
+    (Object error, _) {
       unhandledErrors.add(error);
     },
   );
