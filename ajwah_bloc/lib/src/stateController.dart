@@ -20,7 +20,6 @@ class RemoteStateAction<S> extends Action {
 }
 
 abstract class StateController<S> {
-  //final String stateName;
   final S initialState;
   BehaviorSubject<S>? __store;
   StreamSubscription<Action>? _subscription;
@@ -34,7 +33,6 @@ abstract class StateController<S> {
         action.callback(state);
       }
     });
-    //dispatch(Action(type: '@newBornState($stateName)'));
 
     Future.delayed(Duration(milliseconds: 0)).then((_) => onInit());
   }
@@ -67,7 +65,6 @@ abstract class StateController<S> {
 
   void importState(S state) {
     _store.add(state);
-    //dispatch(Action(type: '@importState($stateName)'));
   }
 
   Future<Model> remoteState<ControllerType, Model>() {
@@ -79,6 +76,7 @@ abstract class StateController<S> {
   void dispose() {
     _subscription?.cancel();
     _effectSubscription?.cancel();
-    //_store.close();
+    _subscription = null;
+    _effectSubscription = null;
   }
 }

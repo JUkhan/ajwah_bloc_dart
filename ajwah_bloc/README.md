@@ -1,114 +1,115 @@
 # ajwah_bloc
 
-Rx based state management library. Manage your application's states, effects, and actions easy way.
+A reactive state management library. Manage your application's states, effects, and actions easy way.
 Make apps more scalable with a unidirectional data-flow.
 
 - **[ajwah_bloc_test](https://pub.dev/packages/ajwah_bloc_test)**
+- **[mono_state](https://pub.dev/packages/mono_state)**
 
-**States**
-
-Every state class must derived from `StateBase<T>` class. The `StateBase<T>` class has an abstract function `mapActionToState(T state, Action action, Store store)`. This method should be invoked whenever any `action` dispatched to the store. You should return a new state based on the `action`.
+## Declare a state controller.
 
 ```dart
-import 'package:ajwah_bloc/ajwah_bloc.dart';
-import 'package:ajwah_block_examples/actionTypes.dart';
+class CounterStateController extends StateController<int> {
+  CounterStateController() : super(0);
 
-class CounterModel {
-  final int count;
-  final bool isLoading;
-  CounterModel({this.count, this.isLoading});
-  CounterModel.init() : this(count: 10, isLoading: false);
-  CounterModel copyWith({int count, bool isLoading}) => CounterModel(
-      count: count ?? this.count, isLoading: isLoading ?? this.isLoading);
-}
-
-class CounterState extends StateBase<CounterModel> {
-  CounterState() : super(name: 'counter', initialState: CounterModel.init());
-
-  Stream<CounterModel> mapActionToState(
-      CounterModel state, Action action, Store store) async* {
-    switch (action.type) {
-      case ActionTypes.Inc:
-        yield state.copyWith(count: state.count + 1, isLoading: false);
-        break;
-      case ActionTypes.Dec:
-        yield state.copyWith(count: state.count - 1, isLoading: false);
-        break;
-      case ActionTypes.AsyncInc:
-        yield state.copyWith(isLoading: true);
-        yield await getCount(state.count);
-        break;
-      default:
-        yield getState(store);
-    }
+  void increment() {
+    emit(state + 1);
   }
 
-  Future<CounterModel> getCount(int count) {
-    return Future.delayed(Duration(milliseconds: 500),
-        () => CounterModel(count: count + 1, isLoading: false));
+  void decrement() {
+    emit(state - 1);
+  }
+
+}
+
+```
+
+## consuming state
+
+```dart
+
+final controller = CounterStateController();
+
+class CounterWidget extends StatelessWidget {
+  const CounterWidget({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: Alignment.center,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          RaisedButton(
+            child: Text('inc'),
+            onPressed: controller.increment,
+          ),
+          RaisedButton(
+            child: Text('dec'),
+            onPressed: controller.decrement,
+          ),
+          StreamBuilder(
+            stream: controller.stream$,
+            initialData: 0,
+            builder: (context, snapshot) {
+              return Container(
+                padding: EdgeInsets.only(left: 20.0),
+                child: Text(snapshot.data.toString()),
+              );
+            },
+          ),
+        ],
+      ),
+    );
   }
 }
 
 ```
 
-**Using state in components**
-
-Declare your store as a global variable or enable `exposeApiGlobally:true`.
+**Testing counter state**
 
 ```dart
-var store = createStore(states:[CounterState()]);
-//or
-createStore(states:[CounterState()], exposeApiGlobally:true);
-```
 
-```dart
-StreamBuilder<CounterModel>(
-    stream: select<CounterModel>('counter'),
-    builder:(context, snapshot) {
-        if (snapshot.data.isLoading) {
-          return CircularProgressIndicator();
-        }
-        return Text(
-            snapshot.data.count.toString(),
-            style: Theme.of(context).textTheme.title,
-          );
+void main() {
+  CounterStateController? controller;
+  setUp(() {
+    controller = CounterStateController();
+  });
+
+  tearDown(() {
+    controller?.dispose();
+  });
+
+  ajwahTest<int>(
+    'Initial state',
+    build: () => controller!.stream$,
+    expect: [isA<int>()],
+    verify: (state) {
+      expect(state[0], 0);
     },
-)
-```
+  );
 
-**Action Dispatching**
+  ajwahTest<int>(
+    'increment',
+    build: () => controller!.stream$,
+    act: () => controller?.increment(),
+    skip: 1,
+    expect: [isA<int>()],
+    verify: (state) {
+      expect(state[0], 1);
+    },
+  );
 
-```dart
-dispatch(Action(type:'Inc'));
-```
-
-## Effects
-
-Every effect class must derived from `EffectBase` class. And it is optional to pass the
-`effectKey`. But it's mandatory if you want conditionally remove the effects by using
-`removeEffectsByKey('effectKey')`. The `EffectBase` class has an abstract method `registerEffects(Actions action$, Store store$)`.
-
-#### Example
-
-```dart
-import 'package:ajwah_bloc/ajwah_bloc.dart';
-import 'package:rxdart/rxdart.dart';
-import '../../actionTypes.dart';
-
-class CounterEffect extends EffectBase {
-
-  CounterEffect() : super(effectKey: "counter-effects");
-
-  Stream<Action> effectForAsyncInc(Actions action$, Store store$) {
-    return action$
-        .whereType(ActionTypes.AsyncInc)
-        .debounceTime(Duration(milliseconds: 500))
-        .mapTo(Action(type: ActionTypes.Inc));
-  }
-
-  List<Stream<Action>> registerEffects(Actions action$, Store store$) {
-    return [effectForAsyncInc(action$, store$)];
-  }
+  ajwahTest<int>(
+    'decrement',
+    build: () => controller!.stream$,
+    act: () => controller?.decrement(),
+    skip: 1,
+    expect: [isA<int>()],
+    verify: (state) {
+      expect(state[0], -1);
+    },
+  );
 }
 
 ```
@@ -116,15 +117,19 @@ class CounterEffect extends EffectBase {
 ### Api
 
 ```dart
-dispatch(String actionType, [dynamic payload])
-Stream<T> select<T>(String stateName)
-Stream<T> selectMany<T>(T callback(Map<String, dynamic> state))
-addState(BaseState stateInstance)
-removeStateByStateName(String stateName)
-addEffects(BaseEffect effectInstance)
-removeEffectsByKey(String effectKey)
-Stream<List<dynamic>> exportState()
-importState(Map<String, dynamic> state)
-addEffect(EffectCallback callback, {String effectKey})
-
+  //global api
+  Actions get action$
+  void dispatch(Action action)
+  //StateController api
+  void onAction(S state, Action action)
+  void onInit()
+  S get state
+  Stream<S> get stream$
+  Stream<T> select<T>(T Function(S state) mapCallback)
+  void emit(S newState)
+  void registerEffects(Iterable<Stream<Action>> callbackList)
+  Stream<List<dynamic>> exportState()
+  void importState(S state)
+  Future<Model> remoteState<ControllerType, Model>()
+  void dispose()
 ```

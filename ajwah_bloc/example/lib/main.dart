@@ -52,7 +52,9 @@ class Loading extends StatelessWidget {
       child: StreamConsumer<bool>(
         stream: controller.loading$,
         builder: (context, isLoadding) {
-          return isLoadding ? CircularProgressIndicator() : Container();
+          return isLoadding != null && isLoadding
+              ? CircularProgressIndicator()
+              : Container();
         },
       ),
     );

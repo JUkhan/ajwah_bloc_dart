@@ -1,37 +1,46 @@
 import 'package:ajwah_bloc_test/ajwah_bloc_test.dart';
 import 'package:test/test.dart';
-import 'package:ajwah_bloc/ajwah_bloc.dart';
 
-import 'actionTypes.dart';
 import 'counterController.dart';
 
 void main() {
-  hello_fn();
-}
+  CounterStateController? controller;
+  setUp(() {
+    controller = CounterStateController();
+  });
 
-void hello_fn() {
-  var controller = CounterController();
-
-  setUp(() {});
   tearDown(() {
-    controller.dispose();
+    controller?.dispose();
   });
-  group('counter', () {
-    ajwahTest<CounterModel>(
-      'initial state',
-      build: () {
-        return controller.stream$;
-      },
-      act: () {
-        dispatch(Action(type: ActionTypes.Inc));
-      },
-      expect: [isA<CounterModel>(), isA<CounterModel>()],
-      log: (models) async {
-        print(models);
-        final m =
-            await controller.remoteState<CounterController, CounterModel>();
-        print(m);
-      },
-    );
-  });
+
+  ajwahTest<int>(
+    'Initial state',
+    build: () => controller!.stream$,
+    expect: [isA<int>()],
+    verify: (state) {
+      expect(state[0], 0);
+    },
+  );
+
+  ajwahTest<int>(
+    'increment',
+    build: () => controller!.stream$,
+    act: () => controller?.increment(),
+    skip: 1,
+    expect: [isA<int>()],
+    verify: (state) {
+      expect(state[0], 1);
+    },
+  );
+
+  ajwahTest<int>(
+    'decrement',
+    build: () => controller!.stream$,
+    act: () => controller?.decrement(),
+    skip: 1,
+    expect: [isA<int>()],
+    verify: (state) {
+      expect(state[0], -1);
+    },
+  );
 }

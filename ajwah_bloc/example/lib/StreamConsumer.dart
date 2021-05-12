@@ -2,7 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 
-typedef StreamWidgetBuilder<S> = Widget Function(BuildContext context, S state);
+typedef StreamWidgetBuilder<S> = Widget Function(
+    BuildContext context, S? state);
 
 typedef StreamWidgetListener<S> = void Function(BuildContext context, S state);
 
@@ -78,7 +79,5 @@ class _StreamConsumerState<S> extends State<StreamConsumer<S>> {
   }
 
   @override
-  Widget build(BuildContext context) => _data != null
-      ? widget.builder(context, _data ?? false as S)
-      : Container();
+  Widget build(BuildContext context) => widget.builder(context, _data);
 }
