@@ -6,7 +6,7 @@ Make apps more scalable with a unidirectional data-flow.
 - **[ajwah_bloc_test](https://pub.dev/packages/ajwah_bloc_test)**
 - **[mono_state](https://pub.dev/packages/mono_state)**
 
-## Declare a state controller.
+## Counter State
 
 ```dart
 class CounterStateController extends StateController<int> {
@@ -24,7 +24,7 @@ class CounterStateController extends StateController<int> {
 
 ```
 
-## consuming state
+## Consuming State
 
 ```dart
 
@@ -66,7 +66,7 @@ class CounterWidget extends StatelessWidget {
 
 ```
 
-**Testing counter state**
+## Testing
 
 ```dart
 
