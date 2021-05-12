@@ -1,6 +1,5 @@
-export 'src/effectBase.dart';
-export 'src/stateBase.dart';
+library ajwah_bloc;
+
 export 'src/action.dart';
 export 'src/actions.dart';
-export 'src/store.dart';
-export 'src/createStore.dart';
+export 'src/stateController.dart';

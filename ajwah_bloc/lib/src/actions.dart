@@ -1,31 +1,22 @@
 import 'package:rxdart/subjects.dart';
 import 'action.dart';
 
-///used for making effects applying filters on action type(s).
-///
-///**Example**
-///```dart
-///Stream<Action> effectForAsyncInc(Actions action$, Store store$) {
-///    return action$
-///        .whereType(ActionTypes.AsyncInc)
-///        .debounceTime(Duration(milliseconds: 550))
-///        .mapTo(Action(type: ActionTypes.Inc));
-///  }
-///```
+typedef ActionsFilterCallback = bool Function(Action action);
+
 class Actions {
   final BehaviorSubject<Action> _dispatcher;
   Actions(this._dispatcher);
 
-  ///This function takes **String actionType** param
-  ///and apply filter on actionType and return Stream<Action>
-  Stream<Action> whereType(String actionType) {
-    return _dispatcher.where((action) => action.type == actionType);
-  }
+  Stream<T> isA<T>() => _dispatcher
+      .where((action) => action is T)
+      .map<T>((action) => action as T);
 
-  ///This function takes **List<String> actionTypes** param
-  ///and apply filter on actionTypes and return Stream<Action>
-  Stream<Action> whereTypes(List<String> actionTypes) {
-    return _dispatcher.where((action) =>
-        actionTypes.indexWhere((type) => type == action.type) != -1);
-  }
+  Stream<Action> whereType(String actionType) =>
+      _dispatcher.where((action) => action.type == actionType);
+
+  Stream<Action> whereTypes(List<String> actionTypes) =>
+      _dispatcher.where((action) => actionTypes.contains(action.type));
+
+  Stream<Action> where(ActionsFilterCallback callback) =>
+      _dispatcher.where(callback);
 }

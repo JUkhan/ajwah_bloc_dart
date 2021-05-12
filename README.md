@@ -1,6 +1,6 @@
 # ajwah_bloc
 
-Rx based state management library. Manage your application's states, effects, and actions easy way.
+Rx based state management library. Manage your application's states, effects, and actions easy way..
 Make apps more scalable with a unidirectional data-flow.
 
 - **[ajwah_bloc_test](https://pub.dev/packages/ajwah_bloc_test)**

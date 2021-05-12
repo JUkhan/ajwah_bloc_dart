@@ -1,6 +1,7 @@
-///In `Action<T>` generic **T** used for pauload action.
-class Action<T> {
+class Action {
   final String type;
-  final T payload;
-  Action({this.type, this.payload});
+  Action({this.type = ''});
+
+  @override
+  String toString() => 'Action(type: $type)';
 }
