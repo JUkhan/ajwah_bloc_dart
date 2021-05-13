@@ -1,3 +1,7 @@
+## 2.5.0
+
+brought dispatch and action$ props into StateController class and some functiioon signature changed - onAction etc.
+
 ## 2.4.0
 
 Removed stateName props from StateController class. Now state should be identified by the StateController Type when you call remoteState<ControllerType, Model>() method.

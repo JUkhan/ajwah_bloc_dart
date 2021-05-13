@@ -1,8 +1,8 @@
-import 'package:example/hooks/useSelector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:get/instance_manager.dart';
 
+import '../hooks/useMonoStream.dart';
 import '../states/searchCategory.dart';
 import '../states/todo.dart';
 
@@ -13,10 +13,9 @@ class Toolbar extends HookWidget {
   Widget build(BuildContext context) {
     final tsCtrl = Get.find<TodoState>();
     final scCtrl = Get.find<SearchCategoryState>();
-    final sc = useControllerStream(scCtrl.stream$, scCtrl.initialState).value;
+    final sc = useMonoStream(scCtrl.stream$, scCtrl.initialState).value;
 
-    final activeTodosInfo =
-        useControllerStream(tsCtrl.activeTodosInfo$, '').value;
+    final activeTodosInfo = useMonoStream(tsCtrl.activeTodosInfo$, '').value;
 
     return Material(
       child: Row(

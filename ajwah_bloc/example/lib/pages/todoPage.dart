@@ -1,5 +1,5 @@
 import 'package:ajwah_bloc/ajwah_bloc.dart';
-import 'package:example/hooks/useSelector.dart';
+import 'package:example/hooks/useMonoStream.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter/material.dart' hide Action;
 import 'package:get/route_manager.dart';
@@ -11,7 +11,6 @@ import '../hooks/useMonoEffect.dart';
 
 import '../states/todo.dart';
 
-
 import '../widgets/todoItem.dart';
 import '../widgets/toolbar.dart';
 import '../widgets/title.dart';
@@ -22,6 +21,7 @@ class TodoPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final tsCtrl = Get.find<TodoState>();
+
     useMonoEffect(
         tsCtrl.action$
             .isA<TodoErrorAction>()
@@ -29,7 +29,7 @@ class TodoPage extends HookWidget {
             .mapTo(Action()),
         tsCtrl.dispatch);
 
-    final todos = useControllerStream(tsCtrl.todo$, []).value;
+    final todos = useMonoStream(tsCtrl.todo$, []).value;
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),

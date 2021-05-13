@@ -23,8 +23,9 @@ void main() {
           page: () => TodoPage(),
           transition: Transition.zoom,
           binding: BindingsBuilder(() {
-            Get.put<TodoState>(TodoState());
-            Get.put<SearchCategoryState>(SearchCategoryState());
+            Get.put<TodoState>(TodoState(), permanent: true);
+            Get.put<SearchCategoryState>(SearchCategoryState(),
+                permanent: true);
           }))
     ],
     initialRoute: '',

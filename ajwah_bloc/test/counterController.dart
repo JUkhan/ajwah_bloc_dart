@@ -40,12 +40,15 @@ class CounterStateController extends StateController<CounterState> {
 
   @override
   void onInit() {
-    registerEffects([
-      action$.whereType('testing').mapTo(Action(type: 'done'))
-    ]);
+    registerEffects([action$.whereType('testing').mapTo(Action(type: 'done'))]);
   }
 }
 
 class RemoteController extends StateController<String> {
   RemoteController() : super('REMOTE STATE');
 }
+
+//pub run test_coverage
+//pub run build_runner test
+//pub run build_runner build
+//pub publish

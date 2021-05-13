@@ -6,10 +6,11 @@ Make apps more scalable with a unidirectional data-flow.
 - **[ajwah_bloc_test](https://pub.dev/packages/ajwah_bloc_test)**
 - **[mono_state](https://pub.dev/packages/mono_state)**
 
-## Counter State
+### Counter State
 
 ```dart
 class CounterStateController extends StateController<int> {
+
   CounterStateController() : super(0);
 
   void increment() {
@@ -24,7 +25,7 @@ class CounterStateController extends StateController<int> {
 
 ```
 
-## Consuming State
+### Consuming State
 
 ```dart
 
@@ -66,7 +67,7 @@ class CounterWidget extends StatelessWidget {
 
 ```
 
-## Testing
+### Testing
 
 ```dart
 
@@ -117,19 +118,17 @@ void main() {
 ### Api
 
 ```dart
-  //global api
+
   Actions get action$
   void dispatch(Action action)
-  //StateController api
-  void onAction(S state, Action action)
+  void onAction(Action action)
   void onInit()
   S get state
   Stream<S> get stream$
   Stream<T> select<T>(T Function(S state) mapCallback)
   void emit(S newState)
   void registerEffects(Iterable<Stream<Action>> callbackList)
-  Stream<List<dynamic>> exportState()
   void importState(S state)
-  Future<Model> remoteState<ControllerType, Model>()
+  Future<State> remoteState<Controller, State>()
   void dispose()
 ```
