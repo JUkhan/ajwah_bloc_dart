@@ -73,7 +73,7 @@ class CounterWidget extends StatelessWidget {
         children: [
           ElevatedButton(
             child: const Text('inc'),
-            onPressed: () => dispatch(Action(type: 'inc')),
+            onPressed: () => controller.dispatch(Action(type: 'inc')),
           ),
           ElevatedButton(
             child: const Text('async-inc'),
@@ -101,7 +101,7 @@ class CounterWidget extends StatelessWidget {
 class CounterStateController extends StateController<int> {
   CounterStateController() : super(2);
   @override
-  void onAction(int state, Action action) async {
+  void onAction(Action action) async {
     print(action);
     switch (action.type) {
       case 'inc':

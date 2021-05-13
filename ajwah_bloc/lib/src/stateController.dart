@@ -5,11 +5,7 @@ import 'action.dart';
 
 var _dispatcher = BehaviorSubject<Action>.seeded(Action(type: '@Init'));
 
-void dispatch(Action action) {
-  _dispatcher.add(action);
-}
-
-var action$ = Actions(_dispatcher);
+var _action$ = Actions(_dispatcher);
 
 typedef RemoteStateCallback<S> = void Function(S state);
 
@@ -27,8 +23,9 @@ abstract class StateController<S> {
 
   StateController(this.initialState) {
     __store = BehaviorSubject.seeded(initialState);
-    _subscription = _dispatcher.listen((action) {
-      onAction(_store.value ?? initialState, action);
+    dispatch(Action(type: '@@NewState($runtimeType)'));
+    _subscription = _dispatcher.distinct().listen((action) {
+      onAction(action);
       if (action is RemoteStateAction && action.controller == runtimeType) {
         action.callback(state);
       }
@@ -37,8 +34,14 @@ abstract class StateController<S> {
     Future.delayed(Duration(milliseconds: 0)).then((_) => onInit());
   }
 
-  void onAction(S state, Action action) {}
+  void onAction(Action action) {}
   void onInit() {}
+
+  void dispatch(Action action) {
+    _dispatcher.add(action);
+  }
+
+  Actions get action$ => _action$;
 
   S get state => _store.value ?? initialState;
 
@@ -60,16 +63,13 @@ abstract class StateController<S> {
     _effectSubscription = Rx.merge(callbackList).listen(dispatch);
   }
 
-  Stream<List<dynamic>> exportState() =>
-      _dispatcher.withLatestFrom(_store, (t, s) => [t, s]);
-
   void importState(S state) {
     _store.add(state);
   }
 
-  Future<Model> remoteState<ControllerType, Model>() {
-    final completer = Completer<Model>();
-    dispatch(RemoteStateAction(ControllerType, completer.complete));
+  Future<State> remoteState<Controller, State>() {
+    final completer = Completer<State>();
+    dispatch(RemoteStateAction(Controller, completer.complete));
     return completer.future;
   }
 

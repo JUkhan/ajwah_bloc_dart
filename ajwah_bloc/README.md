@@ -130,6 +130,6 @@ void main() {
   void registerEffects(Iterable<Stream<Action>> callbackList)
   Stream<List<dynamic>> exportState()
   void importState(S state)
-  Future<Model> remoteState<ControllerType, Model>()
+  Future<State> remoteState<Controller, State>()
   void dispose()
 ```
