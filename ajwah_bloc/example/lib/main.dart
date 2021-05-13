@@ -10,14 +10,13 @@ import './states/searchCategory.dart';
 
 void main() {
   runApp(GetMaterialApp(
+    smartManagement: SmartManagement.keepFactory,
     debugShowCheckedModeBanner: false,
     getPages: [
       GetPage(
           name: '',
           page: () => CounterPage(),
-          binding: BindingsBuilder(() {
-            Get.put<CounterState>(CounterState());
-          })),
+          binding: BindingsBuilder.put(() => CounterState())),
       GetPage(
           name: '/todo',
           page: () => TodoPage(),

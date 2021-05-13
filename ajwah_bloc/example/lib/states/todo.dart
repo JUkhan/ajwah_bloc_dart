@@ -82,7 +82,9 @@ class TodoState extends StateController<List<Todo>> {
           action$
               .isA<SearchTodoAction>()
               .map<String>((action) => action.searchText)
-              .startWith(''), (todos, category, searchText) {
+              .doOnData((event) {
+            print('search: ' + event);
+          }).startWith(''), (todos, category, searchText) {
         if (searchText.isNotEmpty)
           todos = todos
               .where((todo) => todo.description
