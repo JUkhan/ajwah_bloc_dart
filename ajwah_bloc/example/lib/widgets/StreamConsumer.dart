@@ -2,10 +2,14 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 
-typedef StreamWidgetBuilder<S> = Widget Function(
-    BuildContext context, S? state);
+typedef StreamConsumerBuilder<S> = Widget Function(
+    BuildContext context, S state);
 
-typedef StreamWidgetListener<S> = void Function(BuildContext context, S state);
+typedef StreamConsumerListener<S> = void Function(
+    BuildContext context, S state);
+
+typedef StreamConsumerFilter<S> = bool Function(BuildContext context, S state);
+typedef StreamConsumerError = void Function(dynamic error);
 
 /// {@template stream_consumer}
 /// [StreamConsumer] exposes a [builder] and [stream], [listener], [initialData] in order react to new
@@ -21,6 +25,9 @@ typedef StreamWidgetListener<S> = void Function(BuildContext context, S state);
 ///   listener: (context, state) {
 ///     // do stuff here based on state
 ///   },
+///   filter: (context, state) {
+///     return true or false based on state that trigger to render
+///   },
 ///   builder: (context, state) {
 ///     // return widget here based on state
 ///   }
@@ -33,8 +40,9 @@ class StreamConsumer<S> extends StatefulWidget {
     Key? key,
     required this.stream,
     required this.builder,
-    //this.initialData,
+    this.filter,
     this.listener,
+    this.onError,
   }) : super(key: key);
 
   final Stream<S> stream;
@@ -44,11 +52,14 @@ class StreamConsumer<S> extends StatefulWidget {
   /// The [builder] takes the `BuildContext` and current `state` and
   /// must return a widget.
   /// This is analogous to the [builder] function in [StreamBuilder].
-  final StreamWidgetBuilder<S> builder;
+  final StreamConsumerBuilder<S> builder;
 
   /// Takes the `BuildContext` along with the `state`
   /// and is responsible for executing in response to `state` changes.
-  final StreamWidgetListener<S>? listener;
+  final StreamConsumerListener<S>? listener;
+
+  final StreamConsumerFilter<S>? filter;
+  final StreamConsumerError? onError;
 
   @override
   _StreamConsumerState<S> createState() => _StreamConsumerState<S>();
@@ -56,15 +67,23 @@ class StreamConsumer<S> extends StatefulWidget {
 
 class _StreamConsumerState<S> extends State<StreamConsumer<S>> {
   S? _data;
+
   StreamSubscription? _subscription;
   @override
   void initState() {
-    //_data = widget.initialData;
     _subscription = widget.stream.listen((event) {
-      setState(() {
-        _data = event;
-      });
-      widget.listener?.call(context, event);
+      if (widget.filter == null)
+        setState(() {
+          _data = event;
+          widget.listener?.call(context, event);
+        });
+      else if (widget.filter!(context, event))
+        setState(() {
+          _data = event;
+          widget.listener?.call(context, event);
+        });
+    }, onError: (error) {
+      widget.onError?.call(error);
     });
     super.initState();
   }
@@ -79,5 +98,6 @@ class _StreamConsumerState<S> extends State<StreamConsumer<S>> {
   }
 
   @override
-  Widget build(BuildContext context) => widget.builder(context, _data);
+  Widget build(BuildContext context) =>
+      _data == null ? Container() : widget.builder(context, _data!);
 }
