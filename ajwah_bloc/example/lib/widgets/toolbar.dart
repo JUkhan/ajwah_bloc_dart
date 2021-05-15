@@ -13,7 +13,7 @@ class Toolbar extends HookWidget {
   Widget build(BuildContext context) {
     final tsCtrl = Get.find<TodoState>();
     final scCtrl = Get.find<SearchCategoryState>();
-    final sc = useMonoStream(scCtrl.stream$, scCtrl.initialState).value;
+    final sc = useMonoStream(scCtrl.stream$, scCtrl.state).value;
 
     final activeTodosInfo = useMonoStream(tsCtrl.activeTodosInfo$, '').value;
 

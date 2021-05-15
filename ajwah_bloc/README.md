@@ -4,7 +4,8 @@ A reactive state management library. Manage your application's states, effects, 
 Make apps more scalable with a unidirectional data-flow.
 
 - **[ajwah_bloc_test](https://pub.dev/packages/ajwah_bloc_test)**
-- **[mono_state](https://pub.dev/packages/mono_state)**
+
+Please head over to the [Example](https://github.com/JUkhan/ajwah_bloc_dart/tree/master/ajwah_bloc/example) . The example contains `counter` and `todos` pages to demonstrate ajwah_bloc lib out of the box.
 
 ### Counter State
 
@@ -129,6 +130,5 @@ void main() {
   void emit(S newState)
   void registerEffects(Iterable<Stream<Action>> callbackList)
   void importState(S state)
-  Future<State> remoteState<Controller, State>()
   void dispose()
 ```

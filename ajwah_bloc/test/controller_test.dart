@@ -138,10 +138,10 @@ void main() {
       expect(models[0].type, 'mono');
     },
   );
-  test('get Remote state', () async {
-    var state = await controller!.remoteState<RemoteController, String>();
-    expect(state, 'REMOTE STATE');
-  });
+  // test('get Remote state', () async {
+  //   var state = await controller!.remoteState<RemoteController, String>();
+  //   expect(state, 'REMOTE STATE');
+  // });
   ajwahTest<Action>(
     'effect: send Action(testing) that response back Action(done)',
     build: () => controller!.action$.whereType('done'),

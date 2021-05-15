@@ -32,11 +32,21 @@ class Todo {
   }
 }
 
-class TodoState extends StateController<List<Todo>> {
-  TodoState() : super([]);
+class TodoState extends StateController<List<Todo>> with GetLifeCycleBase {
+  TodoState() : super([]) {
+    $configureLifeCycle();
+  }
+
+  @override
+  void onClose() {
+    dispose();
+    super.onClose();
+  }
+
   @override
   void onInit() {
     loadTodos();
+
     registerEffects([
       action$
           .isA<SearchInputAction>()
@@ -83,7 +93,7 @@ class TodoState extends StateController<List<Todo>> {
               .isA<SearchTodoAction>()
               .map<String>((action) => action.searchText)
               .doOnData((event) {
-            print('search: ' + event);
+            print('searchText: ' + event);
           }).startWith(''), (todos, category, searchText) {
         if (searchText.isNotEmpty)
           todos = todos

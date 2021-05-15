@@ -16,7 +16,9 @@ void main() {
       GetPage(
           name: '',
           page: () => CounterPage(),
-          binding: BindingsBuilder.put(() => CounterState())),
+          binding: BindingsBuilder(() {
+            Get.lazyPut(() => CounterState());
+          })),
       GetPage(
           name: '/todo',
           page: () => TodoPage(),
@@ -28,6 +30,7 @@ void main() {
           }))
     ],
     initialRoute: '',
-    home: CounterPage(),
+
+    ///home: CounterPage(),
   ));
 }

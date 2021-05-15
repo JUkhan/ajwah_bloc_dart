@@ -1,7 +1,8 @@
+///This is a base action class
 class Action {
   final String type;
   Action({this.type = ''});
 
   @override
-  String toString() => 'Action(type: $type)';
+  String toString() => '$runtimeType(type: $type)';
 }
