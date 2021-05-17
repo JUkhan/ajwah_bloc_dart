@@ -7,7 +7,7 @@ import 'package:get/instance_manager.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import '../widgets/addTodo.dart';
 
-import '../hooks/useMonoEffect.dart';
+import '../hooks/useNotifier.dart';
 
 import '../states/todo.dart';
 
@@ -22,12 +22,11 @@ class TodoPage extends HookWidget {
   Widget build(BuildContext context) {
     final tsCtrl = Get.find<TodoState>();
 
-    useMonoEffect(
-        tsCtrl.action$
-            .isA<TodoErrorAction>()
-            .doOnData((action) => Get.snackbar('Error', action.error))
-            .mapTo(Action()),
-        tsCtrl.dispatch);
+    useNotifier<String>(
+        tsCtrl.action$.isA<TodoErrorAction>().map((action) => action.error),
+        (error) {
+      Get.snackbar('Info', error, colorText: Colors.red);
+    });
 
     final todos = useMonoStream(tsCtrl.todo$, []).value;
 

@@ -1,5 +1,3 @@
-import 'dart:js';
-
 import '../widgets/StreamConsumer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/instance_manager.dart';
