@@ -80,7 +80,7 @@ abstract class StateController<S> {
   ///
   Actions get action$ => _action$;
 
-  //Return the current state of the controller.
+  ///Return the current state of the controller.
   S get state => _store.value;
 
   ///Return the current state of the controller as a Stream<S>.

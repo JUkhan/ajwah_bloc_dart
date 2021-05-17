@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 typedef StreamConsumerBuilder<S> = Widget Function(
@@ -9,10 +10,24 @@ typedef StreamConsumerListener<S> = void Function(
     BuildContext context, S state);
 
 typedef StreamConsumerFilter<S> = bool Function(BuildContext context, S state);
-typedef StreamConsumerError = void Function(dynamic error);
+typedef StreamConsumerErrorHandler = Widget Function(dynamic error);
+
+abstract class _StreamConsumerResponse {}
+
+class _StreamConsumerLoading extends _StreamConsumerResponse {}
+
+class _StreamConsumerError extends _StreamConsumerResponse {
+  final dynamic error;
+  _StreamConsumerError(this.error);
+}
+
+class _StreamConsumerData<S> extends _StreamConsumerResponse {
+  final data;
+  _StreamConsumerData(this.data);
+}
 
 /// {@template stream_consumer}
-/// [StreamConsumer] exposes a [builder] and [stream], [listener], [initialData] in order react to new
+/// [StreamConsumer] exposes a [builder] and [stream], [listener], [filter], [loading], [error] in order react to new
 /// states.
 ///
 /// [StreamConsumer] should be used for both rebuild UI
@@ -28,6 +43,10 @@ typedef StreamConsumerError = void Function(dynamic error);
 ///   filter: (context, state) {
 ///     return true or false based on state that trigger to render
 ///   },
+///   loading: widget,
+///   error: (error) {
+///     return widget here based on error
+///   },
 ///   builder: (context, state) {
 ///     // return widget here based on state
 ///   }
@@ -42,8 +61,9 @@ class StreamConsumer<S> extends StatefulWidget {
     required this.builder,
     this.filter,
     this.listener,
-    this.onError,
-  }) : super(key: key);
+  })  : loading = CircularProgressIndicator(),
+        error = ((error) => new Container()),
+        super(key: key);
 
   final Stream<S> stream;
   //final S? initialData;
@@ -59,14 +79,16 @@ class StreamConsumer<S> extends StatefulWidget {
   final StreamConsumerListener<S>? listener;
 
   final StreamConsumerFilter<S>? filter;
-  final StreamConsumerError? onError;
+  final StreamConsumerErrorHandler error;
+  final Widget loading;
 
   @override
   _StreamConsumerState<S> createState() => _StreamConsumerState<S>();
 }
 
 class _StreamConsumerState<S> extends State<StreamConsumer<S>> {
-  S? _data;
+  ///S? _data;
+  _StreamConsumerResponse _data = _StreamConsumerLoading();
 
   StreamSubscription? _subscription;
   @override
@@ -74,16 +96,18 @@ class _StreamConsumerState<S> extends State<StreamConsumer<S>> {
     _subscription = widget.stream.listen((event) {
       if (widget.filter == null)
         setState(() {
-          _data = event;
+          _data = _StreamConsumerData(event);
           widget.listener?.call(context, event);
         });
       else if (widget.filter!(context, event))
         setState(() {
-          _data = event;
+          _data = _StreamConsumerData(event);
           widget.listener?.call(context, event);
         });
     }, onError: (error) {
-      widget.onError?.call(error);
+      setState(() {
+        _data = _StreamConsumerError(error);
+      });
     });
     super.initState();
   }
@@ -98,6 +122,14 @@ class _StreamConsumerState<S> extends State<StreamConsumer<S>> {
   }
 
   @override
-  Widget build(BuildContext context) =>
-      _data == null ? Container() : widget.builder(context, _data!);
+  Widget build(BuildContext context) {
+    if (_data is _StreamConsumerData) {
+      return widget.builder(context, (_data as _StreamConsumerData).data);
+    } else if (_data is _StreamConsumerLoading) {
+      return widget.loading;
+    } else if (_data is _StreamConsumerError) {
+      return widget.error((_data as _StreamConsumerError).error);
+    }
+    return Container();
+  }
 }

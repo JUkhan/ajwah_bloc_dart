@@ -1,4 +1,6 @@
-import 'package:example/widgets/StreamConsumer.dart';
+import 'dart:js';
+
+import '../widgets/StreamConsumer.dart';
 import 'package:flutter/material.dart';
 import 'package:get/instance_manager.dart';
 
@@ -36,17 +38,17 @@ class CounterPage extends StatelessWidget {
             ],
           ),
           StreamConsumer<Counter>(
-              stream: csCtl.stream$,
-              builder: (_, counter) {
-                return Container(
-                    height: 50,
-                    child: counter.loading
-                        ? CircularProgressIndicator()
-                        : Text(
-                            '${counter.count}',
-                            style: Theme.of(context).textTheme.headline4,
-                          ));
-              })
+            stream: csCtl.stream$,
+            builder: (context, counter) => Container(
+              height: 50,
+              child: counter.loading
+                  ? CircularProgressIndicator()
+                  : Text(
+                      '${counter.count}',
+                      style: Theme.of(context).textTheme.headline4,
+                    ),
+            ),
+          )
         ],
       )),
     );
