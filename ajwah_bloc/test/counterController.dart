@@ -48,6 +48,28 @@ class RemoteController extends StateController<String> {
   RemoteController() : super('REMOTE STATE');
 }
 
+class Counter2State extends StateController<int> {
+  Counter2State() : super(0);
+  inc() {
+    emit(state + 1);
+  }
+
+  dec() {
+    emit(state - 1);
+  }
+
+  asyncInc() async {
+    dispatch(Action(type: 'start'));
+    await Future.delayed(const Duration(milliseconds: 10));
+    inc();
+  }
+
+  Stream<String> get count$ => Rx.merge([
+        action$.whereType('start').mapTo('loading...'),
+        stream$.map((count) => '$count'),
+      ]).asBroadcastStream();
+}
+
 //pub run test_coverage
 //pub run build_runner test
 //pub run build_runner build

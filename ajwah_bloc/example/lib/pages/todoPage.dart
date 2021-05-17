@@ -1,6 +1,4 @@
-import 'package:ajwah_bloc/ajwah_bloc.dart';
 import 'package:example/hooks/useMonoStream.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:flutter/material.dart' hide Action;
 import 'package:get/route_manager.dart';
 import 'package:get/instance_manager.dart';

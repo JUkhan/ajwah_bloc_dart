@@ -1,3 +1,7 @@
+## 2.6.1
+
+updated readme file
+
 ## 2.6.0
 
 removed remoteState<Controller, State>() function, initialState props

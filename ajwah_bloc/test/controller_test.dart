@@ -5,7 +5,6 @@ import 'package:test/test.dart';
 import 'counterController.dart';
 
 void main() {
-  new RemoteController();
   CounterStateController? controller;
   setUp(() {
     controller = CounterStateController();

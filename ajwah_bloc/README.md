@@ -1,6 +1,6 @@
 # ajwah_bloc
 
-A reactive state management library. Manage your application's states, effects, and actions easy way.
+Reactive state management library. Manage your application's states, effects, and actions easy way.
 Make apps more scalable with a unidirectional data-flow.
 
 - **[ajwah_bloc_test](https://pub.dev/packages/ajwah_bloc_test)**
@@ -14,13 +14,24 @@ class CounterStateController extends StateController<int> {
 
   CounterStateController() : super(0);
 
-  void increment() {
+  inc() {
     emit(state + 1);
   }
 
-  void decrement() {
+  dec() {
     emit(state - 1);
   }
+
+  asyncInc() async {
+    dispatch(Action(type: 'start'));
+    await Future.delayed(const Duration(seconds: 1));
+    inc();
+  }
+
+  Stream<String> get count$ => Rx.merge([
+        action$.whereType('start').mapTo('loading...'),
+        stream$.map((count) => '$count'),
+      ]).asBroadcastStream();
 
 }
 
@@ -42,23 +53,22 @@ class CounterWidget extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          RaisedButton(
+          ElevatedButton(
             child: Text('inc'),
-            onPressed: controller.increment,
+            onPressed: controller.inc,
           ),
-          RaisedButton(
+          ElevatedButton(
             child: Text('dec'),
-            onPressed: controller.decrement,
+            onPressed: controller.dec,
+          ),
+          ElevatedButton(
+            child: Text('async(+)'),
+            onPressed: controller.asyncInc,
           ),
           StreamBuilder(
-            stream: controller.stream$,
-            initialData: 0,
-            builder: (context, snapshot) {
-              return Container(
-                padding: EdgeInsets.only(left: 20.0),
-                child: Text(snapshot.data.toString()),
-              );
-            },
+            stream: controller.count$,
+            initialData: '',
+            builder: (context, snapshot) =>Text(snapshot.data)
           ),
         ],
       ),

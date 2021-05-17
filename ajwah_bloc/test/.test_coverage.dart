@@ -2,7 +2,9 @@
 // Consider adding this file to your .gitignore.
 
 import 'controller_test.dart' as controller_test;
+import 'counter2_test.dart' as counter2_test;
 
 void main() {
+  counter2_test.main();
   controller_test.main();
 }
