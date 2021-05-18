@@ -1,4 +1,5 @@
 import 'package:ajwah_bloc/ajwah_bloc.dart';
+import 'package:example/widgets/StreamConsumer.dart';
 import 'package:rxdart/rxdart.dart';
 
 class CounterState extends StateController<int> {
@@ -17,8 +18,8 @@ class CounterState extends StateController<int> {
     inc();
   }
 
-  Stream<String> get count$ => Rx.merge([
-        action$.whereType('asyncInc').mapTo('loading...'),
-        stream$.map((data) => '$data'),
+  Stream<SCResponse> get count$ => Rx.merge([
+        action$.whereType('asyncInc').mapTo(SCLoading()),
+        stream$.map((data) => SCData<String>('$data')),
       ]);
 }

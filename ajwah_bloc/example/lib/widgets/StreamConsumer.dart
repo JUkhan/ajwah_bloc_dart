@@ -12,18 +12,18 @@ typedef StreamConsumerListener<S> = void Function(
 typedef StreamConsumerFilter<S> = bool Function(BuildContext context, S state);
 typedef StreamConsumerErrorHandler = Widget Function(dynamic error);
 
-abstract class _StreamConsumerResponse {}
+abstract class SCResponse {}
 
-class _StreamConsumerLoading extends _StreamConsumerResponse {}
+class SCLoading extends SCResponse {}
 
-class _StreamConsumerError extends _StreamConsumerResponse {
+class SCError extends SCResponse {
   final dynamic error;
-  _StreamConsumerError(this.error);
+  SCError(this.error);
 }
 
-class _StreamConsumerData<S> extends _StreamConsumerResponse {
+class SCData<S> extends SCResponse {
   final data;
-  _StreamConsumerData(this.data);
+  SCData(this.data);
 }
 
 /// {@template stream_consumer}
@@ -65,7 +65,7 @@ class StreamConsumer<S> extends StatefulWidget {
         error = ((error) => new Container()),
         super(key: key);
 
-  final Stream<S> stream;
+  final Stream<dynamic> stream;
   //final S? initialData;
 
   /// The [builder] function which will be invoked on each widget build.
@@ -87,26 +87,27 @@ class StreamConsumer<S> extends StatefulWidget {
 }
 
 class _StreamConsumerState<S> extends State<StreamConsumer<S>> {
-  ///S? _data;
-  _StreamConsumerResponse _data = _StreamConsumerLoading();
+  SCResponse _data = SCLoading();
 
   StreamSubscription? _subscription;
   @override
   void initState() {
     _subscription = widget.stream.listen((event) {
+      if (!(event is SCResponse))
+        _data = event is S ? SCData(event) : SCError(event);
+      else
+        _data = event;
       if (widget.filter == null)
         setState(() {
-          _data = _StreamConsumerData(event);
           widget.listener?.call(context, event);
         });
       else if (widget.filter!(context, event))
         setState(() {
-          _data = _StreamConsumerData(event);
           widget.listener?.call(context, event);
         });
     }, onError: (error) {
       setState(() {
-        _data = _StreamConsumerError(error);
+        _data = SCError(error);
       });
     });
     super.initState();
@@ -123,12 +124,12 @@ class _StreamConsumerState<S> extends State<StreamConsumer<S>> {
 
   @override
   Widget build(BuildContext context) {
-    if (_data is _StreamConsumerData) {
-      return widget.builder(context, (_data as _StreamConsumerData).data);
-    } else if (_data is _StreamConsumerLoading) {
+    if (_data is SCData) {
+      return widget.builder(context, (_data as SCData).data);
+    } else if (_data is SCLoading) {
       return widget.loading;
-    } else if (_data is _StreamConsumerError) {
-      return widget.error((_data as _StreamConsumerError).error);
+    } else if (_data is SCError) {
+      return widget.error((_data as SCError).error);
     }
     return Container();
   }
