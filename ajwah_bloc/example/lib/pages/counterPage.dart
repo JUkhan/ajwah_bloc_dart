@@ -35,16 +35,14 @@ class CounterPage extends StatelessWidget {
               ),
             ],
           ),
-          StreamConsumer<Counter>(
-            stream: csCtl.stream$,
-            builder: (context, counter) => Container(
+          StreamConsumer<String>(
+            stream: csCtl.count$,
+            builder: (context, count) => Container(
               height: 50,
-              child: counter.loading
-                  ? CircularProgressIndicator()
-                  : Text(
-                      '${counter.count}',
-                      style: Theme.of(context).textTheme.headline4,
-                    ),
+              child: Text(
+                count,
+                style: Theme.of(context).textTheme.headline4,
+              ),
             ),
           )
         ],
