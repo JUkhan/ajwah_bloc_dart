@@ -88,7 +88,9 @@ class TodoState extends StateController<List<Todo>> with GetLifeCycleBase {
   Stream<List<Todo>> get todo$ =>
       Rx.combineLatest3<List<Todo>, SearchCategory, String, List<Todo>>(
           stream$,
-          Get.find<SearchCategoryState>().stream$,
+          //Get.find<SearchCategoryState>().stream$,
+          remoteController<SearchCategoryState>()
+              .flatMap((event) => event.stream$),
           action$
               .isA<SearchTodoAction>()
               .map<String>((action) => action.searchText)

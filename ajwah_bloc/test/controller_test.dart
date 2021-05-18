@@ -1,10 +1,12 @@
 import 'package:ajwah_bloc/src/action.dart';
 import 'package:ajwah_bloc_test/ajwah_bloc_test.dart';
 import 'package:test/test.dart';
+import 'package:rxdart/rxdart.dart';
 
 import 'counterController.dart';
 
 void main() {
+  RemoteController();
   CounterStateController? controller;
   setUp(() {
     controller = CounterStateController();
@@ -137,10 +139,20 @@ void main() {
       expect(models[0].type, 'mono');
     },
   );
-  // test('get Remote state', () async {
-  //   var state = await controller!.remoteState<RemoteController, String>();
-  //   expect(state, 'REMOTE STATE');
-  // });
+  test('get Remote state', () async {
+    var state = await controller!.remoteState<RemoteController, String>();
+    expect(state, 'REMOTE STATE');
+  });
+  ajwahTest<String>(
+    'Remote controller',
+    build: () => controller!
+        .remoteController<RemoteController>()
+        .flatMap((event) => event.stream$),
+    expect: [isA<String>()],
+    verify: (models) {
+      expect(models[0], 'REMOTE STATE');
+    },
+  );
   ajwahTest<Action>(
     'effect: send Action(testing) that response back Action(done)',
     build: () => controller!.action$.whereType('done'),

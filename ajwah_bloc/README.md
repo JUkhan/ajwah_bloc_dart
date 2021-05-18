@@ -31,7 +31,7 @@ class CounterStateController extends StateController<int> {
   Stream<String> get count$ => Rx.merge([
         action$.whereType('start').mapTo('loading...'),
         stream$.map((count) => '$count'),
-      ]).asBroadcastStream();
+      ]);
 
 }
 
@@ -140,5 +140,7 @@ void main() {
   void emit(S newState)
   void registerEffects(Iterable<Stream<Action>> callbackList)
   void importState(S state)
+  Stream<Controller> remoteController<Controller>()
+  Future<State> remoteState<Controller, State>()
   void dispose()
 ```

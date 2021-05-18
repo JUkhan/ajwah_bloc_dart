@@ -1,3 +1,9 @@
+## 2.6.2
+
+Added new functions:  
+Stream<Controller> remoteController<Controller>()
+Future<State> remoteState<Controller, State>()
+
 ## 2.6.1
 
 updated readme file

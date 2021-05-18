@@ -7,17 +7,23 @@ var _dispatcher = BehaviorSubject<Action>.seeded(Action(type: '@Init'));
 
 var _action$ = Actions(_dispatcher);
 
-// typedef RemoteStateCallback<S> = void Function(S state);
+typedef RemoteStateCallback<S> = void Function(S state);
 
-// class RemoteStateAction<S> extends Action {
-//   final RemoteStateCallback<S> callback;
-//   final Type controller;
-//   RemoteStateAction(this.controller, this.callback);
-// }
+class _RemoteStateAction<S> extends Action {
+  final RemoteStateCallback<S> callback;
+  final Type controller;
+  _RemoteStateAction(this.controller, this.callback);
+}
 
-///[StateController] abstract class
+class _RemoteControllerAction<S> extends Action {
+  final RemoteStateCallback<S> callback;
+  final Type controller;
+  _RemoteControllerAction(this.controller, this.callback);
+}
+
+///[StateController] Base class
 ///
-///That is used to develop a powerful concrete state controller class.
+///Define a powerful concrete state controller class.
 ///
 ///So that you can manage your application's state easy and comportable way.
 ///Spliting chunk of them as the controllers and having communication among them.
@@ -48,23 +54,30 @@ abstract class StateController<S> {
     dispatch(Action(type: '@@NewState($runtimeType)'));
     _subscription = _dispatcher.distinct().listen((action) {
       onAction(action);
-      // if (action is RemoteStateAction && action.controller == runtimeType) {
-      //   action.callback(state);
-      // }
     });
 
     Future.delayed(Duration(milliseconds: 0)).then((_) => onInit());
   }
 
-  ///This function is fired whenever action dispatched from the controllers.
-  void onAction(Action action) {}
+  ///This function is fired whenever action dispatched from any controllers.
+  ///
+  ///Note: if you override this method and have call to [remoteState/remoreController] on this instance, don't forget to cal [super.onAction(action)]
+  ///
+  void onAction(Action action) {
+    if (action is _RemoteStateAction && action.controller == runtimeType) {
+      action.callback(state);
+    } else if (action is _RemoteControllerAction &&
+        action.controller == runtimeType) {
+      action.callback(this);
+    }
+  }
 
   ///This function is fired after instantiating the controller.
   void onInit() {}
 
   ///Dispatching an action is just like firing an event.
   ///
-  ///Whenever the acction is dispatched it notifies all the controllers
+  ///Whenever the action is dispatched it notifies all the controllers
   ///those who override the [onAction(action Action)] method and also
   ///notifes all the effects - registered throughout the controllers.
   ///
@@ -86,7 +99,7 @@ abstract class StateController<S> {
   ///Return the current state of the controller as a Stream<S>.
   Stream<S> get stream$ => _store.distinct();
 
-  ///Return the part of the current state of the controller as a Stream<S>, based on your projection.
+  ///Return the part of the current state of the controller as a Stream<S>.
   Stream<T> select<T>(T Function(S state) mapCallback) {
     return _store.map<T>(mapCallback).distinct();
   }
@@ -133,11 +146,28 @@ abstract class StateController<S> {
     _store.add(newState);
   }
 
-  // Future<State> remoteState<Controller, State>() {
-  //   final completer = Completer<State>();
-  //   dispatch(RemoteStateAction(Controller, completer.complete));
-  //   return completer.future;
-  // }
+  ///This function return Future\<State\>
+  ///
+  ///[State] Remote controller state type.
+  ///
+  ///[Controller] Remote controller type.
+  ///
+  Future<State> remoteState<Controller, State>() {
+    final completer = Completer<State>();
+    dispatch(_RemoteStateAction(Controller, completer.complete));
+
+    return completer.future;
+  }
+
+  ///This function return Stream\<Controller\>.
+  ///
+  ///[Controller] Remote controller type.
+  ///
+  Stream<Controller> remoteController<Controller>() {
+    final completer = Completer<Controller>();
+    dispatch(_RemoteControllerAction(Controller, completer.complete));
+    return Stream.fromFuture(completer.future);
+  }
 
   ///This is a clean up funcction.
   ///
