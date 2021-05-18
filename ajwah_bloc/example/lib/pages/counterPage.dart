@@ -37,12 +37,9 @@ class CounterPage extends StatelessWidget {
           ),
           StreamConsumer<String>(
             stream: csCtl.count$,
-            builder: (context, count) => Container(
-              height: 50,
-              child: Text(
-                count,
-                style: Theme.of(context).textTheme.headline4,
-              ),
+            builder: (context, count) => Text(
+              count,
+              style: Theme.of(context).textTheme.headline4,
             ),
           )
         ],
