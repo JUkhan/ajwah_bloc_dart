@@ -18,7 +18,7 @@ class SCLoading extends SCResponse {}
 
 class SCError extends SCResponse {
   final dynamic error;
-  SCError(this.error);
+  SCError(this.error) : assert(error != null);
 }
 
 class SCData<S> extends SCResponse {
@@ -61,9 +61,9 @@ class StreamConsumer<S> extends StatefulWidget {
     required this.builder,
     this.filter,
     this.listener,
-  })  : loading = CircularProgressIndicator(),
-        error = ((error) => new Container()),
-        super(key: key);
+    this.loading,
+    this.error,
+  }) : super(key: key);
 
   final Stream<dynamic> stream;
   //final S? initialData;
@@ -79,8 +79,8 @@ class StreamConsumer<S> extends StatefulWidget {
   final StreamConsumerListener<S>? listener;
 
   final StreamConsumerFilter<S>? filter;
-  final StreamConsumerErrorHandler error;
-  final Widget loading;
+  final StreamConsumerErrorHandler? error;
+  final Widget? loading;
 
   @override
   _StreamConsumerState<S> createState() => _StreamConsumerState<S>();
@@ -127,9 +127,13 @@ class _StreamConsumerState<S> extends State<StreamConsumer<S>> {
     if (_data is SCData) {
       return widget.builder(context, (_data as SCData).data);
     } else if (_data is SCLoading) {
-      return widget.loading;
+      return widget.loading ?? CircularProgressIndicator();
     } else if (_data is SCError) {
-      return widget.error((_data as SCError).error);
+      return widget.error?.call((_data as SCError).error) ??
+          Text(
+            (_data as SCError).error.toString(),
+            style: const TextStyle(color: Colors.redAccent),
+          );
     }
     return Container();
   }

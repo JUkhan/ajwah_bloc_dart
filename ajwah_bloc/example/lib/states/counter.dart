@@ -20,6 +20,8 @@ class CounterState extends StateController<int> {
 
   Stream<SCResponse> get count$ => Rx.merge([
         action$.whereType('asyncInc').mapTo(SCLoading()),
-        stream$.map((data) => SCData<String>('$data')),
+        stream$.map((data) => data > 10
+            ? SCError('Counter is out of the range.')
+            : SCData('$data')),
       ]);
 }

@@ -41,6 +41,13 @@ class CounterPage extends StatelessWidget {
               count,
               style: Theme.of(context).textTheme.headline4,
             ),
+          ),
+          StreamConsumer<int>(
+            stream: csCtl.stream$,
+            builder: (context, count) => Text(
+              count.toString(),
+              style: Theme.of(context).textTheme.headline4,
+            ),
           )
         ],
       )),
