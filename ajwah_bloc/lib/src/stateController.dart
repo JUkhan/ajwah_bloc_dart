@@ -21,9 +21,9 @@ class _RemoteControllerAction<S> extends Action {
   _RemoteControllerAction(this.controller, this.callback);
 }
 
-///[StateController] Base class
+///`StateController` is a  base class
 ///
-///Define a powerful concrete state controller class.
+///Used to Define a powerful concrete state controller class.
 ///
 ///So that you can manage your application's state easy and comportable way.
 ///Spliting chunk of them as the controllers and having communication among them.
@@ -61,7 +61,7 @@ abstract class StateController<S> {
 
   ///This function is fired whenever action dispatched from any controllers.
   ///
-  ///Note: if you override this method and have call to [remoteState/remoreController] on this instance, don't forget to cal [super.onAction(action)]
+  ///Note: if you override this method and have call to `remoteState/remoreController` on this instance, don't forget to cal `super.onAction(action)`
   ///
   void onAction(Action action) {
     if (action is _RemoteStateAction && action.controller == runtimeType) {
@@ -78,7 +78,7 @@ abstract class StateController<S> {
   ///Dispatching an action is just like firing an event.
   ///
   ///Whenever the action is dispatched it notifies all the controllers
-  ///those who override the [onAction(action Action)] method and also
+  ///those who override the `onAction(action Action)` method and also
   ///notifes all the effects - registered throughout the controllers.
   ///
   ///A powerful way to communicate among the controllers.
@@ -86,7 +86,7 @@ abstract class StateController<S> {
     _dispatcher.add(action);
   }
 
-  ///Return a [Acctions] instance.
+  ///Return a `Acctions` instance.
   ///
   ///So that you can filter the actions those are dispatches throughout
   ///the application. And also making effect/s on it.
@@ -123,8 +123,8 @@ abstract class StateController<S> {
   /// This effect start working when SearchInputAction is dispatched
   /// then wait 320 mills to receive subsequent actions(SearchInputAction) -
   /// when reach out time limit it sends a request to server and then dispatches
-  /// [SearchResultAction] when server response come back. Now any controller can
-  /// receive SearchResultAction who override [onAction] method.
+  ///`SearchResultAction` when server response come back. Now any controller can
+  /// receive SearchResultAction who override `onAction` method.
   ///
   /// ```dart
   /// registerEffects([
