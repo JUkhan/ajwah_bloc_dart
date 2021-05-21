@@ -55,18 +55,18 @@ class TodoState extends StateController<List<Todo>> with GetLifeCycleBase {
     ]);
   }
 
-  loadTodos() {
+  void loadTodos() {
     getTodos().listen((todos) {
       emit(todos);
     });
   }
 
-  add(String description) {
+  void add(String description) {
     addTodo(Todo(description: description))
         .listen((todo) => emit([...state, todo]));
   }
 
-  update(Todo todo) {
+  void update(Todo todo) {
     updateTodo(todo).listen(
         (todo) => emit([
               for (var item in state)
@@ -76,7 +76,7 @@ class TodoState extends StateController<List<Todo>> with GetLifeCycleBase {
     });
   }
 
-  remove(Todo todo) {
+  void remove(Todo todo) {
     removeTodo(todo).listen(
         (todo) => emit(state.where((item) => item.id != todo.id).toList()));
   }

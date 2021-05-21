@@ -4,13 +4,9 @@ import 'package:rxdart/rxdart.dart';
 
 class CounterState extends StateController<int> {
   CounterState() : super(0);
-  inc() {
-    emit(state + 1);
-  }
+  void inc() => emit(state + 1);
 
-  dec() {
-    emit(state - 1);
-  }
+  void dec() => emit(state - 1);
 
   asyncInc() async {
     dispatch(Action(type: 'asyncInc'));

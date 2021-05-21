@@ -5,7 +5,5 @@ enum SearchCategory { All, Active, Completed }
 class SearchCategoryState extends StateController<SearchCategory> {
   SearchCategoryState() : super(SearchCategory.All);
 
-  setCategory(SearchCategory category) {
-    emit(category);
-  }
+  void setCategory(SearchCategory category) => emit(category);
 }

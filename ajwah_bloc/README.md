@@ -1,38 +1,154 @@
 # ajwah_bloc
 
-Reactive state management library. Manage your application's states, effects, and actions easy way.
-Make apps more scalable with a unidirectional data-flow.
+This is a `Controller` based state mangement system. Every controller extends `StateController` abstract class. Every `StateController` has the following features:
 
-- **[ajwah_bloc_test](https://pub.dev/packages/ajwah_bloc_test)**
+- Dispatching actions
+- Filtering actions
+- Can make mulltiple effeccts
+- Communication to other controllers
+- RxDart full features
 
-Please head over to the [Example](https://github.com/JUkhan/ajwah_bloc_dart/tree/master/ajwah_bloc/example) . The example contains `counter` and `todos` pages to demonstrate ajwah_bloc lib out of the box.
+Please go through the [example](https://github.com/JUkhan/ajwah_bloc_dart/tree/master/ajwah_bloc/example) . The example contains `counter` and `todos` pages those demonstrate all the features out of the box.
 
-### Counter State
+`CounterState`
 
 ```dart
-class CounterStateController extends StateController<int> {
+import 'package:ajwah_bloc/ajwah_bloc.dart';
+import 'package:example/widgets/StreamConsumer.dart';
+import 'package:rxdart/rxdart.dart';
 
-  CounterStateController() : super(0);
+class CounterState extends StateController<int> {
+  CounterState() : super(0);
+  void inc() => emit(state + 1);
 
-  inc() {
-    emit(state + 1);
-  }
-
-  dec() {
-    emit(state - 1);
-  }
+  void dec() => emit(state - 1);
 
   asyncInc() async {
-    dispatch(Action(type: 'start'));
+    dispatch(Action(type: 'asyncInc'));
     await Future.delayed(const Duration(seconds: 1));
     inc();
   }
 
-  Stream<String> get count$ => Rx.merge([
-        action$.whereType('start').mapTo('loading...'),
-        stream$.map((count) => '$count'),
+  Stream<SCResponse> get count$ => Rx.merge([
+        action$.whereType('asyncInc').mapTo(SCLoading()),
+        stream$.map((data) => data > 10
+            ? SCError('Counter is out of the range.')
+            : SCData('$data')),
       ]);
+}
 
+```
+
+`ToodoState`
+
+```dart
+import 'package:ajwah_bloc/ajwah_bloc.dart';
+import 'package:rxdart/rxdart.dart';
+
+import '../api/todoApi.dart';
+import './searchCategory.dart';
+
+class TodoState extends StateController<List<Todo>> {
+  TodoState() : super([]);
+
+  @override
+  void onInit() {
+    loadTodos();
+
+    registerEffects([
+      action$
+          .isA<SearchInputAction>()
+          .debounceTime(const Duration(milliseconds: 320))
+          .map((action) => SearchTodoAction(action.searchText))
+    ]);
+  }
+
+  void loadTodos() {
+    getTodos().listen((todos) {
+      emit(todos);
+    });
+  }
+
+  void add(String description) {
+    addTodo(Todo(description: description))
+        .listen((todo) => emit([...state, todo]));
+  }
+
+  void update(Todo todo) {
+    updateTodo(todo).listen(
+        (todo) => emit([
+              for (var item in state)
+                if (item.id == todo.id) todo else item,
+            ]), onError: (error) {
+      dispatch(TodoErrorAction(error));
+    });
+  }
+
+  void remove(Todo todo) {
+    removeTodo(todo).listen(
+        (todo) => emit(state.where((item) => item.id != todo.id).toList()));
+  }
+
+  Stream<String> get activeTodosInfo$ => stream$
+      .map((todos) => todos.where((todo) => !todo.completed).toList())
+      .map((todos) => '${todos.length} items left');
+
+  Stream<List<Todo>> get todo$ =>
+      Rx.combineLatest3<List<Todo>, SearchCategory, String, List<Todo>>(
+          stream$,
+          remoteController<SearchCategoryState>()
+              .flatMap((event) => event.stream$),
+          action$
+              .isA<SearchTodoAction>()
+              .map<String>((action) => action.searchText)
+              .doOnData((event) {
+            print('searchText: ' + event);
+          }).startWith(''), (todos, category, searchText) {
+        if (searchText.isNotEmpty)
+          todos = todos
+              .where((todo) => todo.description
+                  .toLowerCase()
+                  .contains(searchText.toLowerCase()))
+              .toList();
+        switch (category) {
+          case SearchCategory.Active:
+            return todos.where((todo) => !todo.completed).toList();
+          case SearchCategory.Completed:
+            return todos.where((todo) => todo.completed).toList();
+          default:
+            return todos;
+        }
+      });
+}
+
+class TodoErrorAction extends Action {
+  final dynamic error;
+  TodoErrorAction(this.error);
+}
+
+class SearchTodoAction extends Action {
+  final String searchText;
+  SearchTodoAction(this.searchText);
+}
+
+class SearchInputAction extends Action {
+  final String searchText;
+  SearchInputAction(this.searchText);
+}
+
+```
+
+`SearchCategoryState`
+
+```dart
+import 'package:ajwah_bloc/ajwah_bloc.dart';
+
+enum SearchCategory { All, Active, Completed }
+
+class SearchCategoryState extends StateController<SearchCategory> {
+  SearchCategoryState() : super(SearchCategory.All);
+
+  void setCategory(SearchCategory category) => emit(category);
 }
 
 ```
@@ -79,6 +195,8 @@ class CounterWidget extends StatelessWidget {
 ```
 
 ### Testing
+
+- **[ajwah_bloc_test](https://pub.dev/packages/ajwah_bloc_test)**
 
 ```dart
 

@@ -1,4 +1,5 @@
 import 'package:rxdart/rxdart.dart';
+import 'package:meta/meta.dart';
 import 'dart:async';
 import 'actions.dart';
 import 'action.dart';
@@ -10,36 +11,35 @@ var _action$ = Actions(_dispatcher);
 typedef RemoteStateCallback<S> = void Function(S state);
 
 class _RemoteStateAction<S> extends Action {
-  final RemoteStateCallback<S> callback;
+  final Completer<S> completer;
   final Type controller;
-  _RemoteStateAction(this.controller, this.callback);
+  _RemoteStateAction(this.controller, this.completer);
 }
 
 class _RemoteControllerAction<S> extends Action {
-  final RemoteStateCallback<S> callback;
+  final Completer<S> completer;
   final Type controller;
-  _RemoteControllerAction(this.controller, this.callback);
+  _RemoteControllerAction(this.controller, this.completer);
 }
 
-///`StateController` is a  base class
+///Every [StateController] has the following features:
+///- Dispatching actions
+///- Filtering actions
+///- Can make mulltiple effeccts
+///- Communication to other controllers
+///- RxDart full features
 ///
-///Used to Define a powerful concrete state controller class.
+///Every [StateController] requires an initial state which will be the state of the [StateController] before [emit] has been called.
 ///
-///So that you can manage your application's state easy and comportable way.
-///Spliting chunk of them as the controllers and having communication among them.
-///
+///The current state of a [StateController] can be accessed via the [state] getter.
 ///```dart
 ///class CounterState extends StateController<int>{
 ///
 ///    CounterState():super(0);
 ///
-///     increment(){
-///       emit(state + 1);
-///     }
+///     void increment() => emit(state + 1);
 ///
-///     decrement(){
-///       emit(state - 1);
-///     }
+///     void decrement() => emit(state - 1);
 ///
 ///}
 ///
@@ -59,36 +59,38 @@ abstract class StateController<S> {
     Future.delayed(Duration(milliseconds: 0)).then((_) => onInit());
   }
 
-  ///This function is fired whenever action dispatched from any controllers.
-  ///
-  ///Note: if you override this method and have call to `remoteState/remoreController` on this instance, don't forget to cal `super.onAction(action)`
-  ///
+  ///This function fired when action dispatches from the `controllers`.
+  @protected
+  @mustCallSuper
   void onAction(Action action) {
-    if (action is _RemoteStateAction && action.controller == runtimeType) {
-      action.callback(state);
+    if (action is _RemoteStateAction &&
+        action.controller == runtimeType &&
+        !action.completer.isCompleted) {
+      action.completer.complete(state);
     } else if (action is _RemoteControllerAction &&
-        action.controller == runtimeType) {
-      action.callback(this);
+        action.controller == runtimeType &&
+        !action.completer.isCompleted) {
+      action.completer.complete(this);
     }
   }
 
   ///This function is fired after instantiating the controller.
+  @protected
   void onInit() {}
 
   ///Dispatching an action is just like firing an event.
   ///
-  ///Whenever the action is dispatched it notifies all the controllers
+  ///When the action dispatches, it notifies all the `Controllers`
   ///those who override the `onAction(action Action)` method and also
-  ///notifes all the effects - registered throughout the controllers.
+  ///notifes all the effects - registered throughout the `Controllers`.
   ///
-  ///A powerful way to communicate among the controllers.
   void dispatch(Action action) {
     _dispatcher.add(action);
   }
 
   ///Return a `Acctions` instance.
   ///
-  ///So that you can filter the actions those are dispatches throughout
+  ///You can filter the actions those are dispatches throughout
   ///the application. And also making effect/s on it.
   ///
   Actions get action$ => _action$;
@@ -96,10 +98,10 @@ abstract class StateController<S> {
   ///Return the current state of the controller.
   S get state => _store.value;
 
-  ///Return the current state of the controller as a Stream<S>.
+  ///Return the current state of the controller as a Stream\<S\>.
   Stream<S> get stream$ => _store.distinct();
 
-  ///Return the part of the current state of the controller as a Stream<S>.
+  ///Return the part of the current state of the controller as a Stream\<S\>.
   Stream<T> select<T>(T Function(S state) mapCallback) {
     return _store.map<T>(mapCallback).distinct();
   }
@@ -109,22 +111,24 @@ abstract class StateController<S> {
   /// Sends a data [newState].
   ///
   /// Listeners receive this newState in a later microtask.
+  @protected
   void emit(S newState) {
     _store.add(newState);
   }
 
-  /// [streams] pass one or more effects.
-  ///
   ///This function registers the effect/s and also
   ///un-registers previous effeccts (if found any).
   ///
-  /// Here is an example of a search effect:
+  /// [streams] param for one or more effects.
   ///
-  /// This effect start working when SearchInputAction is dispatched
-  /// then wait 320 mills to receive subsequent actions(SearchInputAction) -
+  /// `Example of todos search effect:`
+  ///
+  /// This effect start working when `SearchInputAction` is dispatched
+  /// then wait 320 mills to receive subsequent actions(`SearchInputAction`) -
   /// when reach out time limit it sends a request to server and then dispatches
-  ///`SearchResultAction` when server response come back. Now any controller can
-  /// receive SearchResultAction who override `onAction` method.
+  ///`SearchResultAction` when server response come back. Now any `Controller` can
+  /// receive `SearchResultAction` who override `onAction` method / you can use
+  /// action$.isA\<SearchResultAction\>().
   ///
   /// ```dart
   /// registerEffects([
@@ -134,6 +138,7 @@ abstract class StateController<S> {
   ///   .map((res) => SearchResultAction(res)),
   /// ]);
   /// ```
+  @protected
   void registerEffects(Iterable<Stream<Action>> streams) {
     _effectSubscription?.cancel();
     _effectSubscription = Rx.merge(streams).listen(dispatch);
@@ -146,26 +151,49 @@ abstract class StateController<S> {
     _store.add(newState);
   }
 
-  ///This function return Future\<State\>
+  ///This function returns the current state of a cubit as a `Future` value
   ///
-  ///[State] Remote controller state type.
+  ///`Example`
   ///
-  ///[Controller] Remote controller type.
+  ///```dart
+  ///final category = await remoteState<SearchCategoryCubit, SearchCategory>();
+  ///```
   ///
+  @protected
   Future<State> remoteState<Controller, State>() {
     final completer = Completer<State>();
-    dispatch(_RemoteStateAction(Controller, completer.complete));
+    dispatch(_RemoteStateAction(Controller, completer));
 
     return completer.future;
   }
 
-  ///This function return Stream\<Controller\>.
+  ///This function returns `Controller` instance as a Steam based on the type
+  ///you attached with the function.
   ///
-  ///[Controller] Remote controller type.
+  ///`Example`
   ///
+  ///This example returns todo list filtered by searchCategory.
+  ///We need `SearchCategoryController` stream combining with `TodoContrroller's` stream:
+  ///```dart
+  ///Stream<List<Todo>> get todo$ =>
+  ///    Rx.combineLates2<List<Todo>, SearchCategory, List<Todo>>(
+  ///        stream$, remoteCubit<SearchCategoryController>()
+  ///         .flatMap((event) => event.stream$),(todos, category) {
+  ///      switch (category) {
+  ///        case SearchCategory.Active:
+  ///          return todos.where((todo) => !todo.completed).toList();
+  ///        case SearchCategory.Completed:
+  ///          return todos.where((todo) => todo.completed).toList();
+  ///        default:
+  ///          return todos;
+  ///     }
+  ///    });
+  ///```
+  ///
+  @protected
   Stream<Controller> remoteController<Controller>() {
     final completer = Completer<Controller>();
-    dispatch(_RemoteControllerAction(Controller, completer.complete));
+    dispatch(_RemoteControllerAction(Controller, completer));
     return Stream.fromFuture(completer.future);
   }
 
