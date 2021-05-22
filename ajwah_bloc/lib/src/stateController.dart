@@ -221,12 +221,8 @@ abstract class StateController<S> {
   ///    });
   ///```
   ///
-  Stream<S> remoteStream<C, S>() {
-    final completer = Completer<C>();
-    dispatch(_RemoteControllerAction(C, completer));
-    return Stream.fromFuture(completer.future)
-        .flatMap((value) => (value as StateController<S>).stream$);
-  }
+  Stream<S> remoteStream<C, S>() => remoteController<C>()
+      .flatMap((value) => (value as StateController<S>).stream$);
 
   ///This is a clean up funcction.
   ///
