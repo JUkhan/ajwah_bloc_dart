@@ -178,4 +178,11 @@ void main() {
       expect(models[0].loading, false);
     },
   );
+  ajwahTest<CounterState>('Remote Stream(SearchCategoryCubit)- Active',
+      build: () =>
+          controller!.remoteStream<CounterStateController, CounterState>(),
+      act: () => controller!.increment(),
+      verify: (states) {
+        expect(states[0].count, 1);
+      });
 }

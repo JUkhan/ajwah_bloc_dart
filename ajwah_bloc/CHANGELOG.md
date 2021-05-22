@@ -1,3 +1,7 @@
+## 2.6.4
+
+introduce a new function: Stream<S> remoteStream<Controller, S>()
+
 ## 2.6.3
 
 bug fixing for:  

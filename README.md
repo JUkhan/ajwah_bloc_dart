@@ -1,11 +1,11 @@
 # ajwah_bloc
 
-This is a `Controller` based state mangement system. Every controller extends `StateController` abstract class. Every `StateController` has the following features:
+A `Controller` based state management system. Every controller extends `StateController` class. Every `StateController` has the following features:
 
 - Dispatching actions
 - Filtering actions
-- Can make mulltiple effeccts
-- Communication to other controllers
+- Adding effeccts
+- Communications among Controllers
 - RxDart full features
 
 Please go through the [example](https://github.com/JUkhan/ajwah_bloc_dart/tree/master/ajwah_bloc/example) . The example contains `counter` and `todos` pages those demonstrate all the features out of the box.
@@ -96,8 +96,7 @@ class TodoState extends StateController<List<Todo>> {
   Stream<List<Todo>> get todo$ =>
       Rx.combineLatest3<List<Todo>, SearchCategory, String, List<Todo>>(
           stream$,
-          remoteController<SearchCategoryState>()
-              .flatMap((event) => event.stream$),
+          remoteStream<SearchCategoryState, SearchCategory>(),
           action$
               .isA<SearchTodoAction>()
               .map<String>((action) => action.searchText)
@@ -260,5 +259,6 @@ void main() {
   void importState(S state)
   Stream<Controller> remoteController<Controller>()
   Future<State> remoteState<Controller, State>()
+  Stream<S> remoteStream<Controller, S>()
   void dispose()
 ```

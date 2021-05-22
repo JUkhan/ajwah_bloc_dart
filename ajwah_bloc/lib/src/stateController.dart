@@ -25,8 +25,8 @@ class _RemoteControllerAction<S> extends Action {
 ///Every [StateController] has the following features:
 ///- Dispatching actions
 ///- Filtering actions
-///- Can make mulltiple effeccts
-///- Communication to other controllers
+///- Adding effeccts
+///- Communications among controllers
 ///- RxDart full features
 ///
 ///Every [StateController] requires an initial state which will be the state of the [StateController] before [emit] has been called.
@@ -195,6 +195,37 @@ abstract class StateController<S> {
     final completer = Completer<Controller>();
     dispatch(_RemoteControllerAction(Controller, completer));
     return Stream.fromFuture(completer.future);
+  }
+
+  ///This function returns the state of a the `StateController` instance as a Steam depends on the generic types
+  ///you attached with the function.
+  ///
+  ///`Example`
+  ///
+  ///This example returns todo list filtered by searchCategory.
+  ///We need `SearchCategoryCubit` stream combining with `TodoCubit's` stream:
+  ///```dart
+  ///Stream<List<Todo>> get todo$ =>
+  ///    Rx.combineLates2<List<Todo>, SearchCategory, List<Todo>>(
+  ///        stream$,
+  ///        remoteStream<SearchCategoryCubit, SearchCategory>(),
+  ///        (todos, category) {
+  ///        switch (category) {
+  ///           case SearchCategory.Active:
+  ///             return todos.where((todo) => !todo.completed).toList();
+  ///           case SearchCategory.Completed:
+  ///             return todos.where((todo) => todo.completed).toList();
+  ///           default:
+  ///             return todos;
+  ///         }
+  ///    });
+  ///```
+  ///
+  Stream<S> remoteStream<C, S>() {
+    final completer = Completer<C>();
+    dispatch(_RemoteControllerAction(C, completer));
+    return Stream.fromFuture(completer.future)
+        .flatMap((value) => (value as StateController<S>).stream$);
   }
 
   ///This is a clean up funcction.

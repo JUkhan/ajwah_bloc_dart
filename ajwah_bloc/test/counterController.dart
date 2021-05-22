@@ -36,6 +36,7 @@ class CounterStateController extends StateController<CounterState> {
     if (action is IncrementByAction) {
       emit(state.copyWith(count: state.count + action.num));
     }
+    super.onAction(action);
   }
 
   @override
