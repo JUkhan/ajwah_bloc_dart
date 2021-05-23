@@ -1,10 +1,10 @@
 # ajwah_bloc
 
-A `Controller` based state management system. Every controller extends `StateController` class. Every `StateController` has the following features:
+A dart package that helps implement the BLoC pattern. Every `StateController` has the following features:
 
 - Dispatching actions
 - Filtering actions
-- Adding effeccts
+- Adding effects
 - Communications among Controllers
 - RxDart full features
 

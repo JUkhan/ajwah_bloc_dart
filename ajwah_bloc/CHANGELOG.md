@@ -1,3 +1,7 @@
+## 2.6.5
+
+- Updated remotData functions
+
 ## 2.6.4
 
 introduce a new function: Stream<S> remoteStream<Controller, S>()

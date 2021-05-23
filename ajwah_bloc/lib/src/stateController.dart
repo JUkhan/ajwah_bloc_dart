@@ -4,23 +4,16 @@ import 'dart:async';
 import 'actions.dart';
 import 'action.dart';
 
-var _dispatcher = BehaviorSubject<Action>.seeded(Action(type: '@Init'));
-
-var _action$ = Actions(_dispatcher);
-
 typedef RemoteStateCallback<S> = void Function(S state);
-
-class _RemoteStateAction<S> extends Action {
-  final Completer<S> completer;
-  final Type controller;
-  _RemoteStateAction(this.controller, this.completer);
-}
 
 class _RemoteControllerAction<S> extends Action {
   final Completer<S> completer;
   final Type controller;
   _RemoteControllerAction(this.controller, this.completer);
 }
+
+var _dispatcher = BehaviorSubject<Action>.seeded(Action(type: '@Init'));
+var _action$ = Actions(_dispatcher);
 
 ///Every [StateController] has the following features:
 ///- Dispatching actions
@@ -63,11 +56,7 @@ abstract class StateController<S> {
   @protected
   @mustCallSuper
   void onAction(Action action) {
-    if (action is _RemoteStateAction &&
-        action.controller == runtimeType &&
-        !action.completer.isCompleted) {
-      action.completer.complete(state);
-    } else if (action is _RemoteControllerAction &&
+    if (action is _RemoteControllerAction &&
         action.controller == runtimeType &&
         !action.completer.isCompleted) {
       action.completer.complete(this);
@@ -151,6 +140,12 @@ abstract class StateController<S> {
     _store.add(newState);
   }
 
+  Future<C> _remoteData<C extends StateController>() {
+    final completer = Completer<C>();
+    dispatch(_RemoteControllerAction(C, completer));
+    return completer.future;
+  }
+
   ///This function returns the current state of a cubit as a `Future` value
   ///
   ///`Example`
@@ -159,13 +154,8 @@ abstract class StateController<S> {
   ///final category = await remoteState<SearchCategoryCubit, SearchCategory>();
   ///```
   ///
-  @protected
-  Future<State> remoteState<Controller, State>() {
-    final completer = Completer<State>();
-    dispatch(_RemoteStateAction(Controller, completer));
-
-    return completer.future;
-  }
+  Future<S> remoteState<C extends StateController<S>, S>() =>
+      _remoteData<C>().then((value) => value.state);
 
   ///This function returns `Controller` instance as a Steam based on the type
   ///you attached with the function.
@@ -190,12 +180,8 @@ abstract class StateController<S> {
   ///    });
   ///```
   ///
-  @protected
-  Stream<Controller> remoteController<Controller>() {
-    final completer = Completer<Controller>();
-    dispatch(_RemoteControllerAction(Controller, completer));
-    return Stream.fromFuture(completer.future);
-  }
+  Stream<C> remoteController<C extends StateController>() =>
+      Stream.fromFuture(_remoteData<C>());
 
   ///This function returns the state of a the `StateController` instance as a Steam depends on the generic types
   ///you attached with the function.
@@ -221,8 +207,8 @@ abstract class StateController<S> {
   ///    });
   ///```
   ///
-  Stream<S> remoteStream<C, S>() => remoteController<C>()
-      .flatMap((value) => (value as StateController<S>).stream$);
+  Stream<S> remoteStream<C extends StateController<S>, S>() =>
+      remoteController<C>().flatMap((value) => value.stream$);
 
   ///This is a clean up funcction.
   ///
