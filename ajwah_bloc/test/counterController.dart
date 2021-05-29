@@ -51,6 +51,17 @@ class RemoteController extends StateController<String> {
 
 class Counter2State extends StateController<int> {
   Counter2State() : super(0);
+
+  @override
+  void onInit() {
+    mapActionToState([
+      action$
+          .whereType('async+')
+          .delay(const Duration(milliseconds: 10))
+          .map((event) => state + 5)
+    ]);
+  }
+
   inc() {
     emit(state + 1);
   }

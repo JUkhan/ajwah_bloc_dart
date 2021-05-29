@@ -1,3 +1,7 @@
+## 2.6.6
+
+- introduce new feature : mapActionToState
+
 ## 2.6.5
 
 - Updated remotData functions

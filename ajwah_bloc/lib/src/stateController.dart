@@ -41,14 +41,12 @@ abstract class StateController<S> {
   BehaviorSubject<S>? __store;
   StreamSubscription<Action>? _subscription;
   StreamSubscription<Action>? _effectSubscription;
+  StreamSubscription<S>? _mapEffectsSubscription;
 
   StateController(S initialState) {
     __store = BehaviorSubject.seeded(initialState);
     dispatch(Action(type: '@@NewState($runtimeType)'));
-    _subscription = _dispatcher.distinct().listen((action) {
-      onAction(action);
-    });
-
+    _subscription = _dispatcher.distinct().listen(onAction);
     Future.delayed(Duration(milliseconds: 0)).then((_) => onInit());
   }
 
@@ -77,10 +75,10 @@ abstract class StateController<S> {
     _dispatcher.add(action);
   }
 
-  ///Return a `Acctions` instance.
+  ///Return `Actions` instance.
   ///
   ///You can filter the actions those are dispatches throughout
-  ///the application. And also making effect/s on it.
+  ///the application. And also making effect/s on it/map to state.
   ///
   Actions get action$ => _action$;
 
@@ -131,6 +129,21 @@ abstract class StateController<S> {
   void registerEffects(Iterable<Stream<Action>> streams) {
     _effectSubscription?.cancel();
     _effectSubscription = Rx.merge(streams).listen(dispatch);
+  }
+
+  ///This function just like `registerEffects` but return `Stream<State>` instead of `Stream<Action>`.
+  /// ```dart
+  /// mapActionToState([
+  ///   action$.isA<AsyncIncAction>()
+  ///   .delay(const Duration(milliseconds: 500))
+  ///   .map((action) => state+1),
+  ///
+  /// ]);
+  /// ```
+  @protected
+  void mapActionToState(Iterable<Stream<S>> streams) {
+    _mapEffectsSubscription?.cancel();
+    _mapEffectsSubscription = Rx.merge(streams).listen(emit);
   }
 
   ///Sends a data [newState].
@@ -215,6 +228,7 @@ abstract class StateController<S> {
   void dispose() {
     _subscription?.cancel();
     _effectSubscription?.cancel();
+    _mapEffectsSubscription?.cancel();
     _subscription = null;
     _effectSubscription = null;
   }

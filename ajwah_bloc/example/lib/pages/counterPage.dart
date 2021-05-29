@@ -1,6 +1,7 @@
 import '../widgets/StreamConsumer.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Action;
 import 'package:get/instance_manager.dart';
+import 'package:ajwah_bloc/ajwah_bloc.dart';
 
 import '../states/counter.dart';
 import './nav.dart';
@@ -30,7 +31,7 @@ class CounterPage extends StatelessWidget {
                 child: const Text('Dec'),
               ),
               ElevatedButton(
-                onPressed: () => csCtl.asyncInc(),
+                onPressed: () => csCtl.dispatch(Action(type: 'asyncInc')),
                 child: const Text('Async Inc'),
               ),
             ],

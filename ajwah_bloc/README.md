@@ -19,15 +19,20 @@ import 'package:rxdart/rxdart.dart';
 
 class CounterState extends StateController<int> {
   CounterState() : super(0);
+
+  @override
+  void onInit() {
+    mapActionToState([
+      action$
+          .whereType('asyncInc')
+          .delay(const Duration(seconds: 1))
+          .map((event) => state + 1),
+    ]);
+  }
+
   void inc() => emit(state + 1);
 
   void dec() => emit(state - 1);
-
-  asyncInc() async {
-    dispatch(Action(type: 'asyncInc'));
-    await Future.delayed(const Duration(seconds: 1));
-    inc();
-  }
 
   Stream<SCResponse> get count$ => Rx.merge([
         action$.whereType('asyncInc').mapTo(SCLoading()),
@@ -54,7 +59,11 @@ class TodoState extends StateController<List<Todo>> {
   @override
   void onInit() {
     loadTodos();
-
+    /**
+     * Effect for todo search input. For each key strokes AddTodo widget dispatching
+     * SearchInputAction. But effect throttles it for 320 mills to collect the subsequent
+     * actions and then finally dispatching SearchTodoAction.
+     */
     registerEffects([
       action$
           .isA<SearchInputAction>()
@@ -93,6 +102,8 @@ class TodoState extends StateController<List<Todo>> {
       .map((todos) => todos.where((todo) => !todo.completed).toList())
       .map((todos) => '${todos.length} items left');
 
+  ///combining multiplle controllers(TodoState, SearchCategoryState)
+  ///with SearchTodoAction and returns single todos stream.
   Stream<List<Todo>> get todo$ =>
       Rx.combineLatest3<List<Todo>, SearchCategory, String, List<Todo>>(
           stream$,
@@ -260,5 +271,6 @@ void main() {
   Stream<Controller> remoteController<Controller>()
   Future<State> remoteState<Controller, State>()
   Stream<S> remoteStream<Controller, S>()
+  void mapActionToState(Iterable<Stream<S>> callbackList)
   void dispose()
 ```
